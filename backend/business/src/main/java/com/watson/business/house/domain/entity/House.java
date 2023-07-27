@@ -1,10 +1,10 @@
-package com.watson.business.exception.feat.domain.entity.House;
+package com.watson.business.house.domain.entity;
 
-import com.watson.business.exception.feat.domain.item.STATUS;
-import com.watson.business.exception.feat.domain.entity.House.houseinfo.MonthlyInfos;
-import com.watson.business.exception.feat.domain.entity.House.houseinfo.SaleInfos;
-import com.watson.business.exception.feat.domain.entity.House.houseinfo.YearlyInfos;
-import com.watson.business.exception.feat.dto.houseregist.HouseRegistRequest;
+import com.watson.business.house.domain.entity.houseinfo.MonthlyInfos;
+import com.watson.business.house.domain.entity.houseinfo.SaleInfos;
+import com.watson.business.house.domain.entity.houseinfo.YearlyInfos;
+import com.watson.business.house.domain.item.STATUS;
+import com.watson.business.house.dto.houseregist.HouseRegistRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -66,7 +66,7 @@ public class House {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10) DEFAULT '거래중'")
+    @Column(columnDefinition = "VARCHAR(10) DEFAULT TRADING")
     private STATUS status;
 
     @Column(nullable = false)
@@ -86,9 +86,6 @@ public class House {
 
     @OneToOne(cascade = CascadeType.ALL)
     private HouseOption houseOption;
-
-//    @OneToOne(cascade = CascadeType.ALL)      // 조회수 생성
-//    private ViewCounts viewCounts;
 
     @OneToOne(cascade = CascadeType.ALL)
     private SaleInfos saleInfos;
@@ -122,6 +119,7 @@ public class House {
         this.address = houseRegistRequest.getAddress();
         this.title = houseRegistRequest.getTitle();
         this.content = houseRegistRequest.getContent();
+        this.weeklyViewCount = 0;
         this.supplyAreaMeter = houseRegistRequest.getSupplyAreaMeter();
         this.buildingUse = houseRegistRequest.getBuildingUse();
         this.approvalBuildingDate = houseRegistRequest.getApprovalBuildingDate();

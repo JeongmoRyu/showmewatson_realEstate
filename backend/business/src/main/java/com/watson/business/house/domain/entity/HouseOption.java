@@ -1,6 +1,6 @@
-package com.watson.business.exception.feat.domain.entity.House;
+package com.watson.business.house.domain.entity;
 
-import com.watson.business.exception.feat.dto.houseregist.HouseOptionRequest;
+import com.watson.business.house.dto.houseregist.HouseOptionRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -50,21 +50,6 @@ public class HouseOption {
     public HouseOption() {
 
     }
-
-    public HouseOption(boolean sink, boolean airConditioner, boolean shoeCloset, boolean washingMachine, boolean refrigerator, boolean closet, boolean induction, boolean desk, boolean elevator, boolean coldHeating, boolean parking) {
-        this.sink = sink;
-        this.airConditioner = airConditioner;
-        this.shoeCloset = shoeCloset;
-        this.washingMachine = washingMachine;
-        this.refrigerator = refrigerator;
-        this.closet = closet;
-        this.induction = induction;
-        this.desk = desk;
-        this.elevator = elevator;
-        this.coldHeating = coldHeating;
-        this.parking = parking;
-    }
-
     public HouseOption(HouseOptionRequest houseOptionRequest) {
         this.sink = houseOptionRequest.isSink();
         this.airConditioner = houseOptionRequest.isAirConditioner();

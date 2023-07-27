@@ -1,4 +1,4 @@
-package com.watson.business.exception.feat.dto.houseregist;
+package com.watson.business.house.dto.houseregist;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

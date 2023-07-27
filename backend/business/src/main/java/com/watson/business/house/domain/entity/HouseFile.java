@@ -1,7 +1,6 @@
-package com.watson.business.exception.feat.domain.entity.House;
+package com.watson.business.house.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 
 import java.util.Date;

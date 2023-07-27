@@ -1,6 +1,5 @@
-package com.watson.business.exception.feat.dto.houseregist;
+package com.watson.business.house.dto.houseregist;
 
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,6 +1,6 @@
-package com.watson.business.exception.feat.domain.entity.House.houseinfo;
+package com.watson.business.house.domain.entity.houseinfo;
 
-import com.watson.business.exception.feat.dto.houseregist.ContractInfoRequest;
+import com.watson.business.house.dto.houseregist.ContractInfoRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 

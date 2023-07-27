@@ -1,7 +1,7 @@
-package com.watson.business.exception.feat.controller;
+package com.watson.business.house.controller;
 
-import com.watson.business.exception.feat.service.HouseService;
-import com.watson.business.exception.feat.dto.houseregist.HouseRegistRequest;
+import com.watson.business.house.service.HouseService;
+import com.watson.business.house.dto.houseregist.HouseRegistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
