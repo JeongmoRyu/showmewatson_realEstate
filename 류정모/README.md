@@ -1,6 +1,21 @@
-# Week2
+# Week2 week3
 
-## Figma MVP 초안 완료(이번주 제작은 링크)
+- week2
+    - main color 없이 초안1로 제작
+    - 올라간 사진들은 week2에 제작한 이미지
+- week3
+    - main color를 잡고 수정 작업 및 figma 제작 완료
+    - flutter 학습
+    - Flutter로 mvp 기능 구현 작업
+    - Flutter MVP 제작
+
+## Figma MVP 초안 완료
+
+- 일반 유저
+    ![Alt text](image.png)
+- 중개사 
+    ![Alt text](image-1.png)
+
 - Temp
 - Like
     - revised(myPage부분도 함께)
@@ -48,3 +63,20 @@
 - 카카오 : https://developers.kakao.com/docs/latest/ko/kakaopay/common 
 
 - 네이버 : https://developer.pay.naver.com/docs/v1/api  
+
+
+## Flutter MVP 기능 구현 및 제작
+- carousel slider
+- tabbar
+- sliverlist
+- get data 
+    - image list
+    - resoure list
+    - http list
+- routes
+- toast message
+- responsive scroll
+    - chatting in the meeting
+
+
+
