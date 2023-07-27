@@ -1,12 +1,12 @@
-package com.watson.business.house.domain.entity.house.houseinfo;
+package com.watson.business.house.domain.entity.houseinfo;
 
 import com.watson.business.house.dto.houseregist.ContractInfoRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-@Getter
 @Entity
-public class MonthlyInfos {
+@Getter
+public class YearlyInfos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,27 +15,22 @@ public class MonthlyInfos {
     private Long deposit;
 
     @Column(nullable = false)
-    private Long monthlyRent;
-
-    @Column(nullable = false)
     private int maintenance;
 
     @Column(nullable = false)
     private String maintenanceList;
 
-    public MonthlyInfos() {
-
+    public YearlyInfos() {
     }
-    public MonthlyInfos(Long deposit, Long monthlyRent, int maintenance, String maintenanceList) {
+
+    public YearlyInfos(Long deposit, int maintenance, String maintenanceList) {
         this.deposit = deposit;
-        this.monthlyRent = monthlyRent;
         this.maintenance = maintenance;
         this.maintenanceList = maintenanceList;
     }
 
-    public MonthlyInfos(ContractInfoRequest contractInfo) {
+    public YearlyInfos(ContractInfoRequest contractInfo) {
         this.deposit = contractInfo.getDeposit();
-        this.monthlyRent = contractInfo.getMonthlyRent();
         this.maintenance = contractInfo.getMaintenance();
         this.maintenanceList = contractInfo.getMaintenanceList();
     }

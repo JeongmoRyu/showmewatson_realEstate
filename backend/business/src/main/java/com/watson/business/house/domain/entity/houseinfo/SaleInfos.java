@@ -1,4 +1,4 @@
-package com.watson.business.house.domain.entity.house.houseinfo;
+package com.watson.business.house.domain.entity.houseinfo;
 
 import com.watson.business.house.dto.houseregist.ContractInfoRequest;
 import jakarta.persistence.*;

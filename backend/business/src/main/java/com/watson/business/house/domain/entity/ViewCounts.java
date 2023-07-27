@@ -1,4 +1,4 @@
-package com.watson.business.house.domain.entity.house;
+package com.watson.business.house.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

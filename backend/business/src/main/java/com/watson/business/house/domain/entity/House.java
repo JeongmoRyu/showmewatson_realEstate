@@ -1,9 +1,9 @@
-package com.watson.business.house.domain.entity.house;
+package com.watson.business.house.domain.entity;
 
+import com.watson.business.house.domain.entity.houseinfo.MonthlyInfos;
+import com.watson.business.house.domain.entity.houseinfo.SaleInfos;
+import com.watson.business.house.domain.entity.houseinfo.YearlyInfos;
 import com.watson.business.house.domain.item.STATUS;
-import com.watson.business.house.domain.entity.house.houseinfo.MonthlyInfos;
-import com.watson.business.house.domain.entity.house.houseinfo.SaleInfos;
-import com.watson.business.house.domain.entity.house.houseinfo.YearlyInfos;
 import com.watson.business.house.dto.houseregist.HouseRegistRequest;
 import jakarta.persistence.*;
 import lombok.Getter;

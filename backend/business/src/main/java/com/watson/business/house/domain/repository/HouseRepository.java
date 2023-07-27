@@ -1,6 +1,6 @@
-package com.watson.business.house.domain.repository.house;
+package com.watson.business.house.domain.repository;
 
-import com.watson.business.house.domain.entity.house.House;
+import com.watson.business.house.domain.entity.House;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
