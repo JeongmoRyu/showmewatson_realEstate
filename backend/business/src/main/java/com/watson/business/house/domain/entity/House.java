@@ -18,8 +18,8 @@ public class House {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="house_id")
-    private Long houseId;
+    @Column()
+    private Long id;
 
     @Column(nullable = false)
     private String realtorId;
