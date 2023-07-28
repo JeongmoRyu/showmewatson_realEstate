@@ -45,6 +45,6 @@ public class HouseService {
 
         houseRepository.save(house);
 
-        return house.getHouseId();
+        return house.getId();
     }
 }
