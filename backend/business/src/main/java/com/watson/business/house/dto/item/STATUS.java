@@ -1,4 +1,4 @@
-package com.watson.business.house.domain.item;
+package com.watson.business.house.dto.item;
 
 public enum STATUS {
     TRADING, COMPLETED, DELETED
