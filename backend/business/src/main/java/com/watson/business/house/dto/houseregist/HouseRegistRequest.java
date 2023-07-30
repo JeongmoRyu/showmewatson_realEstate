@@ -17,7 +17,7 @@ public class HouseRegistRequest {
      * 3: 매매
      */
     private int contractCode;
-    private int dongCode;
+    private String dongCode;
 
     /**
      * 1: 원룸
