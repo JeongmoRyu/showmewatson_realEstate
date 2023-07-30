@@ -32,7 +32,7 @@ public class House {
     private int contractCode;
 
     @Column(nullable = false)
-    private int dongCode;
+    private String dongCode;
 
     /**
      * 1: 원룸
