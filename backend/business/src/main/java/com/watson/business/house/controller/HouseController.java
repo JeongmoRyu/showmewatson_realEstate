@@ -33,17 +33,7 @@ public class HouseController {
 
         houseService.registHouse(houseRegistRequest, realtorId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("매물등록 완료");
-    }
-
-    @GetMapping
-    public List<HouseListResponse> searchAllHouse() {
-        return houseSearchService.searchAllHouse();
-    }
-
-    @GetMapping("/{id}")
-    public HouseResponse searchHouseById(@PathVariable Long id) {
-        return houseSearchService.searchHouseById(id);
+        return ResponseEntity.ok("매물등록 완료");
     }
 
     @GetMapping
