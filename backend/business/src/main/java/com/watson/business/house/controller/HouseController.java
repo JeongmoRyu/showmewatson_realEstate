@@ -46,8 +46,4 @@ public class HouseController {
         return houseSearchService.searchHouseById(id);
     }
 
-    @GetMapping
-    public List<HouseListResponse> searchAllHouse() {
-        return houseSearchService.searchAllHouse();
-    }
 }
