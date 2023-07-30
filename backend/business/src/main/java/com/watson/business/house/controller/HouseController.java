@@ -46,4 +46,14 @@ public class HouseController {
         return houseSearchService.searchHouseById(id);
     }
 
+    @GetMapping
+    public List<HouseListResponse> searchAllHouse() {
+        return houseSearchService.searchAllHouse();
+    }
+
+    @GetMapping("/{id}")
+    public HouseResponse searchHouseById(@PathVariable Long id) {
+        return houseSearchService.searchHouseById(id);
+    }
+
 }
