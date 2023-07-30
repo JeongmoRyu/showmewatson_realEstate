@@ -35,6 +35,7 @@ public class HouseSearchService {
                 case 1 -> {     // 월세
                     houseListResponse.setDeposit(h.getMonthlyInfos().getDeposit());
                     houseListResponse.setMaintenance(h.getMonthlyInfos().getMaintenance());
+                    houseListResponse.setMonthlyRent(h.getMonthlyInfos().getMonthlyRent());
                 }
                 case 2 -> {     // 전세
                     houseListResponse.setDeposit(h.getYearlyInfos().getDeposit());
@@ -86,9 +87,12 @@ public class HouseSearchService {
             case 1 -> {     // 월세
                 houseResponse.setDeposit(house.getMonthlyInfos().getDeposit());
                 houseResponse.setMaintenance(house.getMonthlyInfos().getMaintenance());
+                houseResponse.setMaintenanceList(house.getMonthlyInfos().getMaintenanceList());
+                houseResponse.setMonthlyRent(house.getMonthlyInfos().getMonthlyRent());
             }
             case 2 -> {     // 전세
                 houseResponse.setDeposit(house.getYearlyInfos().getDeposit());
+                houseResponse.setMaintenanceList(house.getMonthlyInfos().getMaintenanceList());
                 houseResponse.setMaintenance(house.getYearlyInfos().getMaintenance());
             }
             case 3 -> houseResponse.setSalePrice(house.getSaleInfos().getSalePrice());       // 매매
