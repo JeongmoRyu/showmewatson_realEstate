@@ -26,21 +26,21 @@ public class HouseService {
          * 3: 매매
          */
         switch (house.getContractCode()) {
-            case 1:
+            case 1 -> {
                 MonthlyInfos monthInfos = new MonthlyInfos(houseRegistRequest.getContractInfo());
                 house.setMonthlyInfos(monthInfos);
-                break;
-            case 2:
+            }
+            case 2 -> {
                 YearlyInfos yearlyInfos = new YearlyInfos(houseRegistRequest.getContractInfo());
                 house.setYearlyInfos(yearlyInfos);
-                break;
-            case 3:
+            }
+            case 3 -> {
                 SaleInfos saleInfos = new SaleInfos(houseRegistRequest.getContractInfo());
                 house.setSaleInfos(saleInfos);
-                break;
-            default:
+            }
+            default -> {
                 // 오류
-                break;
+            }
         }
 
         houseRepository.save(house);
