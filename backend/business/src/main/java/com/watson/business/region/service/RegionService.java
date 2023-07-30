@@ -32,4 +32,8 @@ public class RegionService {
 
         return emdResponseList;
     }
+
+    public EmdResponse getDongleeNameByEmdCode(String courtCode) {
+        return new EmdResponse(emdRepository.findDongleeNameByCourtCode(courtCode), courtCode);
+    }
 }

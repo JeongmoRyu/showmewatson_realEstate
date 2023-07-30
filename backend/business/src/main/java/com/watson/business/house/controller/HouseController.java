@@ -1,10 +1,12 @@
 package com.watson.business.house.controller;
 
 import com.watson.business.house.dto.search.HouseListResponse;
+import com.watson.business.house.dto.search.HouseResponse;
 import com.watson.business.house.service.HouseSearchService;
 import com.watson.business.house.service.HouseService;
 import com.watson.business.house.dto.houseregist.HouseRegistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,17 @@ public class HouseController {
 
         houseService.registHouse(houseRegistRequest, realtorId);
 
-        return ResponseEntity.ok("매물등록 완료");
+        return ResponseEntity.status(HttpStatus.CREATED).body("매물등록 완료");
+    }
+
+    @GetMapping
+    public List<HouseListResponse> searchAllHouse() {
+        return houseSearchService.searchAllHouse();
+    }
+
+    @GetMapping("/{id}")
+    public HouseResponse searchHouseById(@PathVariable Long id) {
+        return houseSearchService.searchHouseById(id);
     }
 
     @GetMapping
