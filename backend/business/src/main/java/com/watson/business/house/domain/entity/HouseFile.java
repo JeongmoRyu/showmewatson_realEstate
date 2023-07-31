@@ -1,6 +1,6 @@
 package com.watson.business.house.domain.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 
 import java.util.Date;

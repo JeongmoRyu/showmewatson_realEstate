@@ -26,23 +26,28 @@ public class HouseSearchService {
     public List<HouseListResponse> searchAllHouse() {
         List<House> houseList = houseRepository.findAll();
         List<HouseListResponse> allHouseList = new ArrayList<>();
-        for(House h : houseList){
+        for (House h : houseList) {
             HouseListResponse houseListResponse = new HouseListResponse(
                     h.getId(), h.getHouseCode(), h.getSquareMeter(), h.getSupplyAreaMeter(), h.getFloor(), h.getAddress(), h.getContent(), h.getStatus());
 
 
             switch (h.getContractCode()) {
-                case 1 -> {     // 월세
+                case 1:    // 월세
                     houseListResponse.setDeposit(h.getMonthlyInfos().getDeposit());
                     houseListResponse.setMaintenance(h.getMonthlyInfos().getMaintenance());
                     houseListResponse.setMonthlyRent(h.getMonthlyInfos().getMonthlyRent());
-                }
-                case 2 -> {     // 전세
+                    break;
+
+                case 2:    // 전세
                     houseListResponse.setDeposit(h.getYearlyInfos().getDeposit());
                     houseListResponse.setMaintenance(h.getYearlyInfos().getMaintenance());
-                }
-                case 3 -> houseListResponse.setSalePrice(h.getSaleInfos().getSalePrice());      // 매매
-                default -> throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
+                    break;
+
+                case 3:
+                    houseListResponse.setSalePrice(h.getSaleInfos().getSalePrice());
+                    break;// 매매
+                default:
+                    throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
             }
             // TODO: 사진 정보 관련 기능 구현
 
@@ -84,19 +89,24 @@ public class HouseSearchService {
                 house.getHouseOption()
         );
         switch (house.getContractCode()) {
-            case 1 -> {     // 월세
+            case 1:      // 월세
                 houseResponse.setDeposit(house.getMonthlyInfos().getDeposit());
                 houseResponse.setMaintenance(house.getMonthlyInfos().getMaintenance());
                 houseResponse.setMaintenanceList(house.getMonthlyInfos().getMaintenanceList());
                 houseResponse.setMonthlyRent(house.getMonthlyInfos().getMonthlyRent());
-            }
-            case 2 -> {     // 전세
+                break;
+
+            case 2:   // 전세
                 houseResponse.setDeposit(house.getYearlyInfos().getDeposit());
                 houseResponse.setMaintenanceList(house.getMonthlyInfos().getMaintenanceList());
                 houseResponse.setMaintenance(house.getYearlyInfos().getMaintenance());
-            }
-            case 3 -> houseResponse.setSalePrice(house.getSaleInfos().getSalePrice());       // 매매
-            default -> throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
+                break;
+
+            case 3:
+                houseResponse.setSalePrice(house.getSaleInfos().getSalePrice());
+                break;// 매매
+            default:
+                throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
         // TODO: isWish 로직 필요
