@@ -16,6 +16,4 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 
     @Query("SELECT DISTINCT h FROM House h JOIN FETCH h.houseFiles f WHERE h.id = :houseId AND f.isDeleted = false")
     House findHouseById(@Param("houseId") Long houseId);
-
-
 }
