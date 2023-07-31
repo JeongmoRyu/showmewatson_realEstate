@@ -1,5 +1,7 @@
 package com.watson.business.house.service;
 
+import com.watson.business.exception.HouseErrorCode;
+import com.watson.business.exception.HouseException;
 import com.watson.business.house.domain.entity.House;
 import com.watson.business.house.domain.entity.HouseOption;
 import com.watson.business.house.domain.repository.HouseRepository;
@@ -38,9 +40,7 @@ public class HouseService {
                 SaleInfos saleInfos = new SaleInfos(houseRegistRequest.getContractInfo());
                 house.setSaleInfos(saleInfos);
             }
-            default -> {
-                // 오류
-            }
+            default -> throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
         houseRepository.save(house);
