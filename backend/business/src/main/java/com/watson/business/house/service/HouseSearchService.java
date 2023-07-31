@@ -1,6 +1,7 @@
 package com.watson.business.house.service;
 
-import com.watson.business.exception.NotFoundException;
+import com.watson.business.exception.HouseErrorCode;
+import com.watson.business.exception.HouseException;
 import com.watson.business.house.domain.entity.House;
 import com.watson.business.house.domain.repository.HouseRepository;
 import com.watson.business.house.dto.search.HouseListResponse;
@@ -41,7 +42,7 @@ public class HouseSearchService {
                     houseListResponse.setMaintenance(h.getYearlyInfos().getMaintenance());
                 }
                 case 3 -> houseListResponse.setSalePrice(h.getSaleInfos().getSalePrice());      // 매매
-                default -> throw new NotFoundException(404);
+                default -> throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
             }
             // TODO: 사진 정보 관련 기능 구현
 
@@ -56,7 +57,7 @@ public class HouseSearchService {
     public HouseResponse searchHouseById(Long houseId) {
         Optional<House> optionalHouse = houseRepository.findById(houseId);
         if (optionalHouse.isEmpty()) {
-            throw new NotFoundException(404);
+            throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
         House house = optionalHouse.get();
 
@@ -95,7 +96,7 @@ public class HouseSearchService {
                 houseResponse.setMaintenance(house.getYearlyInfos().getMaintenance());
             }
             case 3 -> houseResponse.setSalePrice(house.getSaleInfos().getSalePrice());       // 매매
-            default -> throw new NotFoundException(404);
+            default -> throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
         // TODO: isWish 로직 필요
