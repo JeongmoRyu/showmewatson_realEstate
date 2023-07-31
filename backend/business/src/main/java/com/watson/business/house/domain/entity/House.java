@@ -95,8 +95,7 @@ public class House {
     @OneToOne(cascade = CascadeType.ALL)
     private MonthlyInfos monthlyInfos;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="house_id")
+    @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HouseFile> houseFiles= new ArrayList<>();
 
     @PrePersist
@@ -136,5 +135,15 @@ public class House {
 
     public void setMonthlyInfos(MonthlyInfos monthlyInfos) {
         this.monthlyInfos = monthlyInfos;
+    }
+
+    public void addHouseFile(final HouseFile houseFile) {
+        houseFiles.add(houseFile);
+        houseFile.setHouse(this);
+    }
+
+    public void removeImage(final HouseFile houseFile){
+        houseFiles.remove(houseFile);
+        houseFile.setHouse(null);
     }
 }
