@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class HouseSearchService {
@@ -24,27 +23,31 @@ public class HouseSearchService {
     private RegionService regionService;
 
     public List<HouseListResponse> searchAllHouse() {
-        List<House> houseList = houseRepository.findAll();
+        List<House> houseList = houseRepository.findHouses();
         List<HouseListResponse> allHouseList = new ArrayList<>();
-        for(House h : houseList){
+        for (House h : houseList) {
             HouseListResponse houseListResponse = new HouseListResponse(
-                    h.getId(), h.getHouseCode(), h.getSquareMeter(), h.getSupplyAreaMeter(), h.getFloor(), h.getAddress(), h.getContent(), h.getStatus());
+                    h.getId(), h.getHouseCode(), h.getSquareMeter(), h.getSupplyAreaMeter(), h.getFloor(), h.getAddress(), h.getContent(), h.getStatus(), h.getHouseFiles().get(0).getFileName());
 
 
             switch (h.getContractCode()) {
-                case 1 -> {     // 월세
+                case 1:    // 월세
                     houseListResponse.setDeposit(h.getMonthlyInfos().getDeposit());
                     houseListResponse.setMaintenance(h.getMonthlyInfos().getMaintenance());
                     houseListResponse.setMonthlyRent(h.getMonthlyInfos().getMonthlyRent());
-                }
-                case 2 -> {     // 전세
+                    break;
+
+                case 2:    // 전세
                     houseListResponse.setDeposit(h.getYearlyInfos().getDeposit());
                     houseListResponse.setMaintenance(h.getYearlyInfos().getMaintenance());
-                }
-                case 3 -> houseListResponse.setSalePrice(h.getSaleInfos().getSalePrice());      // 매매
-                default -> throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
+                    break;
+
+                case 3:
+                    houseListResponse.setSalePrice(h.getSaleInfos().getSalePrice());
+                    break;// 매매
+                default:
+                    throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
             }
-            // TODO: 사진 정보 관련 기능 구현
 
             // TODO: access-key 존재시 isWish 관련 기능 구현  : 매물(h.getId()) + wish테이블
 
@@ -55,11 +58,10 @@ public class HouseSearchService {
     }
 
     public HouseResponse searchHouseById(Long houseId) {
-        Optional<House> optionalHouse = houseRepository.findById(houseId);
-        if (optionalHouse.isEmpty()) {
+        House house= houseRepository.findHouseById(houseId);
+        if (house == null) {
             throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
-        House house = optionalHouse.get();
 
         RealtorResponse realtorResponse = new RealtorResponse(null, house.getRealtorId());  // realtorName 로직 필요
         HouseResponse houseResponse = new HouseResponse(
@@ -83,20 +85,26 @@ public class HouseSearchService {
                 house.getRegDate(),
                 house.getHouseOption()
         );
+
         switch (house.getContractCode()) {
-            case 1 -> {     // 월세
+            case 1:      // 월세
                 houseResponse.setDeposit(house.getMonthlyInfos().getDeposit());
                 houseResponse.setMaintenance(house.getMonthlyInfos().getMaintenance());
                 houseResponse.setMaintenanceList(house.getMonthlyInfos().getMaintenanceList());
                 houseResponse.setMonthlyRent(house.getMonthlyInfos().getMonthlyRent());
-            }
-            case 2 -> {     // 전세
+                break;
+
+            case 2:   // 전세
                 houseResponse.setDeposit(house.getYearlyInfos().getDeposit());
                 houseResponse.setMaintenanceList(house.getMonthlyInfos().getMaintenanceList());
                 houseResponse.setMaintenance(house.getYearlyInfos().getMaintenance());
-            }
-            case 3 -> houseResponse.setSalePrice(house.getSaleInfos().getSalePrice());       // 매매
-            default -> throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
+                break;
+
+            case 3:
+                houseResponse.setSalePrice(house.getSaleInfos().getSalePrice());
+                break;// 매매
+            default:
+                throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
         // TODO: isWish 로직 필요
