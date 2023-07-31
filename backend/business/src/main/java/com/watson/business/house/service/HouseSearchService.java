@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class HouseSearchService {
@@ -24,11 +23,11 @@ public class HouseSearchService {
     private RegionService regionService;
 
     public List<HouseListResponse> searchAllHouse() {
-        List<House> houseList = houseRepository.findAll();
+        List<House> houseList = houseRepository.findHouses();
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for (House h : houseList) {
             HouseListResponse houseListResponse = new HouseListResponse(
-                    h.getId(), h.getHouseCode(), h.getSquareMeter(), h.getSupplyAreaMeter(), h.getFloor(), h.getAddress(), h.getContent(), h.getStatus());
+                    h.getId(), h.getHouseCode(), h.getSquareMeter(), h.getSupplyAreaMeter(), h.getFloor(), h.getAddress(), h.getContent(), h.getStatus(), h.getHouseFiles().get(0).getFileName());
 
 
             switch (h.getContractCode()) {
@@ -49,7 +48,6 @@ public class HouseSearchService {
                 default:
                     throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
             }
-            // TODO: 사진 정보 관련 기능 구현
 
             // TODO: access-key 존재시 isWish 관련 기능 구현  : 매물(h.getId()) + wish테이블
 
@@ -60,11 +58,10 @@ public class HouseSearchService {
     }
 
     public HouseResponse searchHouseById(Long houseId) {
-        Optional<House> optionalHouse = houseRepository.findById(houseId);
-        if (optionalHouse.isEmpty()) {
+        House house= houseRepository.findHouseById(houseId);
+        if (house == null) {
             throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
-        House house = optionalHouse.get();
 
         RealtorResponse realtorResponse = new RealtorResponse(null, house.getRealtorId());  // realtorName 로직 필요
         HouseResponse houseResponse = new HouseResponse(
@@ -88,6 +85,7 @@ public class HouseSearchService {
                 house.getRegDate(),
                 house.getHouseOption()
         );
+
         switch (house.getContractCode()) {
             case 1:      // 월세
                 houseResponse.setDeposit(house.getMonthlyInfos().getDeposit());

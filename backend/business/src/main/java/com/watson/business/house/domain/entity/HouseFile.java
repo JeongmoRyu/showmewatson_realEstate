@@ -1,6 +1,7 @@
 package com.watson.business.house.domain.entity;
 
 import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 
 import java.util.Date;
@@ -14,6 +15,7 @@ public class HouseFile {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_id")
+    @JsonBackReference
     private House house;
 
     @Column(nullable = false)

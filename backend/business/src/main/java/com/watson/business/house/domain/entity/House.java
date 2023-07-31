@@ -1,5 +1,6 @@
 package com.watson.business.house.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.watson.business.house.domain.entity.houseinfo.MonthlyInfos;
 import com.watson.business.house.domain.entity.houseinfo.SaleInfos;
 import com.watson.business.house.domain.entity.houseinfo.YearlyInfos;
@@ -65,7 +66,7 @@ public class House {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10) DEFAULT TRADING")
+    @Column(columnDefinition = "VARCHAR(10)")
     private STATUS status;
 
     @Column(nullable = false)
@@ -96,11 +97,13 @@ public class House {
     private MonthlyInfos monthlyInfos;
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<HouseFile> houseFiles= new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
         regDate = new Date(); // 현재 시간을 할당
+        status = STATUS.TRADING;
     }
 
     public House() {
