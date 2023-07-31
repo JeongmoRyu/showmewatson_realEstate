@@ -1,6 +1,9 @@
 package com.watson.business.house.service;
 
+import com.watson.business.exception.HouseErrorCode;
+import com.watson.business.exception.HouseException;
 import com.watson.business.house.domain.entity.House;
+import com.watson.business.house.domain.entity.HouseFile;
 import com.watson.business.house.domain.entity.HouseOption;
 import com.watson.business.house.domain.repository.HouseRepository;
 import com.watson.business.house.domain.entity.houseinfo.MonthlyInfos;
@@ -10,16 +13,27 @@ import com.watson.business.house.dto.houseregist.HouseRegistRequest;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class HouseService {
     private final HouseRepository houseRepository;
-    public Long registHouse(HouseRegistRequest houseRegistRequest, String realtorId) {
+    private final HouseImageService houseImageService;
+    public Long registHouse(List<MultipartFile> file, HouseRegistRequest houseRegistRequest, String realtorId) {
         HouseOption houseOption = new HouseOption(houseRegistRequest.getHouseOption());
 
         House house = new House(realtorId, houseRegistRequest, houseOption);
+
+        // 이미지 저장
+        List<String> houseFileList = houseImageService.uploadFile(file, "house");
+        for(String houseFilePath : houseFileList) {
+            house.addHouseFile(new HouseFile(houseFilePath));
+        }
+
         /**
          * 1: 월세
          * 2: 전세
@@ -38,9 +52,7 @@ public class HouseService {
                 SaleInfos saleInfos = new SaleInfos(houseRegistRequest.getContractInfo());
                 house.setSaleInfos(saleInfos);
             }
-            default -> {
-                // 오류
-            }
+            default -> throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
         houseRepository.save(house);
