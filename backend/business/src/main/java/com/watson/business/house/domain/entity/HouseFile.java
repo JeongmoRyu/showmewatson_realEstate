@@ -12,6 +12,10 @@ public class HouseFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "house_id")
+    private House house;
+
     @Column(nullable = false)
     private String fileName;
 
@@ -20,10 +24,22 @@ public class HouseFile {
     private Date regDate;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
-    private String isDeleted;
+    private boolean isDeleted;
+
+    public HouseFile() {
+
+    }
+
+    public void setHouse(House house) {
+        this.house = house;
+    }
 
     @PrePersist
     protected void onCreate() {
-        regDate = new Date(); // 현재 시간을 할당합니다.
+        regDate = new Date();
+    }
+
+    public HouseFile(String fileName) {
+        this.fileName = fileName;
     }
 }
