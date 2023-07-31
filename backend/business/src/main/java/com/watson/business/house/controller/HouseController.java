@@ -45,5 +45,4 @@ public class HouseController {
     public HouseResponse searchHouseById(@PathVariable Long id) {
         return houseSearchService.searchHouseById(id);
     }
-
 }
