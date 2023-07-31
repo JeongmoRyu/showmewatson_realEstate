@@ -1,143 +1,85 @@
 package com.watson.business.house.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.watson.business.house.domain.entity.houseinfo.MonthlyInfos;
-import com.watson.business.house.domain.entity.houseinfo.SaleInfos;
-import com.watson.business.house.domain.entity.houseinfo.YearlyInfos;
+import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
+import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
+import com.watson.business.house.domain.entity.houseContractInfoDetail.YearlyInfo;
 import com.watson.business.house.dto.item.STATUS;
-import com.watson.business.house.dto.houseregist.HouseRegistRequest;
+
 import javax.persistence.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Getter
 @Entity
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "houses")
 public class House {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "house_id")
     private Long id;
 
-    @Column(nullable = false)
     private String realtorId;
-
-    /**
-     * 1: 월세
-     * 2: 전세
-     * 3: 매매
-     */
-    @Column(nullable = false)
     private int contractCode;
-
-    @Column(nullable = false)
     private String dongCode;
-
-    /**
-     * 1: 원룸
-     * 2: 투룸
-     * 3: 쓰리룸 이상
-     */
-    @Column(nullable = false)
     private int houseCode;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false, updatable = false)
-    private Date regDate;
-
-    @Column(nullable = false)
     private double squareMeter;
-
-    @Column(nullable = false)
     private int floor;
-
-    @Column(nullable = false)
     private int totalFloor;
-
-    @Column(nullable = false)
     private String address;
-
-    @Column(nullable = false)
     private String title;
-
-    @Column(nullable = false)
     private String content;
+    private double supplyAreaMeter;
+    private String buildingUse;
+    private String approvalBuildingDate;
+    private int bathroom;
+    private String maintenanceList;
+
+    private int weeklyViewCount;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
     private STATUS status;
 
-    @Column(nullable = false)
-    private int weeklyViewCount;
+    @CreatedDate
+    private Date regDate;
 
-    @Column(nullable = false)
-    private double supplyAreaMeter;
-
-    @Column(nullable = false)
-    private String buildingUse;
-
-    @Column(nullable = false)
-    private String approvalBuildingDate;
-
-    @Column(nullable = false)
-    private int bathroom;
+    @OneToMany(mappedBy = "house")
+    private List<HouseFile> houseFiles;
 
     @OneToOne(cascade = CascadeType.ALL)
     private HouseOption houseOption;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private SaleInfos saleInfos;
+    private SaleInfo saleInfo;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private YearlyInfos yearlyInfos;
+    private YearlyInfo yearlyInfo;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private MonthlyInfos monthlyInfos;
+    private MonthlyInfo monthlyInfo;
 
-    @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<HouseFile> houseFiles= new ArrayList<>();
-
-    @PrePersist
-    protected void onCreate() {
-        regDate = new Date(); // 현재 시간을 할당
-        status = STATUS.TRADING;
+    public void setSaleInfo(SaleInfo saleInfo) {
+        this.saleInfo = saleInfo;
     }
 
-    public House() {
+    public void setYearlyInfo(YearlyInfo yearlyInfo) {
+        this.yearlyInfo = yearlyInfo;
     }
 
-    public House(String realtorId, HouseRegistRequest houseRegistRequest, HouseOption houseOption) {
-        this.realtorId = realtorId;
-        this.contractCode = houseRegistRequest.getContractCode();
-        this.dongCode = houseRegistRequest.getDongCode();
-        this.houseCode = houseRegistRequest.getHouseCode();
-        this.squareMeter = houseRegistRequest.getSquareMeter();
-        this.floor = houseRegistRequest.getFloor();
-        this.totalFloor = houseRegistRequest.getTotalFloor();
-        this.address = houseRegistRequest.getAddress();
-        this.title = houseRegistRequest.getTitle();
-        this.content = houseRegistRequest.getContent();
-        this.weeklyViewCount = 0;
-        this.supplyAreaMeter = houseRegistRequest.getSupplyAreaMeter();
-        this.buildingUse = houseRegistRequest.getBuildingUse();
-        this.approvalBuildingDate = houseRegistRequest.getApprovalBuildingDate();
-        this.bathroom = houseRegistRequest.getBathroom();
-        this.houseOption = houseOption;
-    }
-
-    public void setSaleInfos(SaleInfos saleInfos) {
-        this.saleInfos = saleInfos;
-    }
-
-    public void setYearlyInfos(YearlyInfos yearlyInfos) {
-        this.yearlyInfos = yearlyInfos;
-    }
-
-    public void setMonthlyInfos(MonthlyInfos monthlyInfos) {
-        this.monthlyInfos = monthlyInfos;
+    public void setMonthlyInfo(MonthlyInfo monthlyInfo) {
+        this.monthlyInfo = monthlyInfo;
     }
 
     public void addHouseFile(final HouseFile houseFile) {

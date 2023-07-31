@@ -13,16 +13,16 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/region")
 public class RegionController {
-    @Autowired
-    private RegionService regionService;
-
-    @GetMapping()
-    public List<String> getGunguNamesBySido(@RequestParam("sido") String sido) {
-        return regionService.getGunguNamesBySido(sido);
-    }
-
-    @GetMapping(value = "/court-code")
-    public List<EmdResponse> getCourtCodesByGungu(@RequestParam("gunguName") String gunguName) {
-        return regionService.getCourtCodesByGungu(gunguName);
-    }
+//    @Autowired
+//    private RegionService regionService;
+//
+//    @GetMapping()
+//    public List<String> getGunguNamesBySido(@RequestParam("sido") String sido) {
+//        return regionService.getGunguNamesBySido(sido);
+//    }
+//
+//    @GetMapping(value = "/court-code")
+//    public List<EmdResponse> getCourtCodesByGungu(@RequestParam("gunguName") String gunguName) {
+//        return regionService.getCourtCodesByGungu(gunguName);
+//    }
 }

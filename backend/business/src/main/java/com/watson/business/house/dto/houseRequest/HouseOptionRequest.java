@@ -1,9 +1,13 @@
-package com.watson.business.house.dto.houseregist;
+package com.watson.business.house.dto.houseRequest;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter @Setter
+@Data
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class HouseOptionRequest {
     private boolean sink;
     private boolean airConditioner;
