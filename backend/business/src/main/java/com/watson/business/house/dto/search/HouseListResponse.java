@@ -21,7 +21,7 @@ public class HouseListResponse {
     private String fileName;
     private boolean isWished;
 
-    public HouseListResponse(Long houseId, int houseCode, double squareMeter, double suppleAreaMeter, int floor, String address, String content, STATUS status) {
+    public HouseListResponse(Long houseId, int houseCode, double squareMeter, double suppleAreaMeter, int floor, String address, String content, STATUS status, String fileName) {
         this.houseId = houseId;
         this.houseCode = houseCode;
         this.squareMeter = squareMeter;
@@ -30,5 +30,6 @@ public class HouseListResponse {
         this.address = address;
         this.content = content;
         this.status = status;
+        this.fileName = fileName;
     }
 }

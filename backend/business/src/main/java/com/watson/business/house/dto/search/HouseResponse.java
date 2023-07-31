@@ -33,12 +33,12 @@ public class HouseResponse {
     private String title;
     private String content;
     private STATUS status;
-    private List<HouseFile> fileNames;
+    private List<HouseFile> houseFiles;
     private Date regDate;
     private HouseOption houseOption;
     private boolean isWished;
 
-    public HouseResponse(RealtorResponse realtor, Long houseId, int contractCode, EmdResponse emdResponse, int houseCode, double suppleAreaMeter, double squareMeter, int floor, int totalFloor, String address, String buildingUse, String approvalBuildingDate, int bathroom, String title, String content, STATUS status, List<HouseFile> fileNames, Date regDate, HouseOption houseOption) {
+    public HouseResponse(RealtorResponse realtor, Long houseId, int contractCode, EmdResponse emdResponse, int houseCode, double suppleAreaMeter, double squareMeter, int floor, int totalFloor, String address, String buildingUse, String approvalBuildingDate, int bathroom, String title, String content, STATUS status, List<HouseFile> houseFiles, Date regDate, HouseOption houseOption) {
         this.realtor = realtor;
         this.houseId = houseId;
         this.contractCode = contractCode;
@@ -55,7 +55,7 @@ public class HouseResponse {
         this.title = title;
         this.content = content;
         this.status = status;
-        this.fileNames = fileNames;
+        this.houseFiles = houseFiles;
         this.regDate = regDate;
         this.houseOption = houseOption;
     }
