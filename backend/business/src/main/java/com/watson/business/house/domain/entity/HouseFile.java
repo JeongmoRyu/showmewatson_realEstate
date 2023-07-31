@@ -1,9 +1,9 @@
 package com.watson.business.house.domain.entity;
 
+import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Getter

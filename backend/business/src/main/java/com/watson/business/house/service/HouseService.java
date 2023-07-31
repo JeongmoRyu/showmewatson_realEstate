@@ -23,6 +23,7 @@ import java.util.List;
 public class HouseService {
     private final HouseRepository houseRepository;
     private final HouseImageService houseImageService;
+
     public Long registHouse(List<MultipartFile> file, HouseRegistRequest houseRegistRequest, String realtorId) {
         HouseOption houseOption = new HouseOption(houseRegistRequest.getHouseOption());
 
