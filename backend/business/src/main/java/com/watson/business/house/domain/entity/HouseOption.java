@@ -1,7 +1,7 @@
 package com.watson.business.house.domain.entity;
 
 import com.watson.business.house.dto.houseregist.HouseOptionRequest;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 
 @Entity

@@ -1,15 +1,15 @@
 package com.watson.business.house.controller;
 
-import com.watson.business.house.dto.search.HouseListResponse;
-import com.watson.business.house.dto.search.HouseResponse;
+import com.watson.business.house.dto.houseregist.HouseRegistRequest;
 import com.watson.business.house.service.HouseSearchService;
 import com.watson.business.house.service.HouseService;
-import com.watson.business.house.dto.houseregist.HouseRegistRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

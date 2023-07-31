@@ -5,7 +5,7 @@ import com.watson.business.house.domain.entity.houseinfo.SaleInfos;
 import com.watson.business.house.domain.entity.houseinfo.YearlyInfos;
 import com.watson.business.house.dto.item.STATUS;
 import com.watson.business.house.dto.houseregist.HouseRegistRequest;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 
 import java.util.ArrayList;

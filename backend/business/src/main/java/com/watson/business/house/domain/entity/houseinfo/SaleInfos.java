@@ -1,7 +1,7 @@
 package com.watson.business.house.domain.entity.houseinfo;
 
 import com.watson.business.house.dto.houseregist.ContractInfoRequest;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 
 @Getter
