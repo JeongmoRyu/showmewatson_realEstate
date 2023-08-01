@@ -21,6 +21,42 @@ import 'package:prac2/screens/login_screen.dart';
 // import 'package:prac2/prac12.dart';
 // import 'package:prac2/prac13.dart';
 
+Page checkAuth(Page page) {
+  if (!checkAuthentication()) {
+    return MaterialPage(child: LoginScreen());
+  }
+  return page;
+}
+
+
+final goRouter = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) => checkAuth(
+        MaterialPage(
+          key: ValueKey('home'),
+          child: HomeScreen(),
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/login',
+      pageBuilder: (context, state) =>
+        MaterialPage(
+          key: ValueKey('login'),
+          child: LoginScreen(),
+        ),
+    ),
+  ],
+);
+
+
+// 사용자 인증을 확인하는 함수입니다.
+// 이 예시에서는 단순히 false를 반환하며, 실제 사용자 인증 로직으로 대체되어야 합니다.
+bool checkAuthentication() {
+  return false; // 인증 실패
+}
 
 void main() {
   runApp(MyApp());
@@ -85,26 +121,14 @@ class MyApp extends StatelessWidget {
 }
 
 class WatsonApp extends StatelessWidget {
-  final go_router = GoRouter(
-    routes: [
-      GoRoute(
-        path: '/',
-        pageBuilder: (context, state) => MaterialPage(
-          key: ValueKey('home'),
-          child: HomeScreen(),
-        ),
-      ),
-    ],
-  );
-
   WatsonApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routerDelegate: go_router.routerDelegate,
-      routeInformationParser: go_router.routeInformationParser,
+      routerDelegate: goRouter.routerDelegate,
+      routeInformationParser: goRouter.routeInformationParser,
     );
   }
 }
