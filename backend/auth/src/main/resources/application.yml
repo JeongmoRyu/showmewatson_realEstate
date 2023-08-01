@@ -1,1 +1,39 @@
+# server setting
+server:
+  port: 8080
 
+# spring setting
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}/auth?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  # spring security
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            authorization-grant-type: authorization_code
+            client-id: ${KCLIENT-ID}
+            client-secret: ${KCLIENT-SECRET}
+#            scope: profile_nickname, account_email # scope는 없어도 됨
+            client-authentication-method: POST
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            client-name: Kakao
+        provider:
+          kakao:
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-name-attribute: id
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL57Dialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+      ddl-auto: create
