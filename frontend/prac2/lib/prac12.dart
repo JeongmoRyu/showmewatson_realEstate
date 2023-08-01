@@ -1,9 +1,51 @@
 import 'package:flutter/material.dart';
 
 class prac12 extends StatelessWidget {
-  final List<bool> houseOption = [
-    true, true, true, true, true, false, true, false, false, true, false
-  ];
+  final Map<String, dynamic> houseList = {
+    "contractCode": 1,
+    "dongCode": 1141011600,
+    "houseCode": 2,
+    "squareMeter": 75.2,
+    "floor": 3,
+    "totalFloor": 4,
+    "address": "서울시 역삼",
+    "title": "고시원 원룸",
+    "content": "월세 300000",
+    "supplyAreaMeter": 80.0,
+    "buildingUse": "주거용",
+    "approvalBuildingDate": "2022-01-15",
+    "bathroom": 2,
+    "contractInfo": {
+      "deposit": 300000,
+      "monthlyRent": 300000,
+      "maintenance": 90000,
+      "maintenanceList": "에어컨 다있음"
+    },
+    "houseOption" : {
+      "sink": true,
+      "airConditioner": false,
+      "shoeCloset": true,
+      "washingMachine": true,
+      "refrigerator": false,
+      "closet": true,
+      "induction": false,
+      "desk": true,
+      "elevator": true,
+      "coldHeating": false,
+      "parking": true
+    },
+    "houseFiles" : null
+  };
+
+  Map<String, dynamic> houseOption = {};
+
+  List<bool> houseOptionList = [];
+
+  prac12() {
+    houseOption = houseList['houseOption'];
+    houseOptionList = houseOption.values.cast<bool>().toList();
+  }
+
 
   final List<String> optionTextList = [
     '싱크대', '에어컨', '신발장', '세탁기', '냉장고', '옷장',
@@ -18,8 +60,8 @@ class prac12 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // true인 값들의 인덱스를 가져옵니다.
-    List<int> trueIndices = List.generate(houseOption.length, (index) => index)
-        .where((index) => houseOption[index])
+    List<int> trueIndices = List.generate(houseOptionList.length, (index) => index)
+        .where((index) => houseOptionList[index])
         .toList();
 
     return Scaffold(
@@ -42,7 +84,7 @@ class prac12 extends StatelessWidget {
   }
 
   Widget _buildBoxColumn(int index) {
-    bool option = houseOption[index];
+    bool option = houseOptionList[index];
     Color boxColor = option ? Colors.white : Colors.red;
     String text = optionTextList[index];
     IconData icon = option ? optionIconList[index] : Icons.clear;
