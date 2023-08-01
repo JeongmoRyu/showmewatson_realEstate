@@ -47,6 +47,16 @@ class prac14 extends StatelessWidget {
     houseOptionList = houseOption.values.cast<bool>().toList();
   }
 
+  List<Widget> getHouseListWidgets() {
+    List<Widget> houseListWidgets = [];
+    houseList.forEach((key, value) {
+      if (key != 'houseOption') {
+        houseListWidgets.add(Text('$key : $value'));
+      }
+    });
+    return houseListWidgets;
+  }
+
 
   final List<String> optionTextList = [
     '싱크대', '에어컨', '신발장', '세탁기', '냉장고', '옷장',
@@ -69,111 +79,118 @@ class prac14 extends StatelessWidget {
       appBar: AppBar(
         title: Text('박스 컬럼 리스트'),
       ),
-      body: Column(
-        children: [
-          CarouselSlider(
-          options: CarouselOptions(
-          enableInfiniteScroll: false,
-            aspectRatio: 16 / 9,
-            enlargeCenterPage: true,
-            viewportFraction: 1.0,
-          ),
-          items: [
-           Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/img-11.png'),
-                fit: BoxFit.cover,
-              ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CarouselSlider(
+            options: CarouselOptions(
+            enableInfiniteScroll: false,
+              aspectRatio: 16 / 9,
+              enlargeCenterPage: true,
+              viewportFraction: 1.0,
             ),
-          ),
-            Container(
-              decoration: BoxDecoration(
-               image: DecorationImage(
-                 image: AssetImage('assets/img_0.png'),
-                 fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Container(
+            items: [
+             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/img_2.png'),
+                  image: AssetImage('assets/img-11.png'),
                   fit: BoxFit.cover,
                 ),
-             ),
+              ),
             ),
-          ],
-        ),
-        Container(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(left: 20),
-          child: Text(
-          '거래 정보',
-          style: TextStyle(
-          color: Colors.black,
-          letterSpacing: 2.0,
-          fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-          Divider(
-            height: 20.0,
-            color: Colors.grey[850],
-            thickness: 1.0,
-            endIndent: 30.0,
+              Container(
+                decoration: BoxDecoration(
+                 image: DecorationImage(
+                   image: AssetImage('assets/img_0.png'),
+                   fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/img_2.png'),
+                    fit: BoxFit.cover,
+                  ),
+               ),
+              ),
+            ],
           ),
           Container(
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.only(left: 20),
             child: Text(
-              '방 정보',
-              style: TextStyle(
-                color: Colors.black,
-                letterSpacing: 2.0,
-                fontWeight: FontWeight.bold,
-              ),
+            '거래 정보',
+            style: TextStyle(
+            color: Colors.black,
+            letterSpacing: 2.0,
+            fontWeight: FontWeight.bold,
             ),
           ),
-          Divider(
-            height: 20.0,
-            color: Colors.grey[850],
-            thickness: 1.0,
-            endIndent: 30.0,
-          ),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 20),
-            child: Text(
-              '추가옵션',
-              style: TextStyle(
-                color: Colors.black,
-                letterSpacing: 2.0,
-                fontWeight: FontWeight.bold,
+        ),
+            Divider(
+              height: 20.0,
+              color: Colors.grey[850],
+              thickness: 1.0,
+              endIndent: 30.0,
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 20),
+              child: Text(
+                '방 정보',
+                style: TextStyle(
+                  color: Colors.black,
+                  letterSpacing: 2.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          Divider(
-            height: 20.0,
-            color: Colors.grey[850],
-            thickness: 1.0,
-            endIndent: 30.0,
-          ),
-        Expanded(
-          child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
+            Divider(
+              height: 20.0,
+              color: Colors.grey[850],
+              thickness: 1.0,
+              endIndent: 30.0,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: getHouseListWidgets(),
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 20),
+              child: Text(
+                '추가옵션',
+                style: TextStyle(
+                  color: Colors.black,
+                  letterSpacing: 2.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+            ),
+            Divider(
+              height: 20.0,
+              color: Colors.grey[850],
+              thickness: 1.0,
+              endIndent: 30.0,
+            ),
+          GridView.builder(
+            shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 10.0,
+            ),
+
               itemCount: trueIndices.length,
               itemBuilder: (context, index) {
                 int trueIndex = trueIndices[index];
                 return _buildBoxColumn(trueIndex);
               },
             ),
-          ),
-        ]
+          ]
+        ),
       )
     );
   }
