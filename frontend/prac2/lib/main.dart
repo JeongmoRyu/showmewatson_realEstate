@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:prac2/states/user_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'package:prac2/screens/home_screen.dart';
 import 'package:prac2/screens/splash_screen.dart';
 import 'package:prac2/screens/login_screen.dart';
+import 'package:prac2/screens/interest_screen.dart';
+import 'package:prac2/screens/chatlist_screen.dart';
+import 'package:prac2/screens/map_screen.dart';
+import 'package:prac2/screens/mypage_screen.dart';
+import 'package:prac2/screens/livelist_screen.dart';
+
+import 'package:prac2/base/navbar.dart';
 
 
 // import 'package:prac2/prac1.dart';
@@ -21,46 +29,70 @@ import 'package:prac2/screens/login_screen.dart';
 // import 'package:prac2/prac12.dart';
 // import 'package:prac2/prac13.dart';
 
-Page checkAuth(Page page) {
-  if (!checkAuthentication()) {
-    return MaterialPage(child: LoginScreen());
-  }
-  return page;
+void main() {
+  runApp(MyApp());
 }
 
-
-final goRouter = GoRouter(
+final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      pageBuilder: (context, state) => checkAuth(
+      pageBuilder: (context, state) =>
         MaterialPage(
           key: ValueKey('home'),
           child: HomeScreen(),
         ),
       ),
+    GoRoute(
+      path: '/chatlist',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('chatlist'),
+            child: ChatList(),
+          ),
+    ),
+    GoRoute(
+      path: '/map',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('map'),
+            child: MapScreen(),
+          ),
+    ),
+    GoRoute(
+      path: '/interest',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('interest'),
+            child: Interest(),
+          ),
+    ),
+    GoRoute(
+      path: '/mypage',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('mypage'),
+            child: MyPage(),
+          ),
     ),
     GoRoute(
       path: '/login',
       pageBuilder: (context, state) =>
-        MaterialPage(
-          key: ValueKey('login'),
-          child: LoginScreen(),
-        ),
+          MaterialPage(
+            key: ValueKey('login'),
+            child: LoginScreen(),
+          ),
+    ),
+    GoRoute(
+      path: '/livelist',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('live'),
+            child: LiveList(),
+          ),
     ),
   ],
 );
-
-
-// 사용자 인증을 확인하는 함수입니다.
-// 이 예시에서는 단순히 false를 반환하며, 실제 사용자 인증 로직으로 대체되어야 합니다.
-bool checkAuthentication() {
-  return false; // 인증 실패
-}
-
-void main() {
-  runApp(MyApp());
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -80,11 +112,11 @@ class MyApp extends StatelessWidget {
             duration: Duration(milliseconds: 0), // 페이드인아웃 효과
             child: _splashLoadingWidget(snapshot), // 스냅샷실행 위젯
           );
-        }
+        },
     );
   }
   // 스플래쉬로딩위젯 선언(인스턴스)
-  StatelessWidget _splashLoadingWidget(AsyncSnapshot<Object> snapshot) {
+  Widget _splashLoadingWidget(AsyncSnapshot<Object> snapshot) {
     if(snapshot.hasError) {
       print(('에러가 발생하였습니다.'));
       return Text('Error');
@@ -120,16 +152,31 @@ class MyApp extends StatelessWidget {
     // );
 }
 
-class WatsonApp extends StatelessWidget {
-  WatsonApp({Key? key}) : super(key: key);
+class WatsonApp extends StatefulWidget {
+  @override
+  _WatsonAppState createState() => _WatsonAppState();
+}
 
+class _WatsonAppState extends State<WatsonApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerDelegate: goRouter.routerDelegate,
-      routeInformationParser: goRouter.routeInformationParser,
+    return ChangeNotifierProvider<UserProvider>(
+      create: (BuildContext context) {
+        return UserProvider();
+      },
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: _router,
+        theme: ThemeData(
+          primaryColor: Color(0xFFDCBF97),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFDCBF97)),
+            ),
+          ),
+        ),
+
+      ),
     );
   }
 }
-

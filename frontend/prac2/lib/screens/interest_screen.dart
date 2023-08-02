@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 // 로그인 화면
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class Interest extends StatelessWidget {
+  const Interest({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Text('로그인창'),
+      body: Text('관심매물창'),
     );
   }
 }
