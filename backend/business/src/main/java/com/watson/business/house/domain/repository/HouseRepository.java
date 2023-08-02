@@ -11,9 +11,10 @@ import java.util.List;
 @Repository
 public interface HouseRepository extends JpaRepository<House, Long> {
 
-    @Query("SELECT DISTINCT h FROM House h JOIN FETCH h.houseFiles f WHERE h.status != 'DELETED' AND f.isDeleted = false")
-    List<House> findHouses();
-
-    @Query("SELECT DISTINCT h FROM House h JOIN FETCH h.houseFiles f WHERE h.id = :houseId AND f.isDeleted = false")
-    House findHouseById(@Param("houseId") Long houseId);
+//    @Query("SELECT DISTINCT h FROM House h JOIN FETCH h.houseFiles f WHERE h.status != 'DELETED' AND f.isDeleted = false")
+//    List<House> findHouses();
+//
+//    @Query("SELECT DISTINCT h FROM House h JOIN FETCH h.houseFiles f WHERE h.id = :houseId AND f.isDeleted = false")
+//    House findHouseById(@Param("houseId") Long houseId);
+    House findHouseById(Long houseId);
 }
