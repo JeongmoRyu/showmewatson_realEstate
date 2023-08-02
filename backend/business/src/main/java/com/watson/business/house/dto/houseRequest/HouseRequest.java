@@ -23,6 +23,7 @@ public class HouseRequest {
     private String buildingUse;
     private String approvalBuildingDate;
     private int bathroom;
+    private int room;
 
     private ContractRequest contractInfo;
 

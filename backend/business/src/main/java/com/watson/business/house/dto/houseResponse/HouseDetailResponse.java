@@ -27,6 +27,7 @@ public class HouseDetailResponse {
     private String buildingUse;
     private String approvalBuildingDate;
     private int bathroom;
+    private int room;
 
     private String content;
     private List<HouseFile> houseFiles;

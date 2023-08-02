@@ -44,6 +44,7 @@ public class House {
     private String buildingUse;
     private String approvalBuildingDate;
     private int bathroom;
+    private int room;
     private String maintenanceList;
 
     private int weeklyViewCount;
