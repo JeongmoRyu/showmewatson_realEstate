@@ -1,13 +1,20 @@
 package com.watson.business.house.domain.entity;
 
-import javax.persistence.*;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Builder
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
+@Table(name = "house_files")
 public class HouseFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,30 +22,19 @@ public class HouseFile {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_id")
-    @JsonBackReference
+//    @JsonBackReference
     private House house;
 
-    @Column(nullable = false)
     private String fileName;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false, updatable = false)
+    @CreatedDate
     private Date regDate;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isDeleted;
 
-    public HouseFile() {
-
-    }
-
     public void setHouse(House house) {
         this.house = house;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        regDate = new Date();
     }
 
     public HouseFile(String fileName) {
