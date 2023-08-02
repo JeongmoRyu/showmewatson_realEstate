@@ -1,12 +1,14 @@
-package com.watson.business.house.dto.houseregist;
+package com.watson.business.house.dto.houseRequest;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Setter @Getter
+@Data
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
-public class ContractInfoRequest {
+public class ContractRequest {
     private Long salePrice;
     private Long deposit;
     private Long monthlyRent;
@@ -14,12 +16,12 @@ public class ContractInfoRequest {
     private String maintenanceList;
 
     // 매매
-    public ContractInfoRequest(Long salePrice) {
+    public ContractRequest(Long salePrice) {
         this.salePrice = salePrice;
     }
 
     // 월세
-    public ContractInfoRequest(Long deposit, Long monthlyRent, int maintenance, String maintenanceList) {
+    public ContractRequest(Long deposit, Long monthlyRent, int maintenance, String maintenanceList) {
         this.deposit = deposit;
         this.monthlyRent = monthlyRent;
         this.maintenance = maintenance;
@@ -27,7 +29,7 @@ public class ContractInfoRequest {
     }
 
     // 전세
-    public ContractInfoRequest(Long deposit, int maintenance, String maintenanceList) {
+    public ContractRequest(Long deposit, int maintenance, String maintenanceList) {
         this.deposit = deposit;
         this.maintenance = maintenance;
         this.maintenanceList = maintenanceList;
