@@ -120,6 +120,15 @@ class prac1 extends StatelessWidget {
                 primary: Colors.brown[600],
               ),
             ),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.pushNamed(context, '/n');
+              },
+              child: Text('Go to prac15'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.brown[700],
+              ),
+            ),
           ],
         ),
       ),
