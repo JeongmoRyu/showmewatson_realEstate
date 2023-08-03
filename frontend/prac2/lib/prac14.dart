@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-class prac13 extends StatelessWidget {
+class prac14 extends StatelessWidget {
   final Map<String, dynamic> houseList = {
     "contractCode": 1,
     "dongCode": 1141011600,
@@ -42,9 +42,19 @@ class prac13 extends StatelessWidget {
 
   List<bool> houseOptionList = [];
 
-  prac12() {
+  prac14() {
     houseOption = houseList['houseOption'];
     houseOptionList = houseOption.values.cast<bool>().toList();
+  }
+
+  List<Widget> getHouseListWidgets() {
+    List<Widget> houseListWidgets = [];
+    houseList.forEach((key, value) {
+      if (key != 'houseOption') {
+        houseListWidgets.add(Text('$key : $value'));
+      }
+    });
+    return houseListWidgets;
   }
 
 
@@ -60,37 +70,39 @@ class prac13 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<int> trueIndices = List.generate(optionTextList.length, (index) => index)
-        .where((index) => houseList['houseOption'][optionTextList[index]] == true || houseList['houseOption'][optionTextList[index]] == null)
+    // true인 값들의 인덱스를 가져옵니다.
+    List<int> trueIndices = List.generate(houseOptionList.length, (index) => index)
+        .where((index) => houseOptionList[index])
         .toList();
 
     return Scaffold(
       appBar: AppBar(
         title: Text('박스 컬럼 리스트'),
       ),
-      body: Column(
-        children: [
-          CarouselSlider(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CarouselSlider(
             options: CarouselOptions(
-              enableInfiniteScroll: false,
+            enableInfiniteScroll: false,
               aspectRatio: 16 / 9,
               enlargeCenterPage: true,
               viewportFraction: 1.0,
             ),
             items: [
-              Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/img-11.png'),
-                    fit: BoxFit.cover,
-                  ),
+             Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/img-11.png'),
+                  fit: BoxFit.cover,
                 ),
               ),
+            ),
               Container(
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/img_0.png'),
-                    fit: BoxFit.cover,
+                 image: DecorationImage(
+                   image: AssetImage('assets/img_0.png'),
+                   fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -100,7 +112,7 @@ class prac13 extends StatelessWidget {
                     image: AssetImage('assets/img_2.png'),
                     fit: BoxFit.cover,
                   ),
-                ),
+               ),
               ),
             ],
           ),
@@ -108,86 +120,86 @@ class prac13 extends StatelessWidget {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.only(left: 20),
             child: Text(
-              '매물정보',
-              style: TextStyle(
-                color: Colors.black,
-                letterSpacing: 2.0,
-                fontWeight: FontWeight.bold,
-              ),
+            '거래 정보',
+            style: TextStyle(
+            color: Colors.black,
+            letterSpacing: 2.0,
+            fontWeight: FontWeight.bold,
             ),
           ),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 20),
-            child: Text(
-              houseList['houseOption']['sink'].toString(),
-              style: TextStyle(
-                color: Colors.black,
-                letterSpacing: 2.0,
-                fontWeight: FontWeight.bold,
+        ),
+            Divider(
+              height: 20.0,
+              color: Colors.grey[850],
+              thickness: 1.0,
+              endIndent: 30.0,
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 20),
+              child: Text(
+                '방 정보',
+                style: TextStyle(
+                  color: Colors.black,
+                  letterSpacing: 2.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          // Container(
-          //   alignment: Alignment.centerLeft,
-          //   padding: EdgeInsets.only(left: 20),
-          //   child: Text(
-          //       trueIndex.toString(),
-          //       style: TextStyle(
-          //       color: Colors.black,
-          //       letterSpacing: 2.0,
-          //       fontWeight: FontWeight.bold,
-          //     ),
-          //   ),
-          // ),
-          Divider(
-            height: 20.0,
-            color: Colors.grey[850],
-            thickness: 1.0,
-            endIndent: 30.0,
-          ),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 20),
-            child: Text(
-              '추가옵션',
-              style: TextStyle(
-                color: Colors.black,
-                letterSpacing: 2.0,
-                fontWeight: FontWeight.bold,
+            Divider(
+              height: 20.0,
+              color: Colors.grey[850],
+              thickness: 1.0,
+              endIndent: 30.0,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: getHouseListWidgets(),
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 20),
+              child: Text(
+                '추가옵션',
+                style: TextStyle(
+                  color: Colors.black,
+                  letterSpacing: 2.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          Divider(
-            height: 20.0,
-            color: Colors.grey[850],
-            thickness: 1.0,
-            endIndent: 30.0,
-          ),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
-              ),
+            Divider(
+              height: 20.0,
+              color: Colors.grey[850],
+              thickness: 1.0,
+              endIndent: 30.0,
+            ),
+          GridView.builder(
+            shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 10.0,
+            ),
+
               itemCount: trueIndices.length,
               itemBuilder: (context, index) {
-                return _buildBoxColumn(trueIndices, index);
+                int trueIndex = trueIndices[index];
+                return _buildBoxColumn(trueIndex);
               },
             ),
-          ),
-        ],
-      ),
+          ]
+        ),
+      )
     );
   }
 
-  Widget _buildBoxColumn(List<int> trueIndices, int index) {
-    int trueIndex = trueIndices[index];
-    bool option = houseList['houseOption'][optionTextList[trueIndex]] ?? false;
+  Widget _buildBoxColumn(int index) {
+    bool option = houseOptionList[index];
     Color boxColor = option ? Colors.white : Colors.red;
-    String text = optionTextList[trueIndex];
-    IconData icon = option ? optionIconList[trueIndex] : Icons.clear;
+    String text = optionTextList[index];
+    IconData icon = option ? optionIconList[index] : Icons.clear;
 
     return Container(
       padding: EdgeInsets.all(10),
@@ -219,6 +231,6 @@ class prac13 extends StatelessWidget {
 
 void main() {
   runApp(MaterialApp(
-    home: prac13(),
+    home: prac14(),
   ));
 }
