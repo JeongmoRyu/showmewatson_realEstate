@@ -85,7 +85,7 @@ class prac15 extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/img-11.png'),
+                          image: AssetImage('assets/img_1.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -253,7 +253,7 @@ class prac15 extends StatelessWidget {
                               children: [
                                 Positioned(
                                   top: 0,
-                                  right: 21,
+                                  right: 20,
                                   child: Icon(
                                     Icons.height,
                                     size: 50,
@@ -261,7 +261,7 @@ class prac15 extends StatelessWidget {
                                   ),
                                 ),
                                 Icon(
-                                  Icons.apartment_sharp,
+                                  Icons.stay_current_portrait,
                                   size: 50,
                                   color: Colors.black,
                                 ),

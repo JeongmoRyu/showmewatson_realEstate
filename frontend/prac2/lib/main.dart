@@ -15,6 +15,11 @@ import 'package:prac2/prac13.dart';
 import 'package:prac2/prac14.dart';
 import 'package:prac2/prac15.dart';
 import 'package:prac2/prac16.dart';
+import 'package:prac2/prac17.dart';
+import 'package:prac2/prac18.dart';
+import 'package:prac2/prac19.dart';
+import 'package:prac2/prac20.dart';
+
 
 
 
@@ -43,6 +48,13 @@ class MyApp extends StatelessWidget {
         '/m': (context) => prac14(),
         '/n': (context) => prac15(),
         '/o': (context) => prac16(),
+        '/p': (context) => prac17(),
+        '/q': (context) => prac18(),
+        '/r': (context) => prac19(),
+        '/s': (context) => prac20(),
+
+
+
 
 
       },

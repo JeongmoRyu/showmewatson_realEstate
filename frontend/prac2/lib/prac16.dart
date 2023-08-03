@@ -13,7 +13,7 @@ class _prac16State extends State<prac16> {
 
   void selectButtonsBetween(int startIndex, int endIndex) {
     setState(() {
-      clickList.clear();
+      clickList.clear() ;
       clickList.addAll(allButtons.sublist(startIndex, endIndex + 1));
     });
   }
@@ -49,44 +49,46 @@ class _prac16State extends State<prac16> {
             ],
           ),
           GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5,
+                crossAxisSpacing: 5.0,
+                mainAxisSpacing: 5.0,
+              ),
+              itemCount: allButtons.length,
+              itemBuilder: (context, index) {
+                final button = allButtons[index];
+                final isSelected = clickList.contains(button);
+
+                return Container(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (clickList.isEmpty) {
+                        setState(() {
+                          clickList.add(button);
+                        });
+                      } else {
+                        int startIndex = allButtons.indexOf(clickList.first);
+                        int endIndex = allButtons.indexOf(clickList.last);
+                        int currentIndex = allButtons.indexOf(button);
+
+                        if (currentIndex >= startIndex && currentIndex <= endIndex) {
+                          setState(() {
+                            clickList.removeRange(1, clickList.length);
+                          });
+                        } else {
+                          selectButtonsBetween(startIndex, currentIndex);
+                        }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: isSelected ? Colors.blue : Colors.grey,
+                    ),
+                    child: Text(button),
+                  ),
+                );
+              },
             ),
-            itemCount: allButtons.length,
-            itemBuilder: (context, index) {
-              final button = allButtons[index];
-              final isSelected = clickList.contains(button);
-
-              return ElevatedButton(
-                onPressed: () {
-                  if (clickList.isEmpty) {
-                    setState(() {
-                      clickList.add(button);
-                    });
-                  } else {
-                    int startIndex = allButtons.indexOf(clickList.first);
-                    int endIndex = allButtons.indexOf(clickList.last);
-                    int currentIndex = allButtons.indexOf(button);
-
-                    if (currentIndex >= startIndex && currentIndex <= endIndex) {
-                      setState(() {
-                        clickList.removeRange(1, clickList.length);
-                      });
-                    } else {
-                      selectButtonsBetween(startIndex, currentIndex);
-                    }
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: isSelected ? Colors.blue : Colors.grey,
-                ),
-                child: Text(button),
-              );
-            },
-          ),
         ],
       ),
     );
