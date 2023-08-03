@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:prac2/screens/live_notice_screen.dart';
 import 'package:prac2/states/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 import 'package:prac2/screens/home_screen.dart';
 import 'package:prac2/screens/splash_screen.dart';
@@ -30,6 +32,7 @@ import 'package:prac2/base/navbar.dart';
 // import 'package:prac2/prac13.dart';
 
 void main() {
+  KakaoSdk.init(nativeAppKey: '{1964206af6e9ee272eb2e64260079bc2}');
   runApp(MyApp());
 }
 
@@ -89,6 +92,14 @@ final _router = GoRouter(
           MaterialPage(
             key: ValueKey('live'),
             child: LiveList(),
+          ),
+    ),
+    GoRoute(
+      path: '/livenotice',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('livenoitce'),
+            child: LiveNotice(),
           ),
     ),
   ],

@@ -86,9 +86,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      Icon(FontAwesomeIcons.lifeRing),
+                      Icon(FontAwesomeIcons.camera),
 
-                      SizedBox(height: 3),
+                      SizedBox(height: 4),
 
                       Text('Live 방송'),
                     ],
@@ -99,19 +99,52 @@ class HomeScreen extends StatelessWidget {
 
                 ElevatedButton(
                   onPressed: () {
-                    // 버튼2 동작
+                    context.go('/map');
                   },
-                  child: Text('Button 2'),
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all<Size>(Size(90, 70)), // 이 버튼의 크기 설정
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),// 모서리 처리의 지름 설정
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(FontAwesomeIcons.mapLocationDot),
+
+                      SizedBox(height: 4),
+
+                      Text('매물 검색'),
+                    ],
+                  ),
                 ),
 
                 SizedBox(width: 20),
 
                 ElevatedButton(
                   onPressed: () {
-                    // 버튼3 동작
+                    context.go('/livenotice');
                   },
-                  child: Text('Button 3'),
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all<Size>(Size(90, 70)), // 이 버튼의 크기 설정
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),// 모서리 처리의 지름 설정
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(FontAwesomeIcons.bell),
+
+                      SizedBox(height: 4),
+
+                      Text('방송 공지'),
+                    ],
+                  ),
                 ),
+
               ],
             ),
 
