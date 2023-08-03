@@ -70,8 +70,11 @@
 
 ### Backend
 - CI/CD
-- 카카오 소셜 로그인(back)
+- Docker를 사용한 배포 및 스크립트 파일 작성
+- 카카오 소셜 로그인 및 회원가입(back)
 - 라이브공지 CRUD
 - 매물관리 CRUD
 - Openvidu(Java) 구현
 - 알림(1차, 2차, DM)
+- Kafka를 통한 FCM 알림메시지 및 리스트 통신
+- S3를 통한 매물 사진 관리
