@@ -19,7 +19,7 @@ spring:
             authorization-grant-type: authorization_code
             client-id: ${KCLIENT-ID}
             client-secret: ${KCLIENT-SECRET}
-#            scope: profile_nickname, account_email # scope는 없어도 됨
+            #            scope: profile_nickname, account_email # scope는 없어도 됨
             client-authentication-method: POST
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             client-name: Kakao
