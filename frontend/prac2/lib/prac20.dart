@@ -19,6 +19,13 @@ class _prac20State extends State<prac20> {
   TextEditingController _fromController = TextEditingController();
   TextEditingController _toController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    _fromController.text = '${startIndex ?? ''}';
+    _toController.text = '${endIndex ?? ''}';
+  }
+
   void selectButtonsBetween(int startIndex, int endIndex) {
     setState(() {
       clickList.clear();
@@ -239,11 +246,12 @@ class _prac20State extends State<prac20> {
                       onChanged: (value) {
                         setState(() {
                           fromValue = int.tryParse(value);
-                          startIndex = fromValue! - 1; // Subtract 1 to make it zero-based index
+                          startIndex = fromValue! - 1;
+                          _toController.text = '${startIndex! + 1 ?? ''}';
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: '${startIndex! + 1}',
+                        hintText: '${(startIndex ?? 0) + 1}',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -264,11 +272,12 @@ class _prac20State extends State<prac20> {
                       onChanged: (value) {
                         setState(() {
                           toValue = int.tryParse(value);
-                          endIndex = toValue! - 1; // Subtract 1 to make it zero-based index
+                          endIndex = toValue! - 1;
+                          _toController.text = '${endIndex! + 1 ?? ''}';
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: '${endIndex! + 1}',
+                        hintText: '${(endIndex ?? 0) + 1}',
                         border: OutlineInputBorder(),
                       ),
                     ),
