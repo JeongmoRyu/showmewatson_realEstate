@@ -7,14 +7,20 @@ import com.watson.business.house.domain.entity.HouseFile;
 import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
 import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
 import com.watson.business.house.domain.entity.houseContractInfoDetail.YearlyInfo;
+import com.watson.business.house.domain.repository.HouseOptionRepository;
 import com.watson.business.house.domain.repository.HouseRepository;
 import com.watson.business.house.dto.houseRequest.ContractRequest;
+import com.watson.business.house.dto.houseRequest.HouseFilterParamRequest;
 import com.watson.business.house.dto.houseRequest.HouseOptionRequest;
 import com.watson.business.house.dto.houseRequest.HouseRequest;
 import com.watson.business.house.dto.houseResponse.HouseListResponse;
 import com.watson.business.house.dto.houseResponse.HouseDetailResponse;
+import com.watson.business.house.filter.HouseSpecification;
+import com.watson.business.region.domain.repository.EmdRepository;
 import com.watson.business.region.service.RegionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,14 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.watson.business.house.dto.item.STATUS.TRADING;
+import static org.aspectj.runtime.internal.Conversions.intValue;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class HouseServiceImp implements HouseService {
     private final HouseRepository houseRepository;
     private final HouseImageServiceImp houseImageService;
-    private final RegionService regionService;
 
     public List<HouseListResponse> findAllHouses() {
         List<House> houseEntityList = houseRepository.findAll();
@@ -193,6 +200,87 @@ public class HouseServiceImp implements HouseService {
         return houseRepository.save(house).getId();
     }
 
+    @Override
+    public List<HouseListResponse> findFilterHouses(HouseFilterParamRequest filterParam) {
+        Specification<House> spec = (root, query, criteriaBuilder) -> null;
+
+        if (filterParam.getHouseCode() > 0) {
+            spec = spec.and(HouseSpecification.equalHouseCode(filterParam.getHouseCode()));
+        }
+
+        // 다른 필터 조건 메서드로 분리하여 호출
+        spec = addSquareMeterConditions(spec, filterParam);
+        spec = addContractCodeConditions(spec, filterParam);
+
+        // 최종 필터 조건 적용
+        List<HouseListResponse> houseListResponses = new ArrayList<>();
+        List<House> houseEntities = houseRepository.findAll(spec);
+        for (House house : houseEntities) {
+            HouseListResponse response = listEntityToDto(house);
+            houseListResponses.add(response);
+        }
+
+        return houseListResponses;
+    }
+
+    // 면적 조건 추가 메서드
+    private Specification<House> addSquareMeterConditions(Specification<House> spec, HouseFilterParamRequest filterParam) {
+        if (filterParam.getMinSquareMeter() != 0) {
+            spec = spec.and(HouseSpecification.graterThanSquareMeter(filterParam.getMinSquareMeter()));
+        }
+        if (filterParam.getMaxSquareMeter() != 0) {
+            spec = spec.and(HouseSpecification.lessThanSquareMeter(filterParam.getMaxSquareMeter()));
+        }
+        return spec;
+    }
+
+    // 계약 유형 조건 추가 메서드
+    private Specification<House> addContractCodeConditions(Specification<House> spec, HouseFilterParamRequest filterParam) {
+        if (filterParam.getContractCode() > 0) {
+            spec = spec.and(HouseSpecification.equalContractCode(filterParam.getContractCode()));
+            switch (filterParam.getContractCode()) {
+                case 1: case 2:    // 1. 월세(보증금, 관리비, 월세)   2. 전세(보증금, 관리비)
+                    spec = addDepositAndMaintenanceConditions(spec, filterParam);
+                    break;
+                case 3:     // 3. 매매(매매가)
+                    spec = addSalePriceConditions(spec, filterParam);
+                    break;
+                default:
+                    throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
+            }
+        }
+        return spec;
+    }
+
+    // 월세와 전세 관련 조건 추가 메서드
+    private Specification<House> addDepositAndMaintenanceConditions(Specification<House> spec, HouseFilterParamRequest filterParam) {
+        if (filterParam.getMinDeposit() != null) {
+            spec = spec.and(HouseSpecification.graterThanDeposit(intValue(filterParam.getMinDeposit())));
+        }
+        if (filterParam.getMaxDeposit() != null) {
+            spec = spec.and(HouseSpecification.lessThanDeposit(intValue(filterParam.getMaxDeposit())));
+        }
+        if (filterParam.getMinMaintenance() != null) {
+            spec = spec.and(HouseSpecification.graterThanMaintenance(intValue(filterParam.getMinMaintenance())));
+        }
+        if (filterParam.getMaxMaintenance() != null) {
+            spec = spec.and(HouseSpecification.lessThanMaintenance(intValue(filterParam.getMaxMaintenance())));
+        }
+        return spec;
+    }
+
+    // 매매 관련 조건 추가 메서드
+    private Specification<House> addSalePriceConditions(Specification<House> spec, HouseFilterParamRequest filterParam) {
+        if (filterParam.getMinSalePrice() != null) {
+            spec = spec.and(HouseSpecification.graterThanSalePrice(intValue(filterParam.getMinSalePrice())));
+        }
+        if (filterParam.getMaxSalePrice() != null) {
+            spec = spec.and(HouseSpecification.lessThanSalePrice(intValue(filterParam.getMaxSalePrice())));
+        }
+        return spec;
+    }
+
+
     private HouseListResponse listEntityToDto(House house) {
         HouseListResponse houseListResponse = HouseListResponse.builder()
                 .houseId(house.getId())
@@ -204,7 +292,7 @@ public class HouseServiceImp implements HouseService {
                 .title(house.getTitle())
                 .status(house.getStatus())
 //                .fileName(house.getHouseFiles().get(0).getFileName())
-                .build();
+                .maintenance(0).build();
         return houseListResponse;
     }
 }
