@@ -1,5 +1,6 @@
 package com.watson.business.house.controller;
 
+import com.watson.business.house.dto.houseRequest.HouseFilterParamRequest;
 import com.watson.business.house.dto.houseResponse.HouseListResponse;
 import com.watson.business.house.dto.houseResponse.HouseDetailResponse;
 import com.watson.business.house.service.HouseService;
