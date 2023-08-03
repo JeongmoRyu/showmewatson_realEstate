@@ -1,63 +1,193 @@
 import 'package:flutter/material.dart';
-import 'package:prac2/prac1.dart';
-import 'package:prac2/prac2.dart';
-import 'package:prac2/prac3.dart';
-import 'package:prac2/prac4.dart';
+import 'package:go_router/go_router.dart';
+import 'package:prac2/screens/live_notice_screen.dart';
+import 'package:prac2/states/user_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+
+import 'package:prac2/screens/home_screen.dart';
+import 'package:prac2/screens/splash_screen.dart';
+import 'package:prac2/screens/login_screen.dart';
+import 'package:prac2/screens/interest_screen.dart';
+import 'package:prac2/screens/chatlist_screen.dart';
+import 'package:prac2/screens/map_screen.dart';
+import 'package:prac2/screens/mypage_screen.dart';
+import 'package:prac2/screens/livelist_screen.dart';
+
+import 'package:prac2/base/navbar.dart';
+
+
+// import 'package:prac2/prac1.dart';
+// import 'package:prac2/prac2.dart';
+// import 'package:prac2/prac3.dart';
+// import 'package:prac2/prac4.dart';
 // import 'package:prac2/prac5.dart';
-import 'package:prac2/prac6.dart';
-import 'package:prac2/prac7.dart';
-import 'package:prac2/prac8.dart';
-import 'package:prac2/prac9.dart';
-import 'package:prac2/prac10.dart';
-import 'package:prac2/prac11.dart';
-import 'package:prac2/prac12.dart';
-import 'package:prac2/prac13.dart';
-import 'package:prac2/prac14.dart';
-import 'package:prac2/prac15.dart';
-import 'package:prac2/prac16.dart';
-import 'package:prac2/prac17.dart';
-import 'package:prac2/prac18.dart';
-import 'package:prac2/prac19.dart';
-import 'package:prac2/prac20.dart';
+// import 'package:prac2/prac6.dart';
+// import 'package:prac2/prac7.dart';
+// import 'package:prac2/prac8.dart';
+// import 'package:prac2/prac9.dart';
+// import 'package:prac2/prac10.dart';
+// import 'package:prac2/prac11.dart';
+// import 'package:prac2/prac12.dart';
+// import 'package:prac2/prac13.dart';
 
+void main() {
+  KakaoSdk.init(nativeAppKey: '{1964206af6e9ee272eb2e64260079bc2}');
+  runApp(MyApp());
+}
 
-
-
-
-void main() => runApp(MyApp());
+final _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      pageBuilder: (context, state) =>
+        MaterialPage(
+          key: ValueKey('home'),
+          child: HomeScreen(),
+        ),
+      ),
+    GoRoute(
+      path: '/chatlist',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('chatlist'),
+            child: ChatList(),
+          ),
+    ),
+    GoRoute(
+      path: '/map',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('map'),
+            child: MapScreen(),
+          ),
+    ),
+    GoRoute(
+      path: '/interest',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('interest'),
+            child: Interest(),
+          ),
+    ),
+    GoRoute(
+      path: '/mypage',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('mypage'),
+            child: MyPage(),
+          ),
+    ),
+    GoRoute(
+      path: '/login',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('login'),
+            child: LoginScreen(),
+          ),
+    ),
+    GoRoute(
+      path: '/livelist',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('live'),
+            child: LiveList(),
+          ),
+    ),
+    GoRoute(
+      path: '/livenotice',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('livenoitce'),
+            child: LiveNotice(),
+          ),
+    ),
+  ],
+);
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/',
-      routes: {
-        '/' : (context) => prac1(),
-        '/a': (context) => prac2(),
-        '/b': (context) => prac3(),
-        '/c': (context) => prac4(),
-        // '/d': (context) => prac5(),
-        '/e': (context) => prac6(),
-        '/f': (context) => prac7(),
-        '/g': (context) => prac8(),
-        '/h': (context) => prac9(),
-        '/i': (context) => prac10(),
-        '/j': (context) => prac11(),
-        '/k': (context) => prac12(),
-        '/l': (context) => prac13(),
-        '/m': (context) => prac14(),
-        '/n': (context) => prac15(),
-        '/o': (context) => prac16(),
-        '/p': (context) => prac17(),
-        '/q': (context) => prac18(),
-        '/r': (context) => prac19(),
-        '/s': (context) => prac20(),
+    // future 함수로 로딩 구현
+    // 1. 유저가 홈화면에 입장 시도
+    // 2. 3초간 데이터를 받아오는 지연시간 발생
+    // 3-1. 만약 데이터가 비정상적 : 에러 발생 결과
+    // 3-2. 만약 데이터가 정상적 : 홈화면
+    // 3-3. 에러도 아니고 데이터 완료도 아닐 때 : 스플래쉬 화면
+    return FutureBuilder<Object>(
+        future: Future.delayed(Duration(seconds: 3), () => 100),
+        builder: (content, snapshot) {
+          return AnimatedSwitcher(
+            duration: Duration(milliseconds: 0), // 페이드인아웃 효과
+            child: _splashLoadingWidget(snapshot), // 스냅샷실행 위젯
+          );
+        },
+    );
+  }
+  // 스플래쉬로딩위젯 선언(인스턴스)
+  Widget _splashLoadingWidget(AsyncSnapshot<Object> snapshot) {
+    if(snapshot.hasError) {
+      print(('에러가 발생하였습니다.'));
+      return Text('Error');
+    } // 에러발생
+    else if(snapshot.hasData) {
+      return WatsonApp();
+    } // 정상
+    else{
+      return SplashScreen();
+    } // 그외
+  }
 
+    // return MaterialApp(
+    //   initialRoute: '/',
+    //   routes: {
+    //     '/' : (context) => prac1(),
+    //     '/a': (context) => prac2(),
+    //     '/b': (context) => prac3(),
+    //     '/c': (context) => prac4(),
+    //     // '/d': (context) => prac5(),
+    //     '/e': (context) => prac6(),
+    //     '/f': (context) => prac7(),
+    //     '/g': (context) => prac8(),
+    //     '/h': (context) => prac9(),
+    //     '/i': (context) => prac10(),
+    //     '/j': (context) => prac11(),
+    //     '/k': (context) => prac12(),
+    //     // '/l': (context) => prac13(),
+    //
+    //
+    //
+    //   },
+    // );
+}
 
+class WatsonApp extends StatefulWidget {
+  @override
+  _WatsonAppState createState() => _WatsonAppState();
+}
 
-
-
+class _WatsonAppState extends State<WatsonApp> {
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<UserProvider>(
+      create: (BuildContext context) {
+        return UserProvider();
       },
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: _router,
+        theme: ThemeData(
+          primaryColor: Color(0xFFDCBF97),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFDCBF97)),
+            ),
+          ),
+        ),
+
+      ),
     );
   }
 }
