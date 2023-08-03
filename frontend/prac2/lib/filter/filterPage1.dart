@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class prac20 extends StatefulWidget {
-  const prac20({Key? key}) : super(key: key);
+class Filter extends StatefulWidget {
+  const Filter({Key? key}) : super(key: key);
 
   @override
-  _prac20State createState() => _prac20State();
+  _FilterState createState() => _FilterState();
 }
 
-class _prac20State extends State<prac20> {
+class _FilterState extends State<Filter> {
   int? startIndex;
   int? endIndex;
   List<String> clickList = [];
@@ -18,13 +18,6 @@ class _prac20State extends State<prac20> {
   int? toValue;
   TextEditingController _fromController = TextEditingController();
   TextEditingController _toController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _fromController.text = '${startIndex ?? ''}';
-    _toController.text = '${endIndex ?? ''}';
-  }
 
   void selectButtonsBetween(int startIndex, int endIndex) {
     setState(() {
@@ -246,12 +239,11 @@ class _prac20State extends State<prac20> {
                       onChanged: (value) {
                         setState(() {
                           fromValue = int.tryParse(value);
-                          startIndex = fromValue! - 1;
-                          _toController.text = '${startIndex! + 1 ?? ''}';
+                          startIndex = fromValue! - 1; // Subtract 1 to make it zero-based index
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: '${(startIndex ?? 0) + 1}',
+                        hintText: '시작 값',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -272,12 +264,11 @@ class _prac20State extends State<prac20> {
                       onChanged: (value) {
                         setState(() {
                           toValue = int.tryParse(value);
-                          endIndex = toValue! - 1;
-                          _toController.text = '${endIndex! + 1 ?? ''}';
+                          endIndex = toValue! - 1; // Subtract 1 to make it zero-based index
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: '${(endIndex ?? 0) + 1}',
+                        hintText: '끝 값',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -290,6 +281,8 @@ class _prac20State extends State<prac20> {
                     },
                     child: Icon(Icons.check),
                   ),
+
+
                 ],
               ),
             ),
@@ -313,6 +306,6 @@ class _prac20State extends State<prac20> {
 
 void main() {
   runApp(MaterialApp(
-    home: prac20(),
+    home: Filter(),
   ));
 }

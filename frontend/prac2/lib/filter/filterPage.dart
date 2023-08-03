@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class prac19 extends StatefulWidget {
-  const prac19({Key? key}) : super(key: key);
+class Filter extends StatefulWidget {
+  const Filter({Key? key}) : super(key: key);
 
   @override
-  _prac19State createState() => _prac19State();
+  _FilterState createState() => _FilterState();
 }
 
-class _prac19State extends State<prac19> {
+class _FilterState extends State<Filter> {
   int? startIndex;
   int? endIndex;
   List<String> clickList = [];
@@ -18,6 +18,13 @@ class _prac19State extends State<prac19> {
   int? toValue;
   TextEditingController _fromController = TextEditingController();
   TextEditingController _toController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fromController.text = '${startIndex ?? ''}';
+    _toController.text = '${endIndex ?? ''}';
+  }
 
   void selectButtonsBetween(int startIndex, int endIndex) {
     setState(() {
@@ -239,11 +246,12 @@ class _prac19State extends State<prac19> {
                       onChanged: (value) {
                         setState(() {
                           fromValue = int.tryParse(value);
-                          startIndex = fromValue! - 1; // Subtract 1 to make it zero-based index
+                          startIndex = fromValue! - 1;
+                          _toController.text = '${startIndex! + 1 ?? ''}';
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: '시작 값',
+                        hintText: '${(startIndex ?? 0) + 1}',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -264,11 +272,12 @@ class _prac19State extends State<prac19> {
                       onChanged: (value) {
                         setState(() {
                           toValue = int.tryParse(value);
-                          endIndex = toValue! - 1; // Subtract 1 to make it zero-based index
+                          endIndex = toValue! - 1;
+                          _toController.text = '${endIndex! + 1 ?? ''}';
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: '끝 값',
+                        hintText: '${(endIndex ?? 0) + 1}',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -281,8 +290,6 @@ class _prac19State extends State<prac19> {
                     },
                     child: Icon(Icons.check),
                   ),
-
-
                 ],
               ),
             ),
@@ -306,6 +313,6 @@ class _prac19State extends State<prac19> {
 
 void main() {
   runApp(MaterialApp(
-    home: prac19(),
+    home: Filter(),
   ));
 }

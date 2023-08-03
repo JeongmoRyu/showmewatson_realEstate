@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-class prac15 extends StatelessWidget {
+class Detail extends StatelessWidget {
   final Map<String, dynamic> houseList = {
     "contractCode": 1,
     "dongCode": 1141011600,
@@ -43,7 +43,7 @@ class prac15 extends StatelessWidget {
 
   List<bool> houseOptionList = [];
 
-  prac15() {
+  Detail() {
     houseOption = houseList['houseOption'];
     houseOptionList = houseOption.values.cast<bool>().toList();
   }
@@ -757,6 +757,6 @@ class prac15 extends StatelessWidget {
 
 void main() {
   runApp(MaterialApp(
-    home: prac15(),
+    home: Detail(),
   ));
 }
