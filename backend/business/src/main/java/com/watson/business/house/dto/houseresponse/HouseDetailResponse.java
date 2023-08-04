@@ -1,8 +1,7 @@
-package com.watson.business.house.dto.houseResponse;
+package com.watson.business.house.dto.houseresponse;
 
 import com.watson.business.house.domain.entity.HouseFile;
 import com.watson.business.house.domain.entity.HouseOption;
-import com.watson.business.house.dto.item.STATUS;
 import com.watson.business.region.dto.EmdResponse;
 import lombok.*;
 

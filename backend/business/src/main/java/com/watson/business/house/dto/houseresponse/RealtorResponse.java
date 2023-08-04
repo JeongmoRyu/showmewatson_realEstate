@@ -1,4 +1,4 @@
-package com.watson.business.house.dto.houseResponse;
+package com.watson.business.house.dto.houseresponse;
 
 import lombok.*;
 
@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RealtorResponse {
-    private String realtor_name;
-    private String realtor_id;
+    private String realtorName;
+    private String realtorId;
 }

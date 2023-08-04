@@ -1,4 +1,4 @@
-package com.watson.business.house.dto.houseRequest;
+package com.watson.business.house.dto.houserequest;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HouseRequest {
+public class HouseRegistRequest {
 
     private int contractCode;
     private String dongCode;

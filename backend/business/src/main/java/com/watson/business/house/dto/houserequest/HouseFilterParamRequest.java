@@ -1,4 +1,4 @@
-package com.watson.business.house.dto.houseRequest;
+package com.watson.business.house.dto.houserequest;
 
 import lombok.*;
 

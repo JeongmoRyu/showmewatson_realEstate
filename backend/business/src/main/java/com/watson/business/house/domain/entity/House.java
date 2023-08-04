@@ -92,4 +92,9 @@ public class House {
         houseFiles.remove(houseFile);
         houseFile.setHouse(null);
     }
+    public void editHouse(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
 }
