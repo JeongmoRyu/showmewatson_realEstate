@@ -7,17 +7,14 @@ import com.watson.business.house.domain.entity.HouseFile;
 import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
 import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
 import com.watson.business.house.domain.entity.houseContractInfoDetail.YearlyInfo;
-import com.watson.business.house.domain.repository.HouseOptionRepository;
 import com.watson.business.house.domain.repository.HouseRepository;
-import com.watson.business.house.dto.houseRequest.ContractRequest;
-import com.watson.business.house.dto.houseRequest.HouseFilterParamRequest;
-import com.watson.business.house.dto.houseRequest.HouseOptionRequest;
-import com.watson.business.house.dto.houseRequest.HouseRequest;
-import com.watson.business.house.dto.houseResponse.HouseListResponse;
-import com.watson.business.house.dto.houseResponse.HouseDetailResponse;
+import com.watson.business.house.dto.houserequest.ContractRequest;
+import com.watson.business.house.dto.houserequest.HouseFilterParamRequest;
+import com.watson.business.house.dto.houserequest.HouseRegistRequest;
+import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
+import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
+import com.watson.business.house.dto.houseresponse.HouseListResponse;
 import com.watson.business.house.filter.HouseSpecification;
-import com.watson.business.region.domain.repository.EmdRepository;
-import com.watson.business.region.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -128,30 +125,30 @@ public class HouseServiceImp implements HouseService {
         return houseDetailResponse;
     }
 
-    public Long addHouse(List<MultipartFile> file, HouseRequest houseRequest, String realtorId) {
+    public Long addHouse(List<MultipartFile> file, HouseRegistRequest houseRegistRequest, String realtorId) {
 
-        ContractRequest contractRequest = houseRequest.getContractInfo();
-//        HouseOptionRequest houseOption = houseRequest.getHouseOptionRequest();
+        ContractRequest contractRequest = houseRegistRequest.getContractInfo();
+//        HouseOptionRequest houseOption = HouseRegistRequest.getHouseOptionRequest();
 
 
 
 //        realtorId 받아오기
 
         House house = House.builder()
-                .contractCode(houseRequest.getContractCode())
-                .dongCode(houseRequest.getDongCode())
-                .houseCode(houseRequest.getHouseCode())
-                .squareMeter(houseRequest.getSquareMeter())
-                .floor(houseRequest.getFloor())
-                .totalFloor(houseRequest.getTotalFloor())
-                .address(houseRequest.getAddress())
-                .title(houseRequest.getTitle())
-                .content(houseRequest.getContent())
-                .supplyAreaMeter(houseRequest.getSupplyAreaMeter())
-                .buildingUse(houseRequest.getBuildingUse())
-                .approvalBuildingDate(houseRequest.getApprovalBuildingDate())
-                .bathroom(houseRequest.getBathroom())
-                .room(houseRequest.getRoom())
+                .contractCode(houseRegistRequest.getContractCode())
+                .dongCode(houseRegistRequest.getDongCode())
+                .houseCode(houseRegistRequest.getHouseCode())
+                .squareMeter(houseRegistRequest.getSquareMeter())
+                .floor(houseRegistRequest.getFloor())
+                .totalFloor(houseRegistRequest.getTotalFloor())
+                .address(houseRegistRequest.getAddress())
+                .title(houseRegistRequest.getTitle())
+                .content(houseRegistRequest.getContent())
+                .supplyAreaMeter(houseRegistRequest.getSupplyAreaMeter())
+                .buildingUse(houseRegistRequest.getBuildingUse())
+                .approvalBuildingDate(houseRegistRequest.getApprovalBuildingDate())
+                .bathroom(houseRegistRequest.getBathroom())
+                .room(houseRegistRequest.getRoom())
                 .weeklyViewCount(0)
                 .status(TRADING)
                 .realtorId(realtorId)
@@ -223,6 +220,13 @@ public class HouseServiceImp implements HouseService {
         return houseListResponses;
     }
 
+    @Override
+    public Long modifyHouse(Long houseId, HouseUpdateRequest houseUpdateRequest, String realtorId) {
+        House house = houseRepository.findHouseById(houseId);
+        house.editHouse(houseUpdateRequest.getTitle(), houseUpdateRequest.getContent());
+        return houseId;
+    }
+
     // 면적 조건 추가 메서드
     private Specification<House> addSquareMeterConditions(Specification<House> spec, HouseFilterParamRequest filterParam) {
         if (filterParam.getMinSquareMeter() != 0) {
@@ -292,7 +296,8 @@ public class HouseServiceImp implements HouseService {
                 .title(house.getTitle())
                 .status(house.getStatus())
 //                .fileName(house.getHouseFiles().get(0).getFileName())
-                .maintenance(0).build();
+                .maintenance(0)
+                .build();
         return houseListResponse;
     }
 }

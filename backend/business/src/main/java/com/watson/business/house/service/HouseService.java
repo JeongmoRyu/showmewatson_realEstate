@@ -1,9 +1,10 @@
 package com.watson.business.house.service;
 
-import com.watson.business.house.dto.houseRequest.HouseFilterParamRequest;
-import com.watson.business.house.dto.houseRequest.HouseRequest;
-import com.watson.business.house.dto.houseResponse.HouseListResponse;
-import com.watson.business.house.dto.houseResponse.HouseDetailResponse;
+import com.watson.business.house.dto.houserequest.HouseFilterParamRequest;
+import com.watson.business.house.dto.houserequest.HouseRegistRequest;
+import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
+import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
+import com.watson.business.house.dto.houseresponse.HouseListResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -11,8 +12,8 @@ import java.util.List;
 public interface HouseService {
     List<HouseListResponse> findAllHouses();
     HouseDetailResponse findHouseByHouseId(Long houseId);
-    Long addHouse(List<MultipartFile> file, HouseRequest houseRequest, String realtorId);
+    Long addHouse(List<MultipartFile> file, HouseRegistRequest HouseRegistRequest, String realtorId);
 //    매물 필터링 목록
     List<HouseListResponse> findFilterHouses(HouseFilterParamRequest filterParam);
-
+    Long modifyHouse(Long houseId, HouseUpdateRequest houseUpdateRequest, String realtorId);
 }

@@ -1,13 +1,13 @@
 package com.watson.business.house.controller;
 
-import com.watson.business.house.dto.houseRequest.HouseFilterParamRequest;
-import com.watson.business.house.dto.houseResponse.HouseListResponse;
-import com.watson.business.house.dto.houseResponse.HouseDetailResponse;
+import com.watson.business.house.dto.houserequest.HouseFilterParamRequest;
+import com.watson.business.house.dto.houserequest.HouseRegistRequest;
+import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
+import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
+import com.watson.business.house.dto.houseresponse.HouseListResponse;
 import com.watson.business.house.service.HouseService;
-import com.watson.business.house.dto.houseRequest.HouseRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +34,11 @@ public class HouseController {
         return ResponseEntity.status(HttpStatus.OK).body(houseService.findHouseByHouseId(id));
     }
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)    // 매물 게시글 등록
-    public ResponseEntity<String> houseAdd(@RequestPart List<MultipartFile> file, @RequestPart HouseRequest houseRequest) {
+    public ResponseEntity<String> houseAdd(@RequestPart List<MultipartFile> file, @RequestPart HouseRegistRequest houseRegistRequest) {
         // access_token으로 realtor_id 가져오는 로직 필요
         String realtorId = "realtor_id";
 
-        houseService.addHouse(file, houseRequest, realtorId);
+        houseService.addHouse(file, houseRegistRequest, realtorId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("매물등록 완료");
     }
@@ -49,6 +49,16 @@ public class HouseController {
         log.debug("{}", filterParam);
 
         return ResponseEntity.status(HttpStatus.OK).body(houseService.findFilterHouses(filterParam));
+    }
+    @PostMapping("/{id}")
+    public ResponseEntity<String> houseModify(@PathVariable Long id, @RequestBody HouseUpdateRequest houseUpdateRequest) {
+        log.debug("{}", houseUpdateRequest);
+        log.debug("{매물 id ::: }", id);
+
+        // access_token으로 realtor_id 가져오는 로직 필요
+        String realtorId = "realtor_id";
+        houseService.modifyHouse(id, houseUpdateRequest, realtorId);
+        return ResponseEntity.status(HttpStatus.OK).body("매물수정 완료");
     }
 
 }
