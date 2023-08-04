@@ -3,7 +3,8 @@ spring:
     import: optional:file:.env[.properties]
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    jdbc-url: ${DB_URL}/business
+    # jdbc-url: ${DB_URL}/business
+    url: ${DB_URL}/business
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 
