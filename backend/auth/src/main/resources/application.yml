@@ -9,7 +9,9 @@ spring:
     url: ${DB_URL}/auth?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: ${DB_USER}
     password: ${DB_PASSWORD}
-
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   # spring security
   security:
     oauth2:
@@ -36,4 +38,4 @@ spring:
     show-sql: true
     hibernate:
       format_sql: true
-      ddl-auto: create
+      ddl-auto: update

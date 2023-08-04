@@ -4,6 +4,9 @@ spring:
     url: ${DB_URL}/business
     username: ${DB_USER}
     password: ${DB_PASSWORD}
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   jpa:
     hibernate:

@@ -31,6 +31,7 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-web' // SecurityConfig에서 SecurityFilterChain 사용을 위해 추가
 	implementation 'org.springframework.security:spring-security-config' // HttpSecurity, @EnableWebSecurity
 	implementation 'com.google.code.gson:gson:2.8.7' // token 요청 위해서
+	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client' // 이거 넣으니까 시큐리티 비번이 안나옴
 
