@@ -49,8 +49,8 @@ public class UserPrincipalDetails implements UserDetails, OAuth2User {
     }
 
     @Override
-    public String getUsername() {
-        return user.getNickname();
+    public String getUsername() { // authentication.getName() 했을 때 authId 가져오도록 변경 (access token에 authId 넣기 위해)
+        return user.getAuthId();
     }
 
     @Override

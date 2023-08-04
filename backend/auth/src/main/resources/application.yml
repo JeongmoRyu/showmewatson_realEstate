@@ -14,6 +14,7 @@ spring:
       matching-strategy: ant_path_matcher
   # spring security
   security:
+    code: ${SECURITY_CODE}
     oauth2:
       client:
         registration:
@@ -38,4 +39,8 @@ spring:
     show-sql: true
     hibernate:
       format_sql: true
-      ddl-auto: update
+      ddl-auto: update # create
+
+# jwt
+jwt:
+  secret: ${JWT-SECRET}
