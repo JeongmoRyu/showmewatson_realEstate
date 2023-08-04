@@ -11,13 +11,13 @@ import java.util.List;
 
 @Repository
 public interface LogRepository extends JpaRepository<ViewLog,Long> {
-//    @Query("SELECT DISTINCT l FROM ViewLog l " +
-//            "WHERE l.houseId=:houseId " +
-//            "AND l.userId = :userId " +
-//            "AND l.logDate = :logDate")
-//    List<ViewLog> findByHouseIdAndUserIdAndLogDate(
-//            @Param("houseId") Long houseId,
-//            @Param("userId") Long userId,
-//            @Param("logDate") Date logDate
-//    );
+    @Query("SELECT DISTINCT l FROM ViewLog l " +
+            "WHERE l.houseId=:houseId " +
+            "AND l.userId = :userId " +
+            "AND l.logDate = :logDate")
+    List<ViewLog> findByHouseIdAndUserIdAndLogDate(
+            @Param("houseId") Long houseId,
+            @Param("userId") Long userId,
+            @Param("logDate") Date logDate
+    );
 }
