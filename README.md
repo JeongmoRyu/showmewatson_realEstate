@@ -97,6 +97,17 @@
 
 ### Backend
 
+auth swagger(추후 외부 포트 닫을 예정)
+http://i9a803.p.ssafy.io:8080/swagger-ui/index.html
+
+
+business swagger
+http://i9a803.p.ssafy.io:8081/swagger-ui/index.html
+
+notice swagger
+http://i9a803.p.ssafy.io:8082/swagger-ui/index.html
+
+
 ![api](readme_assets/api.PNG)
 
 - CI/CD
