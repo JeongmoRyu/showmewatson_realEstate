@@ -17,6 +17,7 @@ import 'package:prac2/screens/livelist_screen.dart';
 import 'package:prac2/base/navbar.dart';
 import 'package:prac2/detail/detailPage.dart';
 import 'package:prac2/detail/agentDetail.dart';
+import 'package:prac2/filter/filterPage.dart';
 import 'package:prac2/filter/filterPage1.dart';
 
 
@@ -116,6 +117,14 @@ final _router = GoRouter(
             child: Agent(),
           ),
     ),
+    GoRoute(
+      path: '/filterPage1',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('filterPage1'),
+            child: FilterOne(),
+          ),
+    ),
 
 
 
@@ -179,6 +188,12 @@ class _WatsonAppState extends State<WatsonApp> {
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFDCBF97)),
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFDCBF97)),
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Set the default text color to white
             ),
           ),
         ),

@@ -139,9 +139,9 @@ class Agent extends StatelessWidget {
           CarouselSlider(
             options: CarouselOptions(
               enableInfiniteScroll: false,
-              aspectRatio: 16 / 9,
+              aspectRatio: 32/9,
               enlargeCenterPage: true,
-              viewportFraction: 1.0,
+              viewportFraction: 0.7,
             ),
             items: [
               Container(
@@ -185,9 +185,9 @@ class Agent extends StatelessWidget {
           CarouselSlider(
             options: CarouselOptions(
               enableInfiniteScroll: false,
-              aspectRatio: 16 / 9,
+              aspectRatio: 32 / 9,
               enlargeCenterPage: true,
-              viewportFraction: 1.0,
+              viewportFraction: 0.7,
             ),
             items: [
               Container(
@@ -230,14 +230,18 @@ class Agent extends StatelessWidget {
             ),
           ),
           ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
-              'assets/images/img_5.png',
-              width: 300,
-              height: 400,
-              fit: BoxFit.cover,
+            borderRadius: BorderRadius.circular(15),
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: Image.asset(
+                'assets/images/img_10.png',
+                width: 300,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
+          )
+
         ],
         ),
       ),

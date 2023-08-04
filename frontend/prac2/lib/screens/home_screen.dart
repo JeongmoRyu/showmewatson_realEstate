@@ -138,7 +138,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          Icon(FontAwesomeIcons.bell),
+                          Icon(FontAwesomeIcons.arrowDownWideShort),
 
                           SizedBox(height: 4),
 
@@ -200,6 +200,27 @@ class HomeScreen extends StatelessWidget {
                       SizedBox(height: 4),
 
                       Text('중개사 정보'),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    context.push('/filterPage1');
+                  },
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all<Size>(Size(90, 70)), // 이 버튼의 크기 설정
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),// 모서리 처리의 지름 설정
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(FontAwesomeIcons.arrowDownWideShort),
+                      SizedBox(height: 14),
+
+                      Text('필터1'),
                     ],
                   ),
                 ),
