@@ -7,11 +7,12 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 
-  second-datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    jdbc-url: ${DB_URL}/log
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+#다중 DB 연결 예정
+#  second-datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    jdbc-url: ${DB_URL}/log
+#    username: ${DB_USER}
+#    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
