@@ -33,8 +33,6 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.7' // token 요청 위해서
 
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client' // 이거 넣으니까 시큐리티 비번이 안나옴
-	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
-
 
 	implementation 'org.springframework.boot:spring-boot-starter-mustache' // test위해서 template 설정
 
