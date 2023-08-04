@@ -1,12 +1,11 @@
 package com.watson.business.house.filter;
 
 import com.watson.business.house.domain.entity.House;
+import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
+import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 public class HouseSpecification {
     //      [일치] 방 코드
@@ -40,47 +39,55 @@ public class HouseSpecification {
         };
     }
     //      [범위 : 최소, 최대] 월세
-    public static Specification<House> graterThanMonthlyRent(int minMonthlyRent) {
+    public static Specification<House> graterThanOrEqualMonthlyRent(int minMonthlyRent) {
         return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("monthlyRent"), minMonthlyRent);
+            Join<House, MonthlyInfo> contractInfoJoin = root.join("monthlyInfo", JoinType.INNER);
+            return criteriaBuilder.greaterThanOrEqualTo(contractInfoJoin.get("monthlyRent"), minMonthlyRent);
         };
     }
-    public static Specification<House> lessThanMonthlyRent(int maxMonthlyRent) {
+    public static Specification<House> lessThanOrEqualMonthlyRent(int maxMonthlyRent) {
         return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.lessThanOrEqualTo(root.get("monthlyRent"), maxMonthlyRent);
+            Join<House, MonthlyInfo> monthlyInfoJoin = root.join("monthlyInfo", JoinType.INNER);
+            return criteriaBuilder.lessThanOrEqualTo(monthlyInfoJoin.get("monthlyRent"), maxMonthlyRent);
         };
     }
-    //      [범위 : 최소, 최대] 보증금
-    public static Specification<House> graterThanDeposit(int minDeposit) {
+    //      [범위 : 최소, 최대] 보증금(월세)
+    public static Specification<House> graterThanOrEqualDeposit(int minDeposit) {
         return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("deposit"), minDeposit);
+            Join<House, MonthlyInfo> monthlyInfoJoin = root.join("monthlyInfo", JoinType.INNER);
+            return criteriaBuilder.greaterThanOrEqualTo(monthlyInfoJoin.get("deposit"), minDeposit);
         };
     }
-    public static Specification<House> lessThanDeposit(int maxDeposit) {
+    public static Specification<House> lessThanOrEqualDeposit(int maxDeposit) {
         return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.lessThanOrEqualTo(root.get("deposit"), maxDeposit);
+            Join<House, MonthlyInfo> monthlyInfoJoin = root.join("monthlyInfo", JoinType.INNER);
+            return criteriaBuilder.lessThanOrEqualTo(monthlyInfoJoin.get("deposit"), maxDeposit);
         };
     }
-    //      [범위 : 최소, 최대] 관리비
-    public static Specification<House> graterThanMaintenance(int minMaintenance) {
+    //      [범위 : 최소, 최대] 관리비(월세)
+    public static Specification<House> graterThanOrEqualMaintenance(int minMaintenance) {
         return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("maintenance"), minMaintenance);
+            Join<House, MonthlyInfo> monthlyInfoJoin = root.join("monthlyInfo", JoinType.INNER);
+            return criteriaBuilder.greaterThanOrEqualTo(monthlyInfoJoin.get("maintenance"), minMaintenance);
         };
     }
-    public static Specification<House> lessThanMaintenance(int maxMaintenance) {
+    public static Specification<House> lessThanOrEqualMaintenance(int maxMaintenance) {
         return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.lessThanOrEqualTo(root.get("maintenance"), maxMaintenance);
+            Join<House, MonthlyInfo> monthlyInfoJoin = root.join("monthlyInfo", JoinType.INNER);
+            return criteriaBuilder.lessThanOrEqualTo(monthlyInfoJoin.get("maintenance"), maxMaintenance);
         };
     }
     //      [범위 : 최소, 최대] 매매가
     public static Specification<House> graterThanSalePrice(int minSalePrice) {
         return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("salePrice"), minSalePrice);
+            Join<House, SaleInfo> contractInfoJoin = root.join("saleInfo", JoinType.INNER);
+            return criteriaBuilder.greaterThanOrEqualTo(contractInfoJoin.get("salePrice"), minSalePrice);
         };
     }
     public static Specification<House> lessThanSalePrice(int maxSalePrice) {
         return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.lessThanOrEqualTo(root.get("salePrice"), maxSalePrice);
+            Join<House, SaleInfo> contractInfoJoin = root.join("saleInfo", JoinType.INNER);
+            return criteriaBuilder.lessThanOrEqualTo(contractInfoJoin.get("salePrice"), maxSalePrice);
         };
     }
 

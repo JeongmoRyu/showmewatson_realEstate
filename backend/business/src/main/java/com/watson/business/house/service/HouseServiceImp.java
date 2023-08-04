@@ -93,10 +93,6 @@ public class HouseServiceImp implements HouseService {
                 .houseOption(house.getHouseOption())
                 .build();
 
-//        private RealtorResponse realtor;
-//        private EmdResponse emdResponse;
-//        private List<HouseFile> houseFiles;
-//        RealtorResponse realtorResponse = new RealtorResponse(null, house.getRealtorId());  // realtorName 로직 필요
         switch (house.getContractCode()) {
             case 1:      // 월세
                 houseListResponse.setDeposit(house.getMonthlyInfo().getDeposit());
@@ -128,9 +124,6 @@ public class HouseServiceImp implements HouseService {
     public Long addHouse(List<MultipartFile> file, HouseRegistRequest houseRegistRequest, String realtorId) {
 
         ContractRequest contractRequest = houseRegistRequest.getContractInfo();
-//        HouseOptionRequest houseOption = HouseRegistRequest.getHouseOptionRequest();
-
-
 
 //        realtorId 받아오기
 
@@ -259,16 +252,16 @@ public class HouseServiceImp implements HouseService {
     // 월세와 전세 관련 조건 추가 메서드
     private Specification<House> addDepositAndMaintenanceConditions(Specification<House> spec, HouseFilterParamRequest filterParam) {
         if (filterParam.getMinDeposit() != null) {
-            spec = spec.and(HouseSpecification.graterThanDeposit(intValue(filterParam.getMinDeposit())));
+            spec = spec.and(HouseSpecification.graterThanOrEqualDeposit(intValue(filterParam.getMinDeposit())));
         }
         if (filterParam.getMaxDeposit() != null) {
-            spec = spec.and(HouseSpecification.lessThanDeposit(intValue(filterParam.getMaxDeposit())));
+            spec = spec.and(HouseSpecification.lessThanOrEqualDeposit(intValue(filterParam.getMaxDeposit())));
         }
         if (filterParam.getMinMaintenance() != null) {
-            spec = spec.and(HouseSpecification.graterThanMaintenance(intValue(filterParam.getMinMaintenance())));
+            spec = spec.and(HouseSpecification.graterThanOrEqualMaintenance(intValue(filterParam.getMinMaintenance())));
         }
         if (filterParam.getMaxMaintenance() != null) {
-            spec = spec.and(HouseSpecification.lessThanMaintenance(intValue(filterParam.getMaxMaintenance())));
+            spec = spec.and(HouseSpecification.lessThanOrEqualMaintenance(intValue(filterParam.getMaxMaintenance())));
         }
         return spec;
     }
