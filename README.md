@@ -8,13 +8,33 @@
     - 기술 스택 선정
     - 정보구조도 
 
+![정보구조도](readme_assets/userIA.PNG)
+![중개사구조도](readme_assets/agentIA.PNG)
+
+
 ### Backend
-- ERD 제작 
+- ERD 제작  
+
+![erd](readme_assets/erd.PNG)
+
 - 아키텍쳐
+
+![arch](readme_assets/arch.png)
+
 - 기능명세서
+
+![re](readme_assets/re.PNG)
+
 - sequence diagram
 
+
+
 ### Frontend
+
+![mvp](readme_assets/figma_user.PNG)
+![mvp](readme_assets/figma_agent.PNG)
+
+
 - MVP 제작
     - Figma MVP 제작
         - MVP (Flutter) 초안 미완성
@@ -68,7 +88,13 @@
     - router
     - 카카오 소셜 로그인(front)
 
+
+
+
 ### Backend
+
+![api](readme_assets/api.PNG)
+
 - CI/CD
 - Docker를 사용한 배포 및 스크립트 파일 작성
 - 카카오 소셜 로그인 및 회원가입(back)
