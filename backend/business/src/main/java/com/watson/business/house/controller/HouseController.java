@@ -5,6 +5,7 @@ import com.watson.business.house.dto.houserequest.HouseRegistRequest;
 import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
 import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
+import com.watson.business.house.service.HouseFilterService;
 import com.watson.business.house.service.HouseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HouseController {
     private final HouseService houseService;
+    private final HouseFilterService houseFilterService;
 
     @GetMapping("")     // 매물 전체 목록
     public ResponseEntity<List<HouseListResponse>> houseList() {
@@ -48,7 +50,7 @@ public class HouseController {
     public ResponseEntity<List<HouseListResponse>> houseFilterList(@RequestBody HouseFilterParamRequest filterParam) {
         log.debug("{}", filterParam);
 
-        return ResponseEntity.status(HttpStatus.OK).body(houseService.findFilterHouses(filterParam));
+        return ResponseEntity.status(HttpStatus.OK).body(houseFilterService.findFilterHouses(filterParam));
     }
     @PostMapping("/{id}")
     public ResponseEntity<String> houseModify(@PathVariable Long id, @RequestBody HouseUpdateRequest houseUpdateRequest) {
