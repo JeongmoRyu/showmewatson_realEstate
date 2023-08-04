@@ -7,10 +7,8 @@
     - 서비스 아이콘 제작
     - 기술 스택 선정
     - 정보구조도 
-
-![정보구조도](readme_assets/userIA.PNG)
-![중개사구조도](readme_assets/agentIA.PNG)
-
+![정보구조도](/uploads/a789c3a4597dd16b9642b5002b7873cb/image.png)
+![중개사구조도](/uploads/e3f8510d1b700b495ebf14a8bcf52757/image.png)
 
 ### Backend
 - ERD 제작  
@@ -19,7 +17,7 @@
 
 - 아키텍쳐
 
-![arch](readme_assets/arch.png)
+![arch](/uploads/f60246a9859ac5ff54498f7353ac44ee/image.png)
 
 - 기능명세서
 
