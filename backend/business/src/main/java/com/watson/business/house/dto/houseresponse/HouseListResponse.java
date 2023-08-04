@@ -1,4 +1,4 @@
-package com.watson.business.house.dto.houseResponse;
+package com.watson.business.house.dto.houseresponse;
 
 import com.watson.business.house.dto.item.STATUS;
 import lombok.*;
