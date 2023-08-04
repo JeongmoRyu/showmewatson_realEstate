@@ -122,31 +122,44 @@ class HomeScreen extends StatelessWidget {
 
                 SizedBox(width: 20),
 
-                ElevatedButton(
-                  onPressed: () {
-                    context.go('/filterPage');
-                  },
-                  style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all<Size>(Size(90, 70)), // 이 버튼의 크기 설정
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),// 모서리 처리의 지름 설정
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        context.push('/filterPage');
+                      },
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all<Size>(Size(90, 70)), // 이 버튼의 크기 설정
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),// 모서리 처리의 지름 설정
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(FontAwesomeIcons.bell),
+
+                          SizedBox(height: 4),
+
+                          Text('필터'),
+                        ],
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(FontAwesomeIcons.bell),
-
-                      SizedBox(height: 4),
-
-                      Text('필터'),
-                    ],
-                  ),
+                  ],
                 ),
+
+
+
+              ],
+            ),
+            SizedBox(height: 20,),
+
+            Row(
+              children: [
                 ElevatedButton(
                   onPressed: () {
-                    context.go('/detailPage');
+                    context.push('/detailPage');
                   },
                   style: ButtonStyle(
                     minimumSize: MaterialStateProperty.all<Size>(Size(90, 70)), // 이 버튼의 크기 설정
@@ -166,10 +179,42 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                SizedBox(width: 20,),
 
+                ElevatedButton(
+                  onPressed: () {
+                    context.push('/agentDetail');
+                  },
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all<Size>(Size(90, 70)), // 이 버튼의 크기 설정
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),// 모서리 처리의 지름 설정
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(FontAwesomeIcons.personChalkboard),
 
+                      SizedBox(height: 4),
+
+                      Text('중개사 정보'),
+                    ],
+                  ),
+                ),
               ],
             ),
+
+
+
+
+
+
+
+
+
+
 
           ],
         ),

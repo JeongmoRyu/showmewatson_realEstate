@@ -16,6 +16,7 @@ import 'package:prac2/screens/livelist_screen.dart';
 
 import 'package:prac2/base/navbar.dart';
 import 'package:prac2/detail/detailPage.dart';
+import 'package:prac2/detail/agentDetail.dart';
 import 'package:prac2/filter/filterPage1.dart';
 
 
@@ -107,6 +108,18 @@ final _router = GoRouter(
             child: Filter(),
           ),
     ),
+    GoRoute(
+      path: '/agentDetail',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('agentDetail'),
+            child: Agent(),
+          ),
+    ),
+
+
+
+
   ],
 );
 
