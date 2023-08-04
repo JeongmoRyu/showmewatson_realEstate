@@ -22,25 +22,25 @@ import javax.sql.DataSource;
 )
 public class LogConfiguration {
 
-//    @Bean(name = "logDataSource")
-//    @ConfigurationProperties(prefix = "spring.second-datasource")
-//    public DataSource logDataSource() {
-//        return DataSourceBuilder.create().build();
-//    }
-//
-//    @Bean(name = "logEntityManagerFactory")
-//    public LocalContainerEntityManagerFactoryBean logEntityManagerFactory(){
-//    LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-//        em.setDataSource(logDataSource());
-//        em.setPackagesToScan(new String[] {"com.watson.log.domain.entity"});
-//        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-//        return em;
-//    }
-//
-//    @Bean(name = "logTransactionManager")
-//    public PlatformTransactionManager transactionManager(){
-//        JpaTransactionManager transactionManager = new JpaTransactionManager();
-//        transactionManager.setEntityManagerFactory(logEntityManagerFactory().getObject());
-//        return transactionManager;
-//    }
+    @Bean(name = "logDataSource")
+    @ConfigurationProperties(prefix = "spring.second-datasource")
+    public DataSource logDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    @Bean(name = "logEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean logEntityManagerFactory(){
+    LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(logDataSource());
+        em.setPackagesToScan(new String[] {"com.watson.log.domain.entity"});
+        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        return em;
+    }
+
+    @Bean(name = "logTransactionManager")
+    public PlatformTransactionManager transactionManager(){
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(logEntityManagerFactory().getObject());
+        return transactionManager;
+    }
 }

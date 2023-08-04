@@ -14,6 +14,5 @@ public interface HouseService {
     HouseDetailResponse findHouseByHouseId(Long houseId);
     Long addHouse(List<MultipartFile> file, HouseRegistRequest HouseRegistRequest, String realtorId);
 //    매물 필터링 목록
-    List<HouseListResponse> findFilterHouses(HouseFilterParamRequest filterParam);
     Long modifyHouse(Long houseId, HouseUpdateRequest houseUpdateRequest, String realtorId);
 }
