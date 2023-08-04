@@ -1,5 +1,6 @@
 package com.watson.business.house.controller;
 
+<<<<<<< backend/business/src/main/java/com/watson/business/house/controller/HouseController.java
 import com.watson.business.house.dto.houserequest.HouseFilterParamRequest;
 import com.watson.business.house.dto.houserequest.HouseRegistRequest;
 import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
