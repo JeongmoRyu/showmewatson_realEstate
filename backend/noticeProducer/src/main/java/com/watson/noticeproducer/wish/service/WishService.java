@@ -1,7 +1,9 @@
-package com.watson.notice.wish.service;
+package com.watson.noticeproducer.wish.service;
 
 import com.google.firebase.messaging.*;
-import com.watson.notice.wish.domain.repository.WishRepository;
+import com.google.gson.Gson;
+import com.watson.noticeproducer.kafka.ProducerService;
+import com.watson.noticeproducer.wish.domain.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +13,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WishService {
     private final WishRepository wishRepository;
+    private final ProducerService producerService;
 
-    public int sendLiveNotice(Long houseId, String title) throws FirebaseMessagingException {
+    public void sendLiveNotice(Long houseId, String title){
         List<String> wishFcmTokenList = wishRepository.findFcmTokenByHouseIdAndIsDeleted(houseId);
 
         if (!wishFcmTokenList.isEmpty()) {
@@ -25,9 +28,9 @@ public class WishService {
                     .setNotification(notification)
                     .build();
 
-            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
-            return response.getSuccessCount();
+            Gson gson = new Gson();
+            String muticastMessageJson = gson.toJson(multicastMessage);
+            producerService.sendToBroker("wish", muticastMessageJson);
         }
-        return 0;
     }
 }

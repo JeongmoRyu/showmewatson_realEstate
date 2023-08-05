@@ -1,4 +1,4 @@
-package com.watson.notice.wish.domain.entity;
+package com.watson.noticeproducer.wish.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Getter
-public class Wish {
+public class Wishes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
