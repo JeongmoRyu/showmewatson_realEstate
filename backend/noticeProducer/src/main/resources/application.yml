@@ -16,10 +16,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         dialect.storage_engine: innodb
-fcm:
-  key:
-    path: ${FCM_PATH}
-    scope: ${FCM_SCOPE}
 
 server:
   port: 8082

@@ -36,7 +36,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'com.google.firebase:firebase-admin:9.2.0'
-
+	implementation 'org.apache.kafka:kafka-clients:2.8.1'
+	implementation 'com.google.code.gson:gson:2.8.9'
 }
 
 tasks.named('test') {
