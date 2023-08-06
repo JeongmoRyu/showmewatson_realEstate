@@ -13,8 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -54,7 +53,7 @@ public class House {
     private STATUS status;
 
     @CreatedDate
-    private Date regDate;
+    private LocalDateTime regDate;
 
     @OneToMany(mappedBy = "house")
     private List<HouseFile> houseFiles;
