@@ -5,7 +5,7 @@ import com.watson.business.house.domain.entity.HouseOption;
 import com.watson.business.region.dto.EmdResponse;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -30,8 +30,7 @@ public class HouseDetailResponse {
 
     private String content;
     private List<HouseFile> houseFiles;
-    private Date regDate;
+    private LocalDateTime regDate;
     private HouseOption houseOption;
-//    private boolean isWished;
 }
 
