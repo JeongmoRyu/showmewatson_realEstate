@@ -1,20 +1,16 @@
-package com.watson.auth.admin.jwt;
+package com.watson.auth.jwt;
 
 import io.jsonwebtoken.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @Component
-@RequiredArgsConstructor
 public class JwtUtils {
 
     @Value("${jwt.secret}")
@@ -24,15 +20,12 @@ public class JwtUtils {
     private static final long REFRESH_TOKEN_EXPIRATION_TIME = 604800000; // Refresh Token 만료 시간 (7일)
 
     /* AccessToken 생성 : authId, authorities로 생성 */
-    public String generateAccessToken(OAuth2AuthenticationToken oauthToken) {
-
-        DefaultOAuth2User oauthUser = (DefaultOAuth2User) oauthToken.getPrincipal();
+    public String generateAccessToken(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("authId", oauthUser.getAttribute("id"));
-        log.info("authId : " + oauthUser.getAttribute("id"));
-        claims.put("role", oauthToken.getAuthorities());
-        log.info("role : " + oauthToken.getAuthorities());
+        claims.put("username", userDetails.getUsername()); // authId
+        claims.put("roles", userDetails.getAuthorities());
 
         Date expirationDate = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME);
 
@@ -40,12 +33,10 @@ public class JwtUtils {
         header.put("typ", "JWT");
         header.put("alg", "HS256");
 
-        log.info("oauthUser.getName() : " + oauthUser.getName());
-
         return Jwts.builder()
                 .setClaims(claims)
                 .setHeader(header)
-                .setSubject(oauthUser.getName())
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -53,8 +44,7 @@ public class JwtUtils {
     }
 
     /* RefreshToken 생성 */
-    public String generateRefreshToken(DefaultOAuth2User oauthUser) {
-
+    public String generateRefreshToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
         Date expirationDate = new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_TIME);
@@ -66,11 +56,12 @@ public class JwtUtils {
         return Jwts.builder()
                 .setClaims(claims)
                 .setHeader(header)
-                .setSubject(oauthUser.getName())
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+
     }
 
     /* SecretKey로 토큰 검증 */
@@ -93,11 +84,11 @@ public class JwtUtils {
     }
 
     /* Access Token, Refresh Token 생성 */
-    public JwtTokens generateTokens(OAuth2AuthenticationToken oauthToken) {
-        DefaultOAuth2User oauthUser = (DefaultOAuth2User) oauthToken.getPrincipal();
+    public JwtTokens generateTokens(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        String accessToken = generateAccessToken(oauthToken);
-        String refreshToken = generateRefreshToken(oauthUser);
+        String accessToken = generateAccessToken(authentication);
+        String refreshToken = generateRefreshToken(userDetails);
 
         return new JwtTokens(accessToken, refreshToken);
     }
