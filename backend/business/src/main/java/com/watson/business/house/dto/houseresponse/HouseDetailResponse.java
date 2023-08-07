@@ -16,6 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseDetailResponse {
+    private String sidoName;
+    private String gunguName;
+    private String dongleeName;
+
     private Long houseId;
     private int houseCode;
     private double squareMeter;
@@ -63,6 +67,9 @@ public class HouseDetailResponse {
         this.title = list.getTitle();
         this.status = list.getStatus();
         this.fileName = list.getFileName();
+        this.sidoName = list.getSidoName();
+        this.gunguName = list.getGunguName();
+        this.dongleeName = list.getDongleeName();
     }
 }
 
