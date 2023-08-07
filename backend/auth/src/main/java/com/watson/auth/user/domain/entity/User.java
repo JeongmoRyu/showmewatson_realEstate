@@ -1,9 +1,8 @@
 package com.watson.auth.user.domain.entity;
 
-import com.watson.auth.util.BaseEntity;
-
 import javax.persistence.*;
 
+import com.watson.auth.util.BaseEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -20,8 +19,5 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private String nickname;
-
-    @Column(nullable = false) // oauth 때문에 추가
-    private String role;
 
 }

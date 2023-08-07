@@ -1,4 +1,4 @@
-package com.watson.auth.user.dto;
+package com.watson.auth.admin.dto;
 
 import lombok.*;
 
@@ -6,12 +6,15 @@ import lombok.*;
 @AllArgsConstructor
 @Getter @Setter
 @Builder
-public class UserLoginResponse {
+public class RealtorLoginResponse {
 
     @NonNull
     private String accessToken;
 
     @NonNull
     private String refreshToken;
+
+    @NonNull
+    private String role = "Realtor";
 
 }
