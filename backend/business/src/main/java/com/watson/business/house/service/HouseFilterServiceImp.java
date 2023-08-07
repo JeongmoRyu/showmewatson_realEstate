@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import static org.aspectj.runtime.internal.Conversions.intValue;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class HouseFilterServiceImp implements HouseFilterService {
     private final HouseRepository houseRepository;
     @Override
@@ -100,7 +102,7 @@ public class HouseFilterServiceImp implements HouseFilterService {
     }
 
     private HouseListResponse listEntityToDto(House house) {
-        HouseListResponse houseListResponse = HouseListResponse.builder()
+        return HouseListResponse.builder()
                 .houseId(house.getId())
                 .houseCode(house.getHouseCode())
                 .squareMeter(house.getSquareMeter())
@@ -112,7 +114,6 @@ public class HouseFilterServiceImp implements HouseFilterService {
 //                .fileName(house.getHouseFiles().get(0).getFileName())
                 .maintenance(0)
                 .build();
-        return houseListResponse;
     }
 
 }
