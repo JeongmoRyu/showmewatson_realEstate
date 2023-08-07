@@ -117,9 +117,9 @@ public class HouseServiceImp implements HouseService {
         return houseDetailResponse;
     }
 
-    public Long addHouse(List<MultipartFile> file, HouseRegistRequest houseRegistRequest, String realtorId) {
+    public Long addHouse(List<MultipartFile> file, HouseRegistRequest request, String realtorId) {
 
-        ContractRequest contractRequest = houseRegistRequest.getContractInfo();
+        ContractRequest contractRequest = request.getContractInfo();
 
 //        realtorId 받아오기
 

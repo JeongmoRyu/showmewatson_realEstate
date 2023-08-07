@@ -1,4 +1,4 @@
-package com.watson.auth.admin.oauth;
+package com.watson.auth.socialauth.config;
 
 import org.springframework.boot.web.servlet.view.MustacheViewResolver;
 import org.springframework.context.annotation.Configuration;

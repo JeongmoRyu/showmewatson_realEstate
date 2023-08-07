@@ -47,6 +47,17 @@ public class HouseController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("매물등록 완료");
     }
+    @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> houseModify( @PathVariable Long id, @RequestPart @Valid List<MultipartFile> file, @RequestPart @Valid HouseUpdateRequest houseUpdateRequest) {
+        log.debug("{}", houseUpdateRequest);
+        log.debug("{매물 id ::: }", id);
+
+        // access_token으로 realtor_id 가져오는 로직 필요
+        String realtorId = "realtor_id";
+
+        houseService.modifyHouse(id, file, houseUpdateRequest, realtorId);
+        return ResponseEntity.status(HttpStatus.OK).body("매물수정 완료");
+    }
 
 //    매물 필터링
     @PostMapping("/filter")
