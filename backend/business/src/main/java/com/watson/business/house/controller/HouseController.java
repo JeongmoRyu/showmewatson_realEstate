@@ -47,8 +47,16 @@ public class HouseController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("매물등록 완료");
     }
-    @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> houseModify( @PathVariable Long id, @RequestPart @Valid List<MultipartFile> file, @RequestPart @Valid HouseUpdateRequest houseUpdateRequest) {
+
+//    매물 필터링
+    @PostMapping("/filter")
+    public ResponseEntity<List<HouseListResponse>> houseFilterList(@RequestBody HouseFilterParamRequest filterParam) {
+        log.debug("{}", filterParam);
+
+        return ResponseEntity.status(HttpStatus.OK).body(houseFilterService.findFilterHouses(filterParam));
+    }
+    @PostMapping("/{id}")
+    public ResponseEntity<String> houseModify(@PathVariable Long id, @RequestBody HouseUpdateRequest houseUpdateRequest) {
         log.debug("{}", houseUpdateRequest);
         log.debug("{매물 id ::: }", id);
 
