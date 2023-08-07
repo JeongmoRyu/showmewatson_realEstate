@@ -11,7 +11,7 @@ import lombok.*;
 public class HouseRegistRequest {
 
     private int contractCode;
-    private String dongCode;
+    private String dongCode;        // court_code
     private int houseCode;
     private double squareMeter;
     private int floor;
