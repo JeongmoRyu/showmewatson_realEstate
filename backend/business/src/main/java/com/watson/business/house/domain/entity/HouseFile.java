@@ -4,31 +4,25 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.util.Date;
 
-@Builder
+@Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name = "house_files")
-public class HouseFile {
+public class HouseFile extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_id")
-//    @JsonBackReference
     private House house;
 
     private String fileName;
-
-    @CreatedDate
-    private Date regDate;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isDeleted;
@@ -39,5 +33,8 @@ public class HouseFile {
 
     public HouseFile(String fileName) {
         this.fileName = fileName;
+    }
+    public void deleteHouseFile() {
+        this.isDeleted = true;
     }
 }

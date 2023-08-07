@@ -7,17 +7,15 @@ import com.watson.business.house.domain.entity.HouseFile;
 import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
 import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
 import com.watson.business.house.domain.entity.houseContractInfoDetail.YearlyInfo;
+import com.watson.business.house.domain.repository.HouseFileRepository;
 import com.watson.business.house.domain.repository.HouseRepository;
 import com.watson.business.house.dto.houserequest.ContractRequest;
-import com.watson.business.house.dto.houserequest.HouseFilterParamRequest;
 import com.watson.business.house.dto.houserequest.HouseRegistRequest;
 import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
 import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
-import com.watson.business.house.filter.HouseSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,14 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.watson.business.house.dto.item.STATUS.TRADING;
-import static org.aspectj.runtime.internal.Conversions.intValue;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class HouseServiceImp implements HouseService {
     private final HouseRepository houseRepository;
+    private final HouseFileRepository houseFileRepository;
     private final HouseImageServiceImp houseImageService;
 
     public List<HouseListResponse> findAllHouses() {
@@ -75,10 +73,7 @@ public class HouseServiceImp implements HouseService {
             throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
-        HouseListResponse houseListResponse = listEntityToDto(house);
-
         HouseDetailResponse houseDetailResponse = HouseDetailResponse.builder()
-                .houseListResponse(houseListResponse)
 //                .realtor(house.getRealtorId())
                 .maintenanceList(house.getMaintenanceList())
                 .contractCode(house.getContractCode())
@@ -92,6 +87,9 @@ public class HouseServiceImp implements HouseService {
                 .regDate(house.getRegDate())
                 .houseOption(house.getHouseOption())
                 .build();
+
+        HouseListResponse houseListResponse = listEntityToDto(house);
+        houseDetailResponse.setHouseListResponse(houseListResponse);
 
         switch (house.getContractCode()) {
             case 1:      // 월세
@@ -114,34 +112,32 @@ public class HouseServiceImp implements HouseService {
                 throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
-
-
 //        // TODO: isWish 로직 필요
 
         return houseDetailResponse;
     }
 
-    public Long addHouse(List<MultipartFile> file, HouseRegistRequest houseRegistRequest, String realtorId) {
+    public Long addHouse(List<MultipartFile> file, HouseRegistRequest request, String realtorId) {
 
-        ContractRequest contractRequest = houseRegistRequest.getContractInfo();
+        ContractRequest contractRequest = request.getContractInfo();
 
 //        realtorId 받아오기
 
         House house = House.builder()
-                .contractCode(houseRegistRequest.getContractCode())
-                .dongCode(houseRegistRequest.getDongCode())
-                .houseCode(houseRegistRequest.getHouseCode())
-                .squareMeter(houseRegistRequest.getSquareMeter())
-                .floor(houseRegistRequest.getFloor())
-                .totalFloor(houseRegistRequest.getTotalFloor())
-                .address(houseRegistRequest.getAddress())
-                .title(houseRegistRequest.getTitle())
-                .content(houseRegistRequest.getContent())
-                .supplyAreaMeter(houseRegistRequest.getSupplyAreaMeter())
-                .buildingUse(houseRegistRequest.getBuildingUse())
-                .approvalBuildingDate(houseRegistRequest.getApprovalBuildingDate())
-                .bathroom(houseRegistRequest.getBathroom())
-                .room(houseRegistRequest.getRoom())
+                .contractCode(request.getContractCode())
+                .dongCode(request.getDongCode())
+                .houseCode(request.getHouseCode())
+                .squareMeter(request.getSquareMeter())
+                .floor(request.getFloor())
+                .totalFloor(request.getTotalFloor())
+                .address(request.getAddress())
+                .title(request.getTitle())
+                .content(request.getContent())
+                .supplyAreaMeter(request.getSupplyAreaMeter())
+                .buildingUse(request.getBuildingUse())
+                .approvalBuildingDate(request.getApprovalBuildingDate())
+                .bathroom(request.getBathroom())
+                .room(request.getRoom())
                 .weeklyViewCount(0)
                 .status(TRADING)
                 .realtorId(realtorId)
@@ -150,10 +146,15 @@ public class HouseServiceImp implements HouseService {
 
         // 이미지 저장
         List<String> houseFileList = houseImageService.addFile(file, "house");
+        houseFileRepository.save(HouseFile.builder()
+                .fileName(houseFileList.get(0))
+                .house(house)
+                .isDeleted(false)
+                .build());
         for (String houseFilePath : houseFileList) {
             house.addHouseFile(new HouseFile(houseFilePath));
         }
-
+        log.debug("{}", houseFileList);
         /**
          * 1: 월세
          * 2: 전세
@@ -191,14 +192,31 @@ public class HouseServiceImp implements HouseService {
     }
 
     @Override
-    public Long modifyHouse(Long houseId, HouseUpdateRequest houseUpdateRequest, String realtorId) {
+    public Long modifyHouse(Long houseId, List<MultipartFile> file, HouseUpdateRequest houseUpdateRequest, String realtorId) {
         House house = houseRepository.findHouseById(houseId);
         house.editHouse(houseUpdateRequest.getTitle(), houseUpdateRequest.getContent());
+
+//        기존 파일 삭제 : houseId를 기준으로 찾아오기
+        List<HouseFile> deleteHouseFileList = houseFileRepository.findHouseFileByHouseId(houseId);
+        for(HouseFile d : deleteHouseFileList) {
+            houseFileRepository.delete(d);
+        }
+//        새 파일 추가
+        List<String> houseFileList = houseImageService.addFile(file, "house");
+        houseFileRepository.save(HouseFile.builder()
+                .fileName(houseFileList.get(0))
+                .house(house)
+                .isDeleted(false)
+                .build());
+        for (String houseFilePath : houseFileList) {
+            house.addHouseFile(new HouseFile(houseFilePath));
+        }
+
         return houseId;
     }
 
     private HouseListResponse listEntityToDto(House house) {
-        HouseListResponse houseListResponse = HouseListResponse.builder()
+        return HouseListResponse.builder()
                 .houseId(house.getId())
                 .houseCode(house.getHouseCode())
                 .squareMeter(house.getSquareMeter())
@@ -210,6 +228,5 @@ public class HouseServiceImp implements HouseService {
 //                .fileName(house.getHouseFiles().get(0).getFileName())
                 .maintenance(0)
                 .build();
-        return houseListResponse;
     }
 }

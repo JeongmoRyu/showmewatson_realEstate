@@ -11,9 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -22,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "houses")
-public class House {
+public class House extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,22 +50,19 @@ public class House {
     @Column(columnDefinition = "VARCHAR(10)")
     private STATUS status;
 
-    @CreatedDate
-    private LocalDateTime regDate;
-
     @OneToMany(mappedBy = "house")
     private List<HouseFile> houseFiles;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private HouseOption houseOption;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private SaleInfo saleInfo;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private YearlyInfo yearlyInfo;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MonthlyInfo monthlyInfo;
 
     public void setSaleInfo(SaleInfo saleInfo) {
