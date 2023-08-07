@@ -2,10 +2,9 @@ package com.watson.business.house.dto.houserequest;
 
 import lombok.*;
 
-@Getter
-@Setter
-@Builder
 @Data
+@Getter @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseUpdateRequest {
