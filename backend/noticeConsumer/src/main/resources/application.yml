@@ -1,0 +1,15 @@
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9091, localhost:9092, localhost:9093
+      group-id:
+    listener:
+      type: BATCH
+
+fcm:
+  key:
+    path: ${FCM_PATH}
+    scope: ${FCM_SCOPE}
+
+server:
+  port: 8083
