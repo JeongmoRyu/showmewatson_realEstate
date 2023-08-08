@@ -14,8 +14,6 @@ import com.watson.business.house.dto.houserequest.HouseRegistRequest;
 import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
 import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
-import com.watson.business.region.dto.EmdNameResponse;
-import com.watson.business.region.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,14 +33,12 @@ public class HouseServiceImp implements HouseService {
     private final HouseRepository houseRepository;
     private final HouseFileRepository houseFileRepository;
     private final HouseImageServiceImp houseImageService;
-    private final RegionService regionService;
 
     public List<HouseListResponse> findAllHouses() {
-        List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
+        List<House> houseEntityList = houseRepository.findAll();
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for (House h : houseEntityList) {
-            EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(h.getDongCode());
-            HouseListResponse houseListResponse = listEntityToDto(h, emdNameResponse);
+            HouseListResponse houseListResponse = listEntityToDto(h);
 
             switch (h.getContractCode()) {
                 case 1:    // 월세
@@ -73,8 +69,6 @@ public class HouseServiceImp implements HouseService {
 
     public HouseDetailResponse findHouseByHouseId(Long houseId) {
         House house = houseRepository.findHouseById(houseId);
-        EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getDongCode());
-        log.info("{}", house);
         if (house == null) {
             throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
@@ -82,6 +76,7 @@ public class HouseServiceImp implements HouseService {
         HouseDetailResponse houseDetailResponse = HouseDetailResponse.builder()
 //                .realtor(house.getRealtorId())
                 .maintenanceList(house.getMaintenanceList())
+                .contractCode(house.getContractCode())
                 .contractCode(house.getContractCode())
                 .totalFloor(house.getTotalFloor())
                 .buildingUse(house.getBuildingUse())
@@ -93,7 +88,7 @@ public class HouseServiceImp implements HouseService {
                 .houseOption(house.getHouseOption())
                 .build();
 
-        HouseListResponse houseListResponse = listEntityToDto(house, emdNameResponse);
+        HouseListResponse houseListResponse = listEntityToDto(house);
         houseDetailResponse.setHouseListResponse(houseListResponse);
 
         switch (house.getContractCode()) {
@@ -220,8 +215,8 @@ public class HouseServiceImp implements HouseService {
         return houseId;
     }
 
-    private HouseListResponse listEntityToDto(House house, EmdNameResponse emdNameResponse) {
-        HouseListResponse response =  HouseListResponse.builder()
+    private HouseListResponse listEntityToDto(House house) {
+        return HouseListResponse.builder()
                 .houseId(house.getId())
                 .houseCode(house.getHouseCode())
                 .squareMeter(house.getSquareMeter())
@@ -231,14 +226,7 @@ public class HouseServiceImp implements HouseService {
                 .title(house.getTitle())
                 .status(house.getStatus())
 //                .fileName(house.getHouseFiles().get(0).getFileName())
-//                .maintenance(0)
-                .sidoName(emdNameResponse.getSidoName())
-                .gunguName(emdNameResponse.getGunguName())
-                .dongleeName(emdNameResponse.getDongLeeName())
+                .maintenance(0)
                 .build();
-        if(!house.getHouseFiles().isEmpty()) {
-            response.setFileName(house.getHouseFiles().get(0).getFileName());
-        }
-        return response;
     }
 }

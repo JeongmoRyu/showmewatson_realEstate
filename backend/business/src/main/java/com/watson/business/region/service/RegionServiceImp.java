@@ -1,8 +1,6 @@
 package com.watson.business.region.service;
 
-import com.watson.business.region.domain.entity.Emd;
 import com.watson.business.region.domain.repository.EmdRepository;
-import com.watson.business.region.dto.EmdNameResponse;
 import com.watson.business.region.dto.EmdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,17 +33,7 @@ public class RegionServiceImp implements RegionService {
         return emdResponseList;
     }
 
-    @Override
-    public EmdNameResponse getEmdNameByEmdCode(String courtCode) {
-        Emd emd = emdRepository.findByCourtCode(courtCode);
-        return EmdNameResponse.builder()
-                .sidoName(emd.getSidoName())
-                .gunguName(emd.getGunguName())
-                .dongLeeName(emd.getDongleeName())
-                .build();
+    public EmdResponse getDongleeNameByEmdCode(String courtCode) {
+        return new EmdResponse(emdRepository.findDongleeNameByCourtCode(courtCode), courtCode);
     }
-
-//    public EmdResponse getDongleeNameByEmdCode(String courtCode) {
-//        return new EmdResponse(emdRepository.findDongleeNameByCourtCode(courtCode), courtCode);
-//    }
 }
