@@ -20,6 +20,5 @@ public class UserPrincipalOauth2UserService extends DefaultOAuth2UserService {
         log.info("getAttributes : " + super.loadUser(userRequest).getAttributes());
 
         return super.loadUser(userRequest);
-
     }
 }
