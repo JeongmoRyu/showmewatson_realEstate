@@ -24,7 +24,7 @@ spring:
             client-secret: ${KCLIENT-SECRET}
             #            scope: profile_nickname, account_email # scope는 없어도 됨
             client-authentication-method: POST
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: ${K-REDIRECT}
             client-name: Kakao
         provider:
           kakao:
@@ -39,8 +39,21 @@ spring:
     show-sql: true
     hibernate:
       format_sql: true
-      ddl-auto: update # create
+      ddl-auto: create # update
 
 # jwt
 jwt:
   secret: ${JWT-SECRET}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    s3:
+      bucket: watson-house # S3에 버킷은 하나
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
