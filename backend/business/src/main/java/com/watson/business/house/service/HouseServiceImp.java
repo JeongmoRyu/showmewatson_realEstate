@@ -41,7 +41,7 @@ public class HouseServiceImp implements HouseService {
         List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for (House h : houseEntityList) {
-            EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(h.getDongCode());
+            EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(h.getCourtCode());
             HouseListResponse houseListResponse = listEntityToDto(h, emdNameResponse);
 
             switch (h.getContractCode()) {
@@ -73,7 +73,7 @@ public class HouseServiceImp implements HouseService {
 
     public HouseDetailResponse findHouseByHouseId(Long houseId) {
         House house = houseRepository.findHouseById(houseId);
-        EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getDongCode());
+        EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
         log.info("{}", house);
         if (house == null) {
             throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
@@ -130,7 +130,7 @@ public class HouseServiceImp implements HouseService {
 
         House house = House.builder()
                 .contractCode(request.getContractCode())
-                .dongCode(request.getDongCode())
+                .courtCode(request.getCourtCode())
                 .houseCode(request.getHouseCode())
                 .squareMeter(request.getSquareMeter())
                 .floor(request.getFloor())
