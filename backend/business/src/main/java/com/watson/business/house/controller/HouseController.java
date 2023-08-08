@@ -66,13 +66,4 @@ public class HouseController {
 
         return ResponseEntity.status(HttpStatus.OK).body(houseFilterService.findFilterHouses(filterParam));
     }
-
-//    매물 필터링
-    @PostMapping("/filter")
-    public ResponseEntity<List<HouseListResponse>> houseFilterList(@RequestBody HouseFilterParamRequest filterParam) {
-        log.debug("{}", filterParam);
-
-        return ResponseEntity.status(HttpStatus.OK).body(houseFilterService.findFilterHouses(filterParam));
-    }
-
 }
