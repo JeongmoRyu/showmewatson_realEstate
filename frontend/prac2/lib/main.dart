@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:prac2/screens/live_notice_screen.dart';
-import 'package:prac2/states/user_provider.dart';
+
 import 'package:provider/provider.dart';
-// import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' hide ChangeNotifierProvider;
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+import 'package:prac2/screens/live_notice_screen.dart';
+import 'package:prac2/states/user_auth_provider.dart';
 
 import 'package:prac2/screens/home_screen.dart';
 import 'package:prac2/screens/splash_screen.dart';
-import 'package:prac2/screens/login_screen.dart';
 import 'package:prac2/screens/interest_screen.dart';
 import 'package:prac2/screens/chatlist_screen.dart';
 import 'package:prac2/screens/map_screen.dart';
 import 'package:prac2/screens/mypage_screen.dart';
 import 'package:prac2/screens/livelist_screen.dart';
+import 'package:prac2/screens/live_notice_screen.dart';
 
-import 'package:prac2/base/navbar.dart';
+import 'package:prac2/login/login_screen.dart';
+
+import 'package:prac2/base/navbar/named_route.dart';
+import 'package:prac2/base/navbar/dashboard_screen.dart';
+
+
 import 'package:prac2/detail/detailPage.dart';
 import 'package:prac2/detail/agentDetail.dart';
 import 'package:prac2/filter/filterPage.dart';
@@ -23,18 +32,27 @@ import 'package:prac2/filter/filterPage1.dart';
 
 
 void main() {
-  // KakaoSdk.init(nativeAppKey: '{1964206af6e9ee272eb2e64260079bc2}');
-  runApp(MyApp());
+  KakaoSdk.init(nativeAppKey: '{1964206af6e9ee272eb2e64260079bc2}');
+  runApp(
+      const ProviderScope(child: MyApp())
+  );
 }
 
+final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
+final GlobalKey<NavigatorState> _shellNavigator = GlobalKey(debugLabel: 'shell');
+
 final _router = GoRouter(
+  navigatorKey: _rootNavigator,
+
+
   routes: [
     GoRoute(
-      path: '/',
+      path: '/home',
+      name: root,
       pageBuilder: (context, state) =>
         MaterialPage(
-          key: ValueKey('home'),
-          child: HomeScreen(),
+          key: state.pageKey,
+          child: DashboardScreen(child: HomeScreen()),
         ),
       ),
     GoRoute(
@@ -42,7 +60,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('chatlist'),
-            child: ChatList(),
+            child: DashboardScreen(child: ChatList()),
           ),
     ),
     GoRoute(
@@ -50,7 +68,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('map'),
-            child: MapScreen(),
+            child: DashboardScreen(child: MapScreen()),
           ),
     ),
     GoRoute(
@@ -58,7 +76,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('interest'),
-            child: Interest(),
+            child: DashboardScreen(child: Interest()),
           ),
     ),
     GoRoute(
@@ -66,23 +84,23 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('mypage'),
-            child: MyPage(),
+            child: DashboardScreen(child: MyPage()),
           ),
     ),
-    // GoRoute(
-    //   path: '/login',
-    //   pageBuilder: (context, state) =>
-    //       MaterialPage(
-    //         key: ValueKey('login'),
-    //         child: LoginScreen(),
-    //       ),
-    // ),
+    GoRoute(
+      path: '/login',
+      pageBuilder: (context, state) =>
+          MaterialPage(
+            key: ValueKey('login'),
+            child: LoginScreen(),
+          ),
+    ),
     GoRoute(
       path: '/livelist',
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('live'),
-            child: LiveList(),
+            child: DashboardScreen(child: LiveList()),
           ),
     ),
     GoRoute(
@@ -90,7 +108,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('livenoitce'),
-            child: LiveNotice(),
+            child: DashboardScreen(child: LiveNotice()),
           ),
     ),
     GoRoute(
@@ -98,7 +116,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('detailPage'),
-            child: Detail(),
+            child: DashboardScreen(child: Detail()),
           ),
     ),
     GoRoute(
@@ -114,7 +132,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('agentDetail'),
-            child: Agent(),
+            child: DashboardScreen(child: Agent()),
           ),
     ),
     GoRoute(
@@ -122,12 +140,77 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('filterPage1'),
-            child: FilterOne(),
+            child: DashboardScreen(child: FilterOne()),
           ),
     ),
 
+    ShellRoute(
+        navigatorKey: _shellNavigator,
+        builder: (context, state, child) => DashboardScreen(key: state.pageKey, child: child),
 
+        routes: [
+          GoRoute(
+              path: '/',
+              name: home,
+              pageBuilder: (context, state) {
+                return NoTransitionPage(
+                    child: HomeScreen(
+                        key: state.pageKey
+                    )
+                );
+              }
+          ),
 
+          GoRoute(
+              path: '/chatlist',
+              name: chatlist,
+              pageBuilder: (context, state) {
+                return NoTransitionPage(
+                    child: ChatList(
+                        key: state.pageKey
+                    )
+                );
+              }
+          ),
+
+          GoRoute(
+              path: '/map',
+              name: map,
+              pageBuilder: (context, state) {
+                return NoTransitionPage(
+                    child: MapScreen(
+                        key: state.pageKey
+                    )
+                );
+              }
+          ),
+
+          GoRoute(
+              path: '/interest',
+              name: interest,
+              pageBuilder: (context, state) {
+                return NoTransitionPage(
+                    child: Interest(
+                        key: state.pageKey
+                    )
+                );
+              }
+          ),
+
+          GoRoute(
+              path: '/mypage',
+              name: mypage,
+              pageBuilder: (context, state) {
+                return NoTransitionPage(
+                    child: MyPage(
+                        key: state.pageKey
+                    )
+                );
+              }
+          ),
+
+        ]
+    ),
 
   ],
 );
@@ -176,9 +259,9 @@ class WatsonApp extends StatefulWidget {
 class _WatsonAppState extends State<WatsonApp> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<UserProvider>(
+    return ChangeNotifierProvider<UserAuthProvider>(
       create: (BuildContext context) {
-        return UserProvider();
+        return UserAuthProvider();
       },
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

@@ -234,7 +234,7 @@ class Agent extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.only(bottom: 20),
               child: Image.asset(
-                'assets/images/img_10.png',
+                'assets/images/img_3.png',
                 width: 300,
                 height: 200,
                 fit: BoxFit.cover,

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:provider/provider.dart';
+
+import 'package:prac2/states/user_auth_provider.dart';
+import 'package:prac2/login/login_platform.dart';
 
 // 홈화면 클래스 생성(인스턴스)
 
@@ -26,11 +30,27 @@ class HomeScreen extends StatelessWidget {
           },
         ),
         actions: [
-          TextButton(
-              onPressed: () {
-                context.push('/login');
-              },
-              child: Text('Login', style: TextStyle(color: Colors.white)),
+          Consumer<UserAuthProvider>(
+            builder: (context, authProvider, _) {
+              if (authProvider.loginPlatform == LoginPlatform.none) {
+                return TextButton(
+                  onPressed: () {
+                    // Here you should call your login logic
+                    // After successful login, call authProvider.login()
+                    // Example: authProvider.login(LoginPlatform.google);
+                    context.go('/login');
+                  },
+                  child: Text('Login', style: TextStyle(color: Colors.white)),
+                );
+              } else {
+                return TextButton(
+                  onPressed: () {
+                    authProvider.logout();
+                  },
+                  child: Text('Logout', style: TextStyle(color: Colors.white)),
+                );
+              }
+            },
           ),
         ],
       ),
