@@ -1,4 +1,4 @@
-package com.watson.auth.user.dto;
+package com.watson.auth.admin.dto;
 
 import lombok.*;
 
@@ -13,5 +13,9 @@ public class UserLoginResponse {
 
     @NonNull
     private String refreshToken;
+
+    @NonNull
+    @Builder.Default
+    private String role = "User";
 
 }

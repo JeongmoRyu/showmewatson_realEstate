@@ -1,4 +1,4 @@
-package com.watson.auth.socialauth.config;
+package com.watson.auth.admin.oauth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +27,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll() // 모든 요청은 인증 없이 접근 가능
 
                 .and()
+                .anonymous() // 익명 인증 활성화
+
+                .and()
                 .oauth2Login()
                 .loginPage("/") // 카카오 로그인 페이지 경로
-                .defaultSuccessUrl("/auth/user/login")
+                .defaultSuccessUrl("/auth/admin") ///auth/user/login")
 
                 .and()
                 .logout();
