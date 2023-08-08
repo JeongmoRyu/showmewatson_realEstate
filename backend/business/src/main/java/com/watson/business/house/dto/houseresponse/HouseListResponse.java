@@ -28,4 +28,8 @@ public class HouseListResponse {
     private String fileName;
 
     //    private boolean isWished;
+//    시도, 구군, 동리
+    private String sidoName;
+    private String gunguName;
+    private String dongleeName;
 }
