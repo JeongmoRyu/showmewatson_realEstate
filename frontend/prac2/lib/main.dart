@@ -31,7 +31,9 @@ import 'package:prac2/filter/filterPage1.dart';
 
 
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   KakaoSdk.init(nativeAppKey: '{1964206af6e9ee272eb2e64260079bc2}');
   runApp(
       const ProviderScope(child: MyApp())
@@ -116,7 +118,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('detailPage'),
-            child: DashboardScreen(child: Detail()),
+            child: Detail(),
           ),
     ),
     GoRoute(
@@ -132,7 +134,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('agentDetail'),
-            child: DashboardScreen(child: Agent()),
+            child: Agent(),
           ),
     ),
     GoRoute(
@@ -140,7 +142,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('filterPage1'),
-            child: DashboardScreen(child: FilterOne()),
+            child: FilterOne(),
           ),
     ),
 

@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget {
                     // Here you should call your login logic
                     // After successful login, call authProvider.login()
                     // Example: authProvider.login(LoginPlatform.google);
-                    context.go('/login');
+                    context.push('/login');
                   },
                   child: Text('Login', style: TextStyle(color: Colors.white)),
                 );
