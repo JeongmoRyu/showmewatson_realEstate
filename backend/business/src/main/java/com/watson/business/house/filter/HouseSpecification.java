@@ -1,8 +1,8 @@
 package com.watson.business.house.filter;
 
 import com.watson.business.house.domain.entity.House;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.MonthlyInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.SaleInfo;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -10,33 +10,32 @@ import javax.persistence.criteria.*;
 public class HouseSpecification {
     //      [일치] 방 코드
     public static Specification<House> equalHouseCode(int houseCode) {
-        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("houseCode"), houseCode);
-        };
+        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) ->
+            criteriaBuilder.equal(root.get("houseCode"), houseCode);
+
     }
 
     //      [일치] 거래 코드
     public static Specification<House> equalContractCode(int contractCode) {
-        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("contractCode"), contractCode);
-        };
+        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) ->
+            criteriaBuilder.equal(root.get("contractCode"), contractCode);
+
     }
     //      [일치] 법정동 코드
     public static Specification<House> equalHouseCode(String dongCode) {
-        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("dongCode"), dongCode);
-        };
+        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) ->
+            criteriaBuilder.equal(root.get("dongCode"), dongCode);
+
     }
     //      [범위 : 최소, 최대] 면적
     public static Specification<House> graterThanSquareMeter(int minSquareMeter) {
-        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.greaterThanOrEqualTo(root.get("squareMeter"), minSquareMeter);
-        };
+        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) ->
+            criteriaBuilder.greaterThanOrEqualTo(root.get("squareMeter"), minSquareMeter);
     }
     public static Specification<House> lessThanSquareMeter(int maxSquareMeter) {
-        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            return criteriaBuilder.lessThanOrEqualTo(root.get("squareMeter"), maxSquareMeter);
-        };
+        return (Root<House> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) ->
+            criteriaBuilder.lessThanOrEqualTo(root.get("squareMeter"), maxSquareMeter);
+
     }
     //      [범위 : 최소, 최대] 월세
     public static Specification<House> graterThanOrEqualMonthlyRent(int minMonthlyRent) {
