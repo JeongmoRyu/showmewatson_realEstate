@@ -4,9 +4,9 @@ import com.watson.business.exception.HouseErrorCode;
 import com.watson.business.exception.HouseException;
 import com.watson.business.house.domain.entity.House;
 import com.watson.business.house.domain.entity.HouseFile;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.YearlyInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.MonthlyInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.SaleInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.YearlyInfo;
 import com.watson.business.house.domain.repository.HouseFileRepository;
 import com.watson.business.house.domain.repository.HouseRepository;
 import com.watson.business.house.dto.houserequest.ContractRequest;
@@ -116,6 +116,8 @@ public class HouseServiceImp implements HouseService {
             default:
                 throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
+
+//        // TODO: isWish 로직 필요
 
         return houseDetailResponse;
     }
