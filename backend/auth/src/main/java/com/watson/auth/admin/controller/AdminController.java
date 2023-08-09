@@ -2,10 +2,14 @@ package com.watson.auth.admin.controller;
 
 import com.watson.auth.realtor.domain.entity.Realtor;
 import com.watson.auth.admin.dto.RealtorLoginResponse;
+import com.watson.auth.realtor.dto.RealtorLoginRequest;
 import com.watson.auth.realtor.dto.RealtorSignupRequest;
 import com.watson.auth.realtor.service.RealtorService;
 import com.watson.auth.user.domain.entity.User;
 import com.watson.auth.admin.dto.UserLoginResponse;
+import com.watson.auth.user.dto.UserLoginRequest;
+import com.watson.auth.user.dto.UserSignupRequest;
+import com.watson.auth.user.dto.UserSignupResponse;
 import com.watson.auth.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,12 +65,20 @@ public class AdminController {
         User loginUser = userService.findUserByAuthId(authId);
         /* 1-3. 회원이면 로그인 */
         if (loginUser != null) { // 사용자면 사용자로 로그인
-            userLogin(loginUser);
+            UserLoginRequest userLoginRequest = UserLoginRequest.builder()
+                    .authId(loginUser.getAuthId())
+                    .authType(loginUser.getAuthType())
+                    .build();
+            userLogin(userLoginRequest);
             return null;
         } else { // 중개사면 중개사로 로그인
             Realtor loginRealtor = realtorService.findRealtorByAuthId(authId);
             if (loginRealtor != null) {
-                realtorLogin(loginRealtor);
+                RealtorLoginRequest realtorLoginRequest = RealtorLoginRequest.builder()
+                        .authId(loginRealtor.getAuthId())
+                        .authType(loginRealtor.getAuthType())
+                        .build();
+                realtorLogin(realtorLoginRequest);
                 return null;
             } else {
                 /* 1-4. 회원이 아니면 Role 선택 후 회원가입 */
@@ -74,8 +87,8 @@ public class AdminController {
         }
     }
 
-    public ResponseEntity<UserLoginResponse> userLogin(User loginUser) {
-        UserLoginResponse userLoginResponse = userService.modifyAccessToken(loginUser);
+    public ResponseEntity<UserLoginResponse> userLogin(UserLoginRequest userLoginRequest) {
+        UserLoginResponse userLoginResponse = userService.modifyAccessToken(userLoginRequest);
 
         if(userLoginResponse != null) {
             return ResponseEntity.status(HttpStatus.OK).body(userLoginResponse);
@@ -84,20 +97,19 @@ public class AdminController {
         }
     }
 
-    public ResponseEntity<RealtorLoginResponse> realtorLogin(Realtor loginRealtor) {
+    public ResponseEntity<RealtorLoginResponse> realtorLogin(RealtorLoginRequest realtorLoginRequest) {
 
-        RealtorLoginResponse realtorLoginResponse = realtorService.modifyAccessToken(loginRealtor);
+        RealtorLoginResponse realtorLoginResponse = realtorService.modifyAccessToken(realtorLoginRequest);
 
         if(realtorLoginResponse != null) {
             return ResponseEntity.status(HttpStatus.OK).body(realtorLoginResponse);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(realtorLoginResponse);
         }
-
     }
 
     @PostMapping("/user")
-    public ResponseEntity.BodyBuilder userSignup(@RequestParam String nickname) {
+    public ResponseEntity<UserLoginResponse> userSignup(String nickname) {
 
         while(true) { // 닉네임 중복 체크
             User findUser = userService.findUserByNickname(nickname);
@@ -106,26 +118,30 @@ public class AdminController {
                 break;
             } else {
                 log.info("사용 중인 닉네임입니다.");
-                return ResponseEntity.status(HttpStatus.CONFLICT); // 이미 사용 중인 닉네임
+                return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 이미 사용 중인 닉네임
             }
         }
 
-        User newUser = userService.addUser(nickname); // 회원가입
+        UserSignupResponse newUser = userService.addUser(nickname); // 회원가입
 
-        userLogin(newUser); // 로그인
+        UserLoginRequest userLoginRequest = UserLoginRequest.builder()
+                .authId(newUser.getAuthId())
+                .authType(newUser.getAuthType())
+                .build();
 
-        return ResponseEntity.status(HttpStatus.OK);
+        UserLoginResponse userLoginResponse = userService.modifyAccessToken(userLoginRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userLoginResponse);
     }
 
     @PostMapping("/realtor")
-//    public void realtorSignup(@RequestPart MultipartFile file, @RequestPart RealtorSignupRequest realtorSignupRequest) { // realtor 등록 이미지 없이 등록 테스트 위해 주석
-    public void realtorSignup(@RequestPart RealtorSignupRequest realtorSignupRequest) {
+    public ResponseEntity<RealtorLoginResponse> realtorSignup(@RequestPart MultipartFile profileImg, @RequestPart MultipartFile agencyImg, @RequestPart RealtorSignupRequest realtorSignupRequest) {
 
-//        Realtor newRealtor = realtorService.addRealtor(file, realtorSignupRequest); // 회원가입
-        Realtor newRealtor = realtorService.addRealtor(realtorSignupRequest); // 회원가입
+        RealtorLoginRequest realtorLoginRequest = realtorService.addRealtor(profileImg, agencyImg, realtorSignupRequest); // 회원가입
 
-        realtorLogin(newRealtor); // 로그인
+        RealtorLoginResponse realtorLoginResponse = realtorService.modifyAccessToken(realtorLoginRequest); // 로그인
 
+        return ResponseEntity.status(HttpStatus.OK).body(realtorLoginResponse);
     }
 
 }

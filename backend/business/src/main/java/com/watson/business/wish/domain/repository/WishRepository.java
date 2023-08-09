@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface WishesRepository extends JpaRepository<Wish, Long> {
+public interface WishRepository extends JpaRepository<Wish, Long> {
 	@Query("SELECT w.houseId FROM Wish w WHERE w.userId = :userId AND w.isDeleted = false")
 	List<Long> findHouseIdByUserIdAndDeletedFalse(String userId);
+	Wish findWishesByUserIdAndHouseId(String userId, Long houseId);
 }
