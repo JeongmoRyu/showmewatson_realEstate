@@ -4,9 +4,9 @@ import com.watson.business.exception.HouseErrorCode;
 import com.watson.business.exception.HouseException;
 import com.watson.business.house.domain.entity.House;
 import com.watson.business.house.domain.entity.HouseFile;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.YearlyInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.MonthlyInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.SaleInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.YearlyInfo;
 import com.watson.business.house.domain.repository.HouseFileRepository;
 import com.watson.business.house.domain.repository.HouseRepository;
 import com.watson.business.house.dto.houserequest.ContractRequest;
@@ -221,7 +221,7 @@ public class HouseServiceImp implements HouseService {
     @Override
     public List<HouseListResponse> findAllHousesWithIsWish(String userId) {
         List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
-        List<Long> isWiehedList = wishesService.findWishesByUserid(userId);
+        List<Long> isWiehedList = wishesService.findWishedHouseIdByUserId(userId);
         log.debug("{}", userId);
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for (House h : houseEntityList) {
@@ -256,9 +256,24 @@ public class HouseServiceImp implements HouseService {
         return allHouseList;
     }
 
+    @Override
+    public List<HouseListResponse> findWishedHousesByUserId(String userId) {
+        List<Long> houseIds = wishesService.findWishedHouseIdByUserId(userId);
+        log.debug("{}", userId);
+        List<HouseListResponse> allHouseList = new ArrayList<>();
+        for(Long id : houseIds) {
+            House house = houseRepository.findHouseById(id);
+            EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
+            HouseListResponse houseListResponse = listEntityToDto(house, emdNameResponse);
+            houseListResponse.setWished(true);
+            allHouseList.add(houseListResponse);
+        }
+        return allHouseList;
+    }
+
     private HouseListResponse listEntityToDto(House house, EmdNameResponse emdNameResponse) {
         HouseListResponse response =  HouseListResponse.builder()
-                .houseId(house.getId())
+                .id(house.getId())
                 .houseCode(house.getHouseCode())
                 .squareMeter(house.getSquareMeter())
                 .suppleAreaMeter(house.getSupplyAreaMeter())

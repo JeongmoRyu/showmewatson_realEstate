@@ -1,4 +1,4 @@
-package com.watson.business.house.domain.entity.houseContractInfoDetail;
+package com.watson.business.house.domain.entity.housecontractinfodetail;
 
 import javax.persistence.*;
 

@@ -1,8 +1,8 @@
 package com.watson.business.house.filter;
 
 import com.watson.business.house.domain.entity.House;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.MonthlyInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.SaleInfo;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;

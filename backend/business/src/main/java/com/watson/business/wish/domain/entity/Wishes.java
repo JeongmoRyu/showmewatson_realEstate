@@ -25,4 +25,8 @@ public class Wishes {
 	private boolean isDeleted;
 	@Column
 	private String fcmToken;
+
+	public void editWish() {
+		this.isDeleted = !isDeleted;
+	}
 }
