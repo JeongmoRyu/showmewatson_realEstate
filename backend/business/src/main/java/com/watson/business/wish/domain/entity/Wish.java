@@ -12,7 +12,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Getter
-public class Wishes {
+@Table(name="wishes")
+public class Wish {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
