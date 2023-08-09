@@ -2,8 +2,8 @@ package com.watson.business.wish.controller;
 
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
 import com.watson.business.house.service.HouseService;
-import com.watson.business.wish.dto.WishesRequest;
-import com.watson.business.wish.service.WishesService;
+import com.watson.business.wish.dto.WishRequest;
+import com.watson.business.wish.service.WishService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/user/wish")
 @RequiredArgsConstructor
-public class WishesController {
+public class WishController {
 //    등록, 삭제, 조회(전체)
-    private final WishesService wishesService;
+    private final WishService wishService;
     private final HouseService houseService;
 
 //    임시 아이디
@@ -30,15 +30,15 @@ public class WishesController {
         return ResponseEntity.status(HttpStatus.OK).body(houseService.findWishedHousesByUserId(userId));
     }
     @PostMapping("")
-    public ResponseEntity<String> wishesAdd(@RequestBody WishesRequest wishesRequest) {
+    public ResponseEntity<String> wishesAdd(@RequestBody WishRequest wishRequest) {
         //  oauth server : access token -> return userId
-        wishesService.addWish(userId, wishesRequest);
+        wishService.addWish(userId, wishRequest);
         return ResponseEntity.status(HttpStatus.OK).body("관심등록 완료");
     }
     @PutMapping("")
-    public ResponseEntity<String> wishesModify(@RequestBody WishesRequest wishesRequest) {
+    public ResponseEntity<String> wishesModify(@RequestBody WishRequest wishRequest) {
         //  oauth server : access token -> return userId
-        wishesService.modifyWish(userId, wishesRequest);
+        wishService.modifyWish(userId, wishRequest);
         return ResponseEntity.status(HttpStatus.OK).body("관심등록 취소 완료");
     }
 }
