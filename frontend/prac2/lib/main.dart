@@ -1,76 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:provider/provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart' hide ChangeNotifierProvider, Provider;
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'package:firebase_core/firebase_core.dart';
-
 import 'package:prac2/screens/live_notice_screen.dart';
-import 'package:prac2/states/user_auth_provider.dart';
+import 'package:prac2/states/user_provider.dart';
+import 'package:provider/provider.dart';
+// import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 import 'package:prac2/screens/home_screen.dart';
 import 'package:prac2/screens/splash_screen.dart';
+import 'package:prac2/screens/login_screen.dart';
 import 'package:prac2/screens/interest_screen.dart';
 import 'package:prac2/screens/chatlist_screen.dart';
 import 'package:prac2/screens/map_screen.dart';
 import 'package:prac2/screens/mypage_screen.dart';
 import 'package:prac2/screens/livelist_screen.dart';
-import 'package:prac2/screens/live_notice_screen.dart';
 
-import 'package:prac2/login/login_screen.dart';
-import 'package:prac2/login/login_platform.dart';
-
-import 'package:prac2/base/navbar/named_route.dart';
-import 'package:prac2/base/navbar/dashboard_screen.dart';
-
-
+import 'package:prac2/base/navbar.dart';
 import 'package:prac2/detail/detailPage.dart';
-import 'package:prac2/detail/agentDetail.dart';
-import 'package:prac2/filter/filterPage.dart';
 import 'package:prac2/filter/filterPage1.dart';
 
 
 
-void main() async {
-  // 구글 소셜 로그인 : SDK 초기화
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  
-  // 카카오톡 소셜 로그인 : SDK 초기화
-  KakaoSdk.init(nativeAppKey: '1964206af6e9ee272eb2e64260079bc2');
-  
-  
-  runApp(
-      const ProviderScope(child: MyApp())
-  );
-}
-
-final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigator = GlobalKey(debugLabel: 'shell');
-
-String? redirectIfNotAuthenticated(BuildContext context, GoRouterState state) {
-  final authProvider = Provider.of<UserAuthProvider>(context, listen: false);
-  final isAuthenticated = authProvider.loginPlatform != LoginPlatform.none;
-  if (!isAuthenticated) {
-    return '/login';
-  } else {
-    return null;
-  }
+void main() {
+  // KakaoSdk.init(nativeAppKey: '{1964206af6e9ee272eb2e64260079bc2}');
+  runApp(MyApp());
 }
 
 final _router = GoRouter(
-  navigatorKey: _rootNavigator,
-
-
   routes: [
     GoRoute(
-      path: '/home',
-      name: root,
+      path: '/',
       pageBuilder: (context, state) =>
         MaterialPage(
-          key: state.pageKey,
-          child: DashboardScreen(child: HomeScreen()),
+          key: ValueKey('home'),
+          child: HomeScreen(),
         ),
       ),
     GoRoute(
@@ -78,7 +40,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('chatlist'),
-            child: DashboardScreen(child: ChatList()),
+            child: ChatList(),
           ),
     ),
     GoRoute(
@@ -86,7 +48,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('map'),
-            child: DashboardScreen(child: MapScreen()),
+            child: MapScreen(),
           ),
     ),
     GoRoute(
@@ -94,7 +56,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('interest'),
-            child: DashboardScreen(child: Interest()),
+            child: Interest(),
           ),
     ),
     GoRoute(
@@ -102,23 +64,23 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('mypage'),
-            child: DashboardScreen(child: MyPage()),
+            child: MyPage(),
           ),
     ),
-    GoRoute(
-      path: '/login',
-      pageBuilder: (context, state) =>
-          MaterialPage(
-            key: ValueKey('login'),
-            child: LoginScreen(),
-          ),
-    ),
+    // GoRoute(
+    //   path: '/login',
+    //   pageBuilder: (context, state) =>
+    //       MaterialPage(
+    //         key: ValueKey('login'),
+    //         child: LoginScreen(),
+    //       ),
+    // ),
     GoRoute(
       path: '/livelist',
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('live'),
-            child: DashboardScreen(child: LiveList()),
+            child: LiveList(),
           ),
     ),
     GoRoute(
@@ -126,11 +88,10 @@ final _router = GoRouter(
       pageBuilder: (context, state) =>
           MaterialPage(
             key: ValueKey('livenoitce'),
-            child: DashboardScreen(child: LiveNotice()),
+            child: LiveNotice(),
           ),
     ),
     GoRoute(
-      redirect: redirectIfNotAuthenticated,
       path: '/detailPage',
       pageBuilder: (context, state) =>
           MaterialPage(
@@ -146,91 +107,6 @@ final _router = GoRouter(
             child: Filter(),
           ),
     ),
-    GoRoute(
-      path: '/agentDetail',
-      pageBuilder: (context, state) =>
-          MaterialPage(
-            key: ValueKey('agentDetail'),
-            child: Agent(),
-          ),
-    ),
-    GoRoute(
-      path: '/filterPage1',
-      pageBuilder: (context, state) =>
-          MaterialPage(
-            key: ValueKey('filterPage1'),
-            child: FilterOne(),
-          ),
-    ),
-
-    ShellRoute(
-        navigatorKey: _shellNavigator,
-        builder: (context, state, child) => DashboardScreen(key: state.pageKey, child: child),
-
-        routes: [
-          GoRoute(
-              path: '/',
-              name: home,
-              pageBuilder: (context, state) {
-                return NoTransitionPage(
-                    child: HomeScreen(
-                        key: state.pageKey
-                    )
-                );
-              }
-          ),
-
-          GoRoute(
-              path: '/chatlist',
-              name: chatlist,
-              pageBuilder: (context, state) {
-                return NoTransitionPage(
-                    child: ChatList(
-                        key: state.pageKey
-                    )
-                );
-              }
-          ),
-
-          GoRoute(
-              path: '/map',
-              name: map,
-              pageBuilder: (context, state) {
-                return NoTransitionPage(
-                    child: MapScreen(
-                        key: state.pageKey
-                    )
-                );
-              }
-          ),
-
-          GoRoute(
-              path: '/interest',
-              name: interest,
-              pageBuilder: (context, state) {
-                return NoTransitionPage(
-                    child: Interest(
-                        key: state.pageKey
-                    )
-                );
-              }
-          ),
-
-          GoRoute(
-              path: '/mypage',
-              name: mypage,
-              pageBuilder: (context, state) {
-                return NoTransitionPage(
-                    child: MyPage(
-                        key: state.pageKey
-                    )
-                );
-              }
-          ),
-
-        ]
-    ),
-
   ],
 );
 
@@ -278,9 +154,9 @@ class WatsonApp extends StatefulWidget {
 class _WatsonAppState extends State<WatsonApp> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<UserAuthProvider>(
+    return ChangeNotifierProvider<UserProvider>(
       create: (BuildContext context) {
-        return UserAuthProvider();
+        return UserProvider();
       },
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
@@ -290,12 +166,6 @@ class _WatsonAppState extends State<WatsonApp> {
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFDCBF97)),
-            ),
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFDCBF97)),
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Set the default text color to white
             ),
           ),
         ),

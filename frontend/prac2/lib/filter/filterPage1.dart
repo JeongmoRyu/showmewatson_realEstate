@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-
-class FilterOne extends StatefulWidget {
-  const FilterOne({Key? key}) : super(key: key);
+class Filter extends StatefulWidget {
+  const Filter({Key? key}) : super(key: key);
 
   @override
-  _FilterOneState createState() => _FilterOneState();
+  _FilterState createState() => _FilterState();
 }
 
-class _FilterOneState extends State<FilterOne> {
+class _FilterState extends State<Filter> {
   int? startIndex;
   int? endIndex;
   List<String> clickList = [];
@@ -20,13 +18,6 @@ class _FilterOneState extends State<FilterOne> {
   int? toValue;
   TextEditingController _fromController = TextEditingController();
   TextEditingController _toController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _fromController.text = '${startIndex ?? ''}';
-    _toController.text = '${endIndex ?? ''}';
-  }
 
   void selectButtonsBetween(int startIndex, int endIndex) {
     setState(() {
@@ -80,110 +71,6 @@ class _FilterOneState extends State<FilterOne> {
       ),
       body: Column(
         children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () => print('Button 1 is pressed'),
-                child: Text('필터 1'),
-              ),
-            ),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () => print('Button 2 is pressed'),
-                child: Text('필터 2'),
-              ),
-            ),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () => print('Button 3 is pressed'),
-                child: Text('필터 3'),
-              ),
-            ),
-          ],
-        ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Icon(FontAwesomeIcons.arrowDownWideShort),
-              TextButton(
-                onPressed: () {
-                  if (clickList.isNotEmpty) {
-                    setState(() {
-                      clickList.removeRange(1, clickList.length - 1);
-                    });
-                  }
-                },
-                child: Column(
-                  children: [
-                    Text(
-                      clickList.isEmpty ? '버튼 1' : clickList.length == 1 ? clickList.first : '${clickList.first}',
-                      textAlign: TextAlign.center,
-                    ),
-                    if (clickList.length > 1)
-                      Text(
-                        '~ ${clickList.last}',
-                        textAlign: TextAlign.center,
-                      ),
-                  ],
-                ),
-                style: TextButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (clickList_2.isNotEmpty) {
-                    setState(() {
-                      clickList_2.removeRange(1, clickList_2.length - 1);
-                    });
-                  }
-                },
-                child: Column(
-                  children: [
-                    Text(
-                      clickList_2.isEmpty ? '버튼 2' : clickList_2.length == 1 ? clickList_2.first : '${clickList_2.first}',
-                      textAlign: TextAlign.center,
-                    ),
-                    if (clickList_2.length > 1)
-                      Text(
-                        '~ ${clickList_2.last}',
-                        textAlign: TextAlign.center,
-                      ),
-                  ],
-                ),
-                style: TextButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () => print('Button 3 is pressed'),
-                child: Text('버튼 3'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          Padding(
-            padding: EdgeInsets.only(
-              left: 20,
-            ),
-            child: Divider(
-              height: 20.0,
-              color: Colors.grey[100],
-              thickness: 1.0,
-              endIndent: 20.0,
-            ),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -352,12 +239,11 @@ class _FilterOneState extends State<FilterOne> {
                       onChanged: (value) {
                         setState(() {
                           fromValue = int.tryParse(value);
-                          startIndex = fromValue! - 1;
-                          _toController.text = '${startIndex! + 1 ?? ''}';
+                          startIndex = fromValue! - 1; // Subtract 1 to make it zero-based index
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: '${(startIndex ?? 0) + 1}',
+                        hintText: '시작 값',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -378,12 +264,11 @@ class _FilterOneState extends State<FilterOne> {
                       onChanged: (value) {
                         setState(() {
                           toValue = int.tryParse(value);
-                          endIndex = toValue! - 1;
-                          _toController.text = '${endIndex! + 1 ?? ''}';
+                          endIndex = toValue! - 1; // Subtract 1 to make it zero-based index
                         });
                       },
                       decoration: InputDecoration(
-                        hintText: '${(endIndex ?? 0) + 1}',
+                        hintText: '끝 값',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -396,6 +281,8 @@ class _FilterOneState extends State<FilterOne> {
                     },
                     child: Icon(Icons.check),
                   ),
+
+
                 ],
               ),
             ),
@@ -419,6 +306,6 @@ class _FilterOneState extends State<FilterOne> {
 
 void main() {
   runApp(MaterialApp(
-    home: FilterOne(),
+    home: Filter(),
   ));
 }
