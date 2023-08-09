@@ -7,6 +7,7 @@ import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
 import com.watson.business.house.service.HouseFilterService;
 import com.watson.business.house.service.HouseService;
+import com.watson.business.log.service.LogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import java.util.List;
 public class HouseController {
     private final HouseService houseService;
     private final HouseFilterService houseFilterService;
+    private final LogService logService;
 
     @GetMapping("")     // 매물 전체 목록
     public ResponseEntity<List<HouseListResponse>> houseList() {
@@ -34,7 +36,11 @@ public class HouseController {
     }
     @GetMapping("/{id}")  // 매물 상세보기
     public ResponseEntity<HouseDetailResponse> houseDetailsByHouseId(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(houseService.findHouseByHouseId(id));
+        log.debug("{매물 id ::: }", id);
+        HouseDetailResponse findHouse = houseService.findHouseByHouseId(id);
+        String userId = "test"; //accessToken 보내면 userId return하는거 필요
+        logService.insertViewLog(id,userId,findHouse.getDongleeName());
+        return ResponseEntity.status(HttpStatus.OK).body(findHouse);
     }
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)    // 매물 게시글 등록
     public ResponseEntity<String> houseAdd(@RequestPart List<MultipartFile> file, @RequestPart @Valid HouseRegistRequest houseRegistRequest) {
