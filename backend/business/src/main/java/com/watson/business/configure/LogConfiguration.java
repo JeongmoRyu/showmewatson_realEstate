@@ -1,4 +1,4 @@
-package com.watson.log.config;
+package com.watson.business.configure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -16,29 +16,29 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.watson.log.domain.entity",
-        entityManagerFactoryRef = "logEntityManager",
+        basePackages = "com.watson.business.log.domain.repository",
+        entityManagerFactoryRef = "logEntityManagerFactory",
         transactionManagerRef = "logTransactionManager"
 )
 public class LogConfiguration {
 
-    @Bean(name = "logDataSource")
+    @Bean
     @ConfigurationProperties(prefix = "spring.second-datasource")
     public DataSource logDataSource() {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean(name = "logEntityManagerFactory")
+    @Bean
     public LocalContainerEntityManagerFactoryBean logEntityManagerFactory(){
     LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(logDataSource());
-        em.setPackagesToScan(new String[] {"com.watson.log.domain.entity"});
+        em.setPackagesToScan("com.watson.business.log.domain.entity");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         return em;
     }
 
     @Bean(name = "logTransactionManager")
-    public PlatformTransactionManager transactionManager(){
+    public PlatformTransactionManager logTransactionManager(){
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(logEntityManagerFactory().getObject());
         return transactionManager;
