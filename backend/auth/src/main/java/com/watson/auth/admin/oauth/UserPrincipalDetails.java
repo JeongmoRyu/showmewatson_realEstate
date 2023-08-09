@@ -1,4 +1,4 @@
-package com.watson.auth.socialauth.dto;
+package com.watson.auth.admin.oauth;
 
 import com.watson.auth.user.domain.entity.User;
 import org.springframework.security.core.GrantedAuthority;

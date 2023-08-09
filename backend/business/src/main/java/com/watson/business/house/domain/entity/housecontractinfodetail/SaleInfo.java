@@ -1,4 +1,4 @@
-package com.watson.business.house.domain.entity.houseContractInfoDetail;
+package com.watson.business.house.domain.entity.housecontractinfodetail;
 
 import javax.persistence.*;
 
@@ -12,14 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "monthly_infos")
-public class MonthlyInfo {
+@Table(name = "sale_infos")
+public class SaleInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long deposit;
-    private Long monthlyRent;
-    private int maintenance;
-    private String maintenanceList;
+    @Column(name = "sale_price")
+    private Long salePrice;
 }
