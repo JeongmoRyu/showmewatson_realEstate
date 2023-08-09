@@ -103,7 +103,7 @@ public class HouseFilterServiceImp implements HouseFilterService {
 
     private HouseListResponse listEntityToDto(House house) {
         return HouseListResponse.builder()
-                .houseId(house.getId())
+                .id(house.getId())
                 .houseCode(house.getHouseCode())
                 .squareMeter(house.getSquareMeter())
                 .suppleAreaMeter(house.getSupplyAreaMeter())

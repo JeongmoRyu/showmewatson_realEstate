@@ -54,7 +54,7 @@ public class HouseDetailResponse {
     private HouseOption houseOption;
 
     public void setHouseListResponse(HouseListResponse list) {
-        this.houseId = list.getHouseId();
+        this.houseId = list.getId();
         this.houseCode = list.getHouseCode();
         this.squareMeter = list.getSquareMeter();
         this.suppleAreaMeter = list.getSuppleAreaMeter();

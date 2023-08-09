@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import com.watson.business.house.domain.entity.housecontractinfodetail.MonthlyInfo;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
