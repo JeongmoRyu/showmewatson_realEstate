@@ -15,14 +15,18 @@ import javax.persistence.*;
 public class Wishes {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
 
-	@Column
+	@Column(name = "user_id")
 	private String userId;
-	@Column
+
+	@Column(name = "house_id")
 	private Long houseId;
-	@Column
+
+	@Column(name = "is_deleted")
 	private boolean isDeleted;
-	@Column
+
+	@Column(name = "fcm_token")
 	private String fcmToken;
 }

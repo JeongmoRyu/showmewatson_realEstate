@@ -22,9 +22,10 @@ public class HouseFile extends BaseTime {
     @JoinColumn(name = "house_id")
     private House house;
 
+    @Column(name = "file_name")
     private String fileName;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
     private boolean isDeleted;
 
     public void setHouse(House house) {
