@@ -1,4 +1,4 @@
-package com.watson.auth.jwt;
+package com.watson.auth.admin.jwt;
 
 import lombok.*;
 

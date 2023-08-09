@@ -1,5 +1,6 @@
 package com.watson.business.house.domain.entity;
 
+import com.watson.business.house.domain.entity.housecontractinfodetail.MonthlyInfo;
 import com.watson.business.house.domain.entity.housecontractinfodetail.SaleInfo;
 import com.watson.business.house.domain.entity.housecontractinfodetail.YearlyInfo;
 import com.watson.business.house.dto.item.STATUS;

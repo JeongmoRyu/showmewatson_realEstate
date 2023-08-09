@@ -117,8 +117,6 @@ public class HouseServiceImp implements HouseService {
                 throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
-//        // TODO: isWish 로직 필요
-
         return houseDetailResponse;
     }
 
