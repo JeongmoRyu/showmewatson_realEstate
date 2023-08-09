@@ -1,82 +1,73 @@
 package com.watson.auth.user.controller;
 
-import com.watson.auth.jwt.*;
-import com.watson.auth.socialauth.service.UserPrincipalOauth2UserService;
-import com.watson.auth.user.domain.entity.User;
-import com.watson.auth.user.dto.UserLoginResponse;
+import com.watson.auth.user.dto.UserResponse;
+import com.watson.auth.user.dto.UserUpdateRequest;
 import com.watson.auth.user.service.UserService;
-import io.swagger.annotations.Api;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
-@Api(tags = "User 컨트롤러")
 @RequestMapping(value = "/auth/user")
 public class UserController {
 
-    private final JwtUtils jwtUtils;
+    private final UserService userService;
 
-    public UserController(JwtUtils jwtUtils) {
-        this.jwtUtils = jwtUtils;
-    }
+    /* 정보 수정 (닉네임) */
+    @PutMapping
+    public ResponseEntity<String> userModify(@RequestPart UserUpdateRequest userUpdateRequest) {
+        try {
+            String accessToken = userUpdateRequest.getAccessToken();
+            log.info("accessToken : " + accessToken);
+            if (userService.validateToken(accessToken)) {
+                log.info("유효한 토큰입니다.");
+                userService.modifyNickname(accessToken, userUpdateRequest.getNickname());
+                log.info("닉네임을 수정하였습니다.");
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    UserPrincipalOauth2UserService userPrincipalOauth2UserService;
-
-    /* 로그인 : 기회원 확인 및 미회원인 경우 회원가입까지 된 상태 */
-    @GetMapping("/login")
-    public ResponseEntity<UserLoginResponse> userLogin() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // authentication 가져오기
-        log.info("authId : " + authentication.getName()); // authId 가져옴
-
-        UserLoginResponse userLoginResponse = new UserLoginResponse(); // 리턴할 userLogingResponse
-
-        // 인증 성공 시 Access Token과 Refresh Token 생성
-        if(authentication.isAuthenticated()) {
-            JwtTokens jwtTokens = jwtUtils.generateTokens(authentication);
-
-            userLoginResponse = UserLoginResponse.builder()
-                    .accessToken(jwtTokens.getAccessToken())
-                    .refreshToken(jwtTokens.getRefreshToken())
-                    .build();
-
-            String accessToken = userLoginResponse.getAccessToken();
-            String refreshToken = userLoginResponse.getRefreshToken();
-
-            log.info("AccessToken : " + accessToken);
-            log.info("RefreshToken : " + refreshToken);
-
-            // DB에 Access Token 저장
-            String authId = authentication.getName();
-            User loginUser = userService.findUserByAuthId(authId);
-            loginUser.setAccessToken(accessToken); // 새로운 accessToken으로 변경
-            userService.modifyAccessToken(loginUser);
-
-            return ResponseEntity.status(HttpStatus.OK).body(userLoginResponse);
-
+                return ResponseEntity.status(HttpStatus.OK).build();
+            } else {
+                log.info("유효하지 않은 토큰입니다.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 유효하지 않은 토큰
+            }
+        } catch (Exception e) {
+            log.info("INTERNAL_SERVER_ERROR");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(userLoginResponse);
-
     }
-
-    /* 정보 수정 */
-
 
     /* 탈퇴 */
 
 
     /* 회원 정보 조회 */
+    @GetMapping
+    public ResponseEntity<UserResponse> userDetails(@RequestHeader("Authorization") String accessToken) {
+        log.info("try 직전");
+        try {
+            log.info("nickname 초기설정");
+            String nickname = "";
+            log.info("accessToken : " + accessToken);
+            if (userService.validateToken(accessToken)) {
+                log.info("findNickname 전");
+                nickname = userService.findNicknameByAccessToken(accessToken);
+                log.info("nickname : " + nickname);
+            } else {
+                log.info("UNAUTHORIZED");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 유효하지 않은 토큰
+            }
+            UserResponse userResponse = UserResponse.builder()
+                    .nickname(nickname)
+                    .build();
 
+            return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("INTERNAL_SERVER_ERROR");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }

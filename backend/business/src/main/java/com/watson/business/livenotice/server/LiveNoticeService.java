@@ -1,36 +1,55 @@
 package com.watson.business.livenotice.server;
 
+import com.watson.business.exception.HouseErrorCode;
+import com.watson.business.exception.HouseException;
+import com.watson.business.liveschedule.domain.repository.LiveScheduleRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-@Service
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class LiveNoticeService {
     private final RedisTemplate<String, Object> noticeRedisTemplate;
-
-    public LiveNoticeService(RedisTemplate<String, Object> noticeRedisTemplate) {
-        this.noticeRedisTemplate = noticeRedisTemplate;
-        log.info("noticeRedisTemplate: {}", noticeRedisTemplate);
-    }
+    private final LiveScheduleRepository liveScheduleRepository;
 
     public void registLiveNotice(String houseId, String fcmToken) {
-        putLiveNotice(houseId, fcmToken, false);
-    }
+        try {
+            Date liveDate = liveScheduleRepository.findLiveDateByHouseId(Long.valueOf(houseId));
 
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");
+            String formattedDate = sdf.format(liveDate);
+
+            log.info("liveDate: {}", formattedDate);
+
+            addValueToSet(formattedDate, fcmToken+","+houseId);
+        } catch (NullPointerException e) {
+            throw new HouseException(HouseErrorCode.NOT_FOUND_LIVE_INFO);
+        }
+    }
     public void cancelLiveNotice(String houseId, String fcmToken) {
-        putLiveNotice(houseId, fcmToken, true);
+        try {
+            Date liveDate = liveScheduleRepository.findLiveDateByHouseId(Long.valueOf(houseId));
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");
+            String formattedDate = sdf.format(liveDate);
+
+            deleteValueFromSet(formattedDate, fcmToken+","+houseId);
+        } catch (NullPointerException e) {
+            throw new HouseException(HouseErrorCode.NOT_FOUND_LIVE_INFO);
+        }
     }
 
-    // 실제 Redis 서버에 저장
-    private void putLiveNotice(String houseId, String fcmToken, Boolean isDeleted) {
-        HashOperations<String, Object, Object> hashOps = noticeRedisTemplate.opsForHash();
-        hashOps.put(houseId, fcmToken, isDeleted);
+    public Long addValueToSet(String key, String value) {
+        return noticeRedisTemplate.opsForSet().add(key, value);
     }
 
-    public Object getLiveNotice(String houseId, String fcmToken) {
-        HashOperations<String, Object, Object> hashOps = noticeRedisTemplate.opsForHash();
-        return hashOps.get(houseId, fcmToken);
+    public Long deleteValueFromSet(String key, String value) {
+        return noticeRedisTemplate.opsForSet().remove(key, value);
     }
 }

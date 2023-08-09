@@ -1,9 +1,6 @@
 package com.watson.auth.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
@@ -34,13 +31,18 @@ public abstract class BaseEntity {
     @Column(nullable = false)
     private String password; // Security로 로그인 하기 위해 password 생성 (진짜 pw 아님)
 
+    @Column(nullable = false) // oauth 때문에 추가
+    private String role;
+
     @Column(nullable = false)
+    @Builder.Default
     private boolean isBanned = false; //  정지 여부
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isDeleted = false; // 탈퇴 여부
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 512)
     private String accessToken; // 로그인 액세스 토큰
 
     @Column(nullable = false)
