@@ -12,7 +12,8 @@ public interface HouseService {
     List<HouseListResponse> findAllHouses();
     HouseDetailResponse findHouseByHouseId(Long houseId);
     Long addHouse(List<MultipartFile> file, HouseRegistRequest houseRegistRequest, String realtorId);
-//    매물 필터링 목록
     Long modifyHouse(Long houseId, List<MultipartFile> file, HouseUpdateRequest houseUpdateRequest, String realtorId);
     List<HouseListResponse> findAllHousesWithIsWish(String userId);
+//    사용자의 관심매물 리스트
+    List<HouseListResponse> findWishedHousesByUserId(String userId);
 }
