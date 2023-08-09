@@ -1,19 +1,15 @@
-package com.watson.business.house.dto.houseresponse;
+package com.watson.business.wish.dto;
 
 import com.watson.business.house.dto.item.STATUS;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class HouseListResponse {
-    private Long id;
+public class WishesResponse {
+    private Long houseId;
     private int houseCode;
     private double squareMeter;
-    private double suppleAreaMeter;
     private int floor;
     private String address;
 
@@ -28,7 +24,7 @@ public class HouseListResponse {
     private String fileName;
 
     private boolean isWished;
-//    시도, 구군, 동리
+    //    시도, 구군, 동리
     private String sidoName;
     private String gunguName;
     private String dongleeName;
