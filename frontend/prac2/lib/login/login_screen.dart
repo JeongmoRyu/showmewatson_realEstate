@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'package:http/http.dart' as http;
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao;
 import 'package:provider/provider.dart';
 
 import 'package:prac2/login/login_platform.dart';
@@ -23,16 +22,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (googleUser != null) { // null 체크 추가
         final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-        final credential = GoogleAuthProvider.credential(
+        final credential = firebase.GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        await firebase.FirebaseAuth.instance.signInWithCredential(credential);
+
         context.go('/home'); // 홈 화면으로 이동
 
         setState(() {
           _loginPlatform = LoginPlatform.google;
         });
+
+        final UserAuthProvider userAuthProvider = Provider.of<UserAuthProvider>(context, listen: false);
+        userAuthProvider.login(LoginPlatform.google);
 
         print('Google 로그인 성공!');
       } else {
@@ -45,16 +48,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void signInWithKakao() async {
     try {
-      bool isInstalled = await isKakaoTalkInstalled();
-      OAuthToken token = isInstalled
-          ? await UserApi.instance.loginWithKakaoTalk()
-          : await UserApi.instance.loginWithKakaoAccount();
+      bool isInstalled = await kakao.isKakaoTalkInstalled();
+      kakao.OAuthToken token = isInstalled
+          ? await kakao.UserApi.instance.loginWithKakaoTalk()
+          : await kakao.UserApi.instance.loginWithKakaoAccount();
+
+      kakao.User user = await kakao.UserApi.instance.me();
 
       context.go('/home'); // 홈 화면으로 이동
 
       setState(() {
         _loginPlatform = LoginPlatform.kakao;
       });
+
+      final UserAuthProvider userAuthProvider = Provider.of<UserAuthProvider>(context, listen: false);
+      userAuthProvider.login(LoginPlatform.kakao);
 
       print('카카오톡으로 로그인 성공!');
     } catch (error) {
@@ -68,7 +76,6 @@ class _LoginScreenState extends State<LoginScreen> {
         await GoogleSignIn().signOut();
         break;
       case LoginPlatform.kakao:
-        await UserApi.instance.logout();
         break;
       case LoginPlatform.none:
         break;
@@ -138,138 +145,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-
-// import 'dart:convert';
-// import 'dart:io';
-//
-// import 'package:flutter/material.dart';
-// import 'package:go_router/go_router.dart';
-// import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:provider/provider.dart';
-//
-// import 'package:prac2/login/login_platform.dart';
-// import 'package:prac2/states/user_auth_provider.dart';
-//
-//
-// // 로그인 화면
-// class LoginScreen extends StatefulWidget {
-//   const LoginScreen({Key? key}) : super(key: key);
-//
-//   @override
-//   State<LoginScreen> createState() => _KakaoLoginPageState();
-// }
-//
-// class _KakaoLoginPageState extends State<LoginScreen> {
-//   LoginPlatform _loginPlatform = LoginPlatform.none;
-//
-//
-//   void signInWithKakao() async {
-//     try {
-//       bool isInstalled = await isKakaoTalkInstalled();
-//
-//       OAuthToken token = isInstalled
-//           ? await UserApi.instance.loginWithKakaoTalk()
-//           : await UserApi.instance.loginWithKakaoAccount();
-//
-//       final url = Uri.https('kapi.kakao.com', '/v2/user/me');
-//
-//       // final response = await http.get(
-//       //   url,
-//       //   headers: {
-//       //     HttpHeaders.authorizationHeader: 'Bearer ${token.accessToken}'
-//       //   },
-//       // );
-//
-//       context.go('/'); // 홈 화면으로 이동
-//
-//       setState(() {
-//         _loginPlatform = LoginPlatform.kakao;
-//       });
-//
-//       print('로그인 성공!');
-//
-//     } catch (error) {
-//       print('카카오톡으로 로그인 실패 $error');
-//     }
-//   }
-//
-//   void signOut() async {
-//     switch (_loginPlatform) {
-//       case LoginPlatform.google:
-//         break;
-//       case LoginPlatform.kakao:
-//         await UserApi.instance.logout();
-//         break;
-//       case LoginPlatform.none:
-//         break;
-//     }
-//
-//     setState(() {
-//       _loginPlatform = LoginPlatform.none;
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//
-//       // AppBar 부분
-//       appBar: AppBar(
-//         backgroundColor: Color(0xFFDCBF97),
-//         centerTitle: true,
-//         title: InkWell(
-//           onTap: () {
-//             context.go('/');
-//           },
-//           child: Image.asset(
-//             'assets/images/app_icon.png',
-//             width: 45, // 아이콘의 너비
-//             height: 45, // 아이콘의 높이
-//             fit: BoxFit.contain, // 이미지를 부모 위젯 크기에 맞게 조절
-//           ),
-//         ),
-//       ),
-//
-//       body: Center(
-//           child: _loginPlatform != LoginPlatform.none
-//               ? _logoutButton()
-//               : Row(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               _loginButton(
-//                 'kakao_logo',
-//                 signInWithKakao,
-//               )
-//             ],
-//           )),
-//     );
-//   }
-//
-//   Widget _loginButton(String path, VoidCallback onTap) {
-//     return InkWell(
-//         onTap: onTap,
-//         child: Image.asset(
-//             'assets/images/kakao_login_button.png',
-//           width: 300,
-//           height: 50,
-//           fit: BoxFit.fill, // 이미지를 부모 위젯 크기에 맞게 조절
-//         ),
-//     );
-//   }
-//
-//   Widget _logoutButton() {
-//     return ElevatedButton(
-//       onPressed: signOut,
-//       style: ButtonStyle(
-//         backgroundColor: MaterialStateProperty.all(
-//           const Color(0xff0165E1),
-//         ),
-//       ),
-//       child: const Text('로그아웃'),
-//     );
-//   }
-// }
-//
-//

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:provider/provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart' hide ChangeNotifierProvider;
+import 'package:flutter_riverpod/flutter_riverpod.dart' hide ChangeNotifierProvider, Provider;
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -19,6 +19,7 @@ import 'package:prac2/screens/livelist_screen.dart';
 import 'package:prac2/screens/live_notice_screen.dart';
 
 import 'package:prac2/login/login_screen.dart';
+import 'package:prac2/login/login_platform.dart';
 
 import 'package:prac2/base/navbar/named_route.dart';
 import 'package:prac2/base/navbar/dashboard_screen.dart';
@@ -32,9 +33,14 @@ import 'package:prac2/filter/filterPage1.dart';
 
 
 void main() async {
+  // 구글 소셜 로그인 : SDK 초기화
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  KakaoSdk.init(nativeAppKey: '{1964206af6e9ee272eb2e64260079bc2}');
+  
+  // 카카오톡 소셜 로그인 : SDK 초기화
+  KakaoSdk.init(nativeAppKey: '1964206af6e9ee272eb2e64260079bc2');
+  
+  
   runApp(
       const ProviderScope(child: MyApp())
   );
@@ -42,6 +48,16 @@ void main() async {
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
 final GlobalKey<NavigatorState> _shellNavigator = GlobalKey(debugLabel: 'shell');
+
+String? redirectIfNotAuthenticated(BuildContext context, GoRouterState state) {
+  final authProvider = Provider.of<UserAuthProvider>(context, listen: false);
+  final isAuthenticated = authProvider.loginPlatform != LoginPlatform.none;
+  if (!isAuthenticated) {
+    return '/login';
+  } else {
+    return null;
+  }
+}
 
 final _router = GoRouter(
   navigatorKey: _rootNavigator,
@@ -114,6 +130,7 @@ final _router = GoRouter(
           ),
     ),
     GoRoute(
+      redirect: redirectIfNotAuthenticated,
       path: '/detailPage',
       pageBuilder: (context, state) =>
           MaterialPage(
