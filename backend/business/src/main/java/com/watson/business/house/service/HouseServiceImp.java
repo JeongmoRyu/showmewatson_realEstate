@@ -221,7 +221,7 @@ public class HouseServiceImp implements HouseService {
     @Override
     public List<HouseListResponse> findAllHousesWithIsWish(String userId) {
         List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
-        List<Long> isWiehedList = wishesService.findWishesByUserid(userId);
+        List<Long> isWiehedList = wishesService.findWishedHouseIdByUserId(userId);
         log.debug("{}", userId);
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for (House h : houseEntityList) {
@@ -256,9 +256,24 @@ public class HouseServiceImp implements HouseService {
         return allHouseList;
     }
 
+    @Override
+    public List<HouseListResponse> findWishedHousesByUserId(String userId) {
+        List<Long> houseIds = wishesService.findWishedHouseIdByUserId(userId);
+        log.debug("{}", userId);
+        List<HouseListResponse> allHouseList = new ArrayList<>();
+        for(Long id : houseIds) {
+            House house = houseRepository.findHouseById(id);
+            EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
+            HouseListResponse houseListResponse = listEntityToDto(house, emdNameResponse);
+            houseListResponse.setWished(true);
+            allHouseList.add(houseListResponse);
+        }
+        return allHouseList;
+    }
+
     private HouseListResponse listEntityToDto(House house, EmdNameResponse emdNameResponse) {
         HouseListResponse response =  HouseListResponse.builder()
-                .houseId(house.getId())
+                .id(house.getId())
                 .houseCode(house.getHouseCode())
                 .squareMeter(house.getSquareMeter())
                 .suppleAreaMeter(house.getSupplyAreaMeter())
