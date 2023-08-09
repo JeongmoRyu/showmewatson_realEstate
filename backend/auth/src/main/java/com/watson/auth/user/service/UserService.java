@@ -5,7 +5,9 @@ import com.watson.auth.admin.jwt.JwtTokens;
 import com.watson.auth.admin.jwt.JwtUtils;
 import com.watson.auth.user.domain.entity.User;
 import com.watson.auth.user.domain.repository.UserRepository;
+import com.watson.auth.user.dto.UserLoginRequest;
 import com.watson.auth.user.dto.UserResponse;
+import com.watson.auth.user.dto.UserSignupResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -71,10 +73,12 @@ public class UserService {
         return false;
     }
 
-    public UserLoginResponse modifyAccessToken(User user) {
+    public UserLoginResponse modifyAccessToken(UserLoginRequest userLoginRequest) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserLoginResponse userLoginResponse = new UserLoginResponse();
+
+        User findUser = userRepository.findByAuthId(userLoginRequest.getAuthId());
 
         /* 사용자면 사용자로 로그인 */
         log.info("사용자로 로그인을 진행합니다.");
@@ -93,8 +97,8 @@ public class UserService {
             log.info("RefreshToken : " + refreshToken);
 
             // DB에 Access Token 저장
-            user.setAccessToken(accessToken); // 새로운 accessToken으로 변경
-            userRepository.save(user);
+            findUser.setAccessToken(accessToken); // 새로운 accessToken으로 변경
+            userRepository.save(findUser);
 
             userLoginResponse = UserLoginResponse.builder()
                     .accessToken(accessToken)
@@ -110,7 +114,7 @@ public class UserService {
         return userRepository.findByAuthId(authId);
     }
 
-    public User addUser(String nickname) {
+    public UserSignupResponse addUser(String nickname) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         log.info("사용자 회원가입을 진행합니다.");
@@ -148,7 +152,10 @@ public class UserService {
         /* 4. 회원가입 (DB 저장) */
         userRepository.save(newUser);
 
-        return newUser;
+        return UserSignupResponse.builder()
+                .authId(newUser.getAuthId())
+                .authType(newUser.getAuthType())
+                .build();
     }
 
     public User findUserByNickname(String nickname) {

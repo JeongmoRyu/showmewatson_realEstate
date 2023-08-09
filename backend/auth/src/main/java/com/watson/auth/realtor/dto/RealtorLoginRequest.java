@@ -1,15 +1,15 @@
-package com.watson.auth.user.dto;
+package com.watson.auth.realtor.dto;
+
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
-
-import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
 @Builder
-public class UserSignupResponse {
+public class RealtorLoginRequest {
 
     @Id
     private String authId;
