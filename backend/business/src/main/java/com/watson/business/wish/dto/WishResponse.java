@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class WishesResponse {
+public class WishResponse {
     private Long houseId;
     private int houseCode;
     private double squareMeter;
