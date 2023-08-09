@@ -28,12 +28,12 @@ public class HouseController {
 
     @GetMapping("")     // 매물 전체 목록
     public ResponseEntity<List<HouseListResponse>> houseList() {
-//        access token 여부 체크 -> if 로그인한 사용자라면 userId 리턴받기
-        String userId = "admin";
-        return ResponseEntity.status(HttpStatus.OK).body(houseService.findAllHousesWithIsWish(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(houseService.findAllHouses());
     }
     @GetMapping("/{id}")  // 매물 상세보기
     public ResponseEntity<HouseDetailResponse> houseDetailsByHouseId(@PathVariable Long id) {
+        log.debug("{매물 id ::: }", id);
+
         return ResponseEntity.status(HttpStatus.OK).body(houseService.findHouseByHouseId(id));
     }
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)    // 매물 게시글 등록

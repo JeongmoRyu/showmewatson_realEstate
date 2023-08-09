@@ -16,7 +16,6 @@ import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
 import com.watson.business.region.dto.EmdNameResponse;
 import com.watson.business.region.service.RegionService;
-import com.watson.business.wish.service.WishesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,6 @@ public class HouseServiceImp implements HouseService {
     private final HouseFileRepository houseFileRepository;
     private final HouseImageServiceImp houseImageService;
     private final RegionService regionService;
-    private final WishesService wishesService;
 
     public List<HouseListResponse> findAllHouses() {
         List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
@@ -64,6 +62,8 @@ public class HouseServiceImp implements HouseService {
                 default:
                     throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
             }
+
+            // TODO: access-key 존재시 isWish 관련 기능 구현  : 매물(h.getId()) + wish테이블
 
             allHouseList.add(houseListResponse);
         }
@@ -116,6 +116,8 @@ public class HouseServiceImp implements HouseService {
             default:
                 throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
+
+//        // TODO: isWish 로직 필요
 
         return houseDetailResponse;
     }
@@ -218,44 +220,6 @@ public class HouseServiceImp implements HouseService {
         return houseId;
     }
 
-    @Override
-    public List<HouseListResponse> findAllHousesWithIsWish(String userId) {
-        List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
-        List<Long> isWiehedList = wishesService.findWishesByUserid(userId);
-        log.debug("{}", userId);
-        List<HouseListResponse> allHouseList = new ArrayList<>();
-        for (House h : houseEntityList) {
-            EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(h.getCourtCode());
-            HouseListResponse houseListResponse = listEntityToDto(h, emdNameResponse);
-
-            switch (h.getContractCode()) {
-                case 1:    // 월세
-                    houseListResponse.setDeposit(h.getMonthlyInfo().getDeposit());
-                    houseListResponse.setMaintenance(h.getMonthlyInfo().getMaintenance());
-                    houseListResponse.setMonthlyRent(h.getMonthlyInfo().getMonthlyRent());
-                    break;
-
-                case 2:    // 전세
-                    houseListResponse.setDeposit(h.getYearlyInfo().getDeposit());
-                    houseListResponse.setMaintenance(h.getYearlyInfo().getMaintenance());
-                    break;
-
-                case 3:
-                    houseListResponse.setSalePrice(h.getSaleInfo().getSalePrice());
-                    break;// 매매
-                default:
-                    throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
-            }
-
-            if(isWiehedList.contains(h.getId())) {
-                houseListResponse.setWished(true);
-            }
-            allHouseList.add(houseListResponse);
-        }
-
-        return allHouseList;
-    }
-
     private HouseListResponse listEntityToDto(House house, EmdNameResponse emdNameResponse) {
         HouseListResponse response =  HouseListResponse.builder()
                 .houseId(house.getId())
@@ -266,6 +230,8 @@ public class HouseServiceImp implements HouseService {
                 .address(house.getAddress())
                 .title(house.getTitle())
                 .status(house.getStatus())
+//                .fileName(house.getHouseFiles().get(0).getFileName())
+//                .maintenance(0)
                 .sidoName(emdNameResponse.getSidoName())
                 .gunguName(emdNameResponse.getGunguName())
                 .dongleeName(emdNameResponse.getDongLeeName())
