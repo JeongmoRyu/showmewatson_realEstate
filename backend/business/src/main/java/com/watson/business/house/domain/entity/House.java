@@ -1,8 +1,8 @@
 package com.watson.business.house.domain.entity;
 
-import com.watson.business.house.domain.entity.houseContractInfoDetail.MonthlyInfo;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.SaleInfo;
-import com.watson.business.house.domain.entity.houseContractInfoDetail.YearlyInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.MonthlyInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.SaleInfo;
+import com.watson.business.house.domain.entity.housecontractinfodetail.YearlyInfo;
 import com.watson.business.house.dto.item.STATUS;
 
 import javax.persistence.*;
@@ -24,7 +24,6 @@ public class House extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "house_id")
     private Long id;
 
     private String realtorId;
