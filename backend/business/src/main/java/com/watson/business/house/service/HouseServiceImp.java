@@ -16,7 +16,7 @@ import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
 import com.watson.business.region.dto.EmdNameResponse;
 import com.watson.business.region.service.RegionService;
-import com.watson.business.wish.service.WishesService;
+import com.watson.business.wish.service.WishService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class HouseServiceImp implements HouseService {
     private final HouseFileRepository houseFileRepository;
     private final HouseImageServiceImp houseImageService;
     private final RegionService regionService;
-    private final WishesService wishesService;
+    private final WishService wishService;
 
     public List<HouseListResponse> findAllHouses() {
         List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
@@ -246,7 +246,7 @@ public class HouseServiceImp implements HouseService {
     @Override
     public List<HouseListResponse> findAllHousesWithIsWish(String userId) {
         List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
-        List<Long> isWiehedList = wishesService.findWishedHouseIdByUserId(userId);
+        List<Long> isWiehedList = wishService.findWishedHouseIdByUserId(userId);
         log.debug("{}", userId);
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for (House h : houseEntityList) {
@@ -283,7 +283,7 @@ public class HouseServiceImp implements HouseService {
 
     @Override
     public List<HouseListResponse> findWishedHousesByUserId(String userId) {
-        List<Long> houseIds = wishesService.findWishedHouseIdByUserId(userId);
+        List<Long> houseIds = wishService.findWishedHouseIdByUserId(userId);
         log.debug("{}", userId);
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for(Long id : houseIds) {
