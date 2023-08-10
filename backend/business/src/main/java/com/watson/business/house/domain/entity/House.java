@@ -126,9 +126,17 @@ public class House extends BaseTime {
         houseFile.setHouse(null);
     }
 
-    public void editHouse(String title, String content) {
+    public void editHousePost(String title, String content) {
         this.title = title;
         this.content = content;
     }
-
+    public void editHouseMonthlyInfo(MonthlyInfo monthlyInfo) {
+        this.monthlyInfo = monthlyInfo;
+    }
+    public void editHouseYearlyInfo(YearlyInfo yearlyInfo) {
+        this.yearlyInfo = yearlyInfo;
+    }
+    public void editHouseSaleInfo(SaleInfo saleInfo) {
+        this.saleInfo = saleInfo;
+    }
 }
