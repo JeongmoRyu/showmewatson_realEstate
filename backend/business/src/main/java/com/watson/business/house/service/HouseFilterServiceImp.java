@@ -106,7 +106,7 @@ public class HouseFilterServiceImp implements HouseFilterService {
                 .id(house.getId())
                 .houseCode(house.getHouseCode())
                 .squareMeter(house.getSquareMeter())
-                .suppleAreaMeter(house.getSupplyAreaMeter())
+                .supplyAreaMeter(house.getSupplyAreaMeter())
                 .floor(house.getFloor())
                 .address(house.getAddress())
                 .title(house.getTitle())
