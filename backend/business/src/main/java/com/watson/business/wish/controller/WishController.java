@@ -39,7 +39,7 @@ public class WishController {
     public ResponseEntity<String> wishesModify(@RequestBody WishRequest wishRequest) {
         //  oauth server : access token -> return userId
         wishService.modifyWish(userId, wishRequest);
-        return ResponseEntity.status(HttpStatus.OK).body("관심등록 취소 완료");
+        return ResponseEntity.status(HttpStatus.OK).body("관심등록 상태 변경 완료");
     }
 }
 
