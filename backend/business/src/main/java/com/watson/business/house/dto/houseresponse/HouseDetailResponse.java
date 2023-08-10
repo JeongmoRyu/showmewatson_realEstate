@@ -57,7 +57,7 @@ public class HouseDetailResponse {
         this.houseId = list.getId();
         this.houseCode = list.getHouseCode();
         this.squareMeter = list.getSquareMeter();
-        this.suppleAreaMeter = list.getSuppleAreaMeter();
+        this.suppleAreaMeter = list.getSupplyAreaMeter();
         this.floor = list.getFloor();
         this.address = list.getAddress();
         this.deposit = list.getDeposit();

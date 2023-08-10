@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseTime {
 	@CreatedDate
-	@Column(name="reg_date", updatable = false)
+	@Column(updatable = false, name="reg_date")
 	private LocalDateTime regDate;
 
 	@LastModifiedDate

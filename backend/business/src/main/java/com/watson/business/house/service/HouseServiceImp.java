@@ -98,24 +98,26 @@ public class HouseServiceImp implements HouseService {
 
         switch (house.getContractCode()) {
             case 1:      // 월세
-                houseListResponse.setDeposit(house.getMonthlyInfo().getDeposit());
-                houseListResponse.setMaintenance(house.getMonthlyInfo().getMaintenance());
+                houseDetailResponse.setDeposit(house.getMonthlyInfo().getDeposit());
+                houseDetailResponse.setMaintenance(house.getMonthlyInfo().getMaintenance());
                 houseDetailResponse.setMaintenanceList(house.getMonthlyInfo().getMaintenanceList());
-                houseListResponse.setMonthlyRent(house.getMonthlyInfo().getMonthlyRent());
+                houseDetailResponse.setMonthlyRent(house.getMonthlyInfo().getMonthlyRent());
                 break;
 
             case 2:   // 전세
-                houseListResponse.setDeposit(house.getYearlyInfo().getDeposit());
+                houseDetailResponse.setDeposit(house.getYearlyInfo().getDeposit());
                 houseDetailResponse.setMaintenanceList(house.getMonthlyInfo().getMaintenanceList());
-                houseListResponse.setMaintenance(house.getYearlyInfo().getMaintenance());
+                houseDetailResponse.setMaintenance(house.getYearlyInfo().getMaintenance());
                 break;
 
             case 3:
-                houseListResponse.setSalePrice(house.getSaleInfo().getSalePrice());
+                houseDetailResponse.setSalePrice(house.getSaleInfo().getSalePrice());
                 break;// 매매
             default:
                 throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
+
+//        // TODO: isWish 로직 필요
 
         return houseDetailResponse;
     }
@@ -197,7 +199,33 @@ public class HouseServiceImp implements HouseService {
     @Override
     public Long modifyHouse(Long houseId, List<MultipartFile> file, HouseUpdateRequest houseUpdateRequest, String realtorId) {
         House house = houseRepository.findHouseById(houseId);
-        house.editHouse(houseUpdateRequest.getTitle(), houseUpdateRequest.getContent());
+        house.editHousePost(houseUpdateRequest.getTitle(), houseUpdateRequest.getContent());
+//        가격 수정
+        switch (house.getContractCode()) {
+            case 1:
+                MonthlyInfo monthInfo = MonthlyInfo.builder()
+                        .deposit(houseUpdateRequest.getDeposit())
+                        .monthlyRent(houseUpdateRequest.getMonthlyRent())
+                        .maintenance(houseUpdateRequest.getMaintenance())
+                        .build();
+                house.editHouseMonthlyInfo(monthInfo);
+                break;
+            case 2:
+                YearlyInfo yearlyInfo = YearlyInfo.builder()
+                        .deposit(houseUpdateRequest.getDeposit())
+                        .maintenance(houseUpdateRequest.getMaintenance())
+                        .build();
+                house.editHouseYearlyInfo(yearlyInfo);
+                break;
+            case 3:
+                SaleInfo saleInfo = SaleInfo.builder()
+                        .salePrice(houseUpdateRequest.getSalePrice())
+                        .build();
+                house.editHouseSaleInfo(saleInfo);
+                break;
+            default:
+                throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
+        }
 
 //        기존 파일 삭제 : houseId를 기준으로 찾아오기
         List<HouseFile> deleteHouseFileList = houseFileRepository.findHouseFileByHouseId(houseId);
@@ -214,7 +242,6 @@ public class HouseServiceImp implements HouseService {
         for (String houseFilePath : houseFileList) {
             house.addHouseFile(new HouseFile(houseFilePath));
         }
-
         return houseId;
     }
 
@@ -276,7 +303,7 @@ public class HouseServiceImp implements HouseService {
                 .id(house.getId())
                 .houseCode(house.getHouseCode())
                 .squareMeter(house.getSquareMeter())
-                .suppleAreaMeter(house.getSupplyAreaMeter())
+                .supplyAreaMeter(house.getSupplyAreaMeter())
                 .floor(house.getFloor())
                 .address(house.getAddress())
                 .title(house.getTitle())

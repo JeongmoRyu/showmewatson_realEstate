@@ -10,4 +10,10 @@ import lombok.*;
 public class HouseUpdateRequest {
 	private String title;
 	private String content;
+//	가격 수정
+	private Long salePrice;
+	private Long deposit;
+	private Long monthlyRent;
+	private int maintenance;
+	private String maintenanceList;
 }
