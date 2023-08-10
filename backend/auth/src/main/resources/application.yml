@@ -9,9 +9,11 @@ spring:
     url: ${DB_URL}/auth?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: ${DB_USER}
     password: ${DB_PASSWORD}
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
   # spring security
   security:
     code: ${SECURITY_CODE}
@@ -22,7 +24,6 @@ spring:
             authorization-grant-type: authorization_code
             client-id: ${KCLIENT-ID}
             client-secret: ${KCLIENT-SECRET}
-            #            scope: profile_nickname, account_email # scope는 없어도 됨
             client-authentication-method: POST
             redirect-uri: ${K-REDIRECT}
             client-name: Kakao
@@ -40,6 +41,16 @@ spring:
     hibernate:
       format_sql: true
       ddl-auto: update # create
+
+  redis:
+    auth:
+      host: I9A803.p.ssafy.io # 127.0.0.1
+      port: 6379  # live: 6379
+      sentinel:
+        master: authmaster
+        nodes: I9A803.p.ssafy.io:26379,I9A803.p.ssafy.io:26380,I9A803.p.ssafy.io:26381    # live : 26379-26381 // 사용하는 포트번호
+      lettuce:
+        shutdown-timeout: 200ms
 
 # jwt
 jwt:

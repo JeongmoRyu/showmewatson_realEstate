@@ -3,13 +3,12 @@ package com.watson.auth.user.service;
 import com.watson.auth.admin.dto.UserLoginResponse;
 import com.watson.auth.admin.jwt.JwtTokens;
 import com.watson.auth.admin.jwt.JwtUtils;
+import com.watson.auth.admin.service.RedisService;
 import com.watson.auth.user.domain.entity.User;
 import com.watson.auth.user.domain.repository.UserRepository;
 import com.watson.auth.user.dto.UserLoginRequest;
 import com.watson.auth.user.dto.UserResponse;
 import com.watson.auth.user.dto.UserSignupResponse;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ public class UserService {
 
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
+    private final RedisService redisService;
 
     @Autowired // config에서 Bean 등록
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -55,8 +55,9 @@ public class UserService {
                 return true;
             } else {
                 /* 3. 토큰이 유효하지 않다면 -> Refresh Token은 유효한가? */
-                // refreshToken 가져오는 로직 필요
-                String refreshToken = "";
+                String refreshToken = redisService.getValues(authId);
+                log.info("refreshToken : " + refreshToken);
+
                 if(jwtUtils.validateToken(refreshToken)) {
                     /* 4. 유혀한 경우 -> Refresh Token으로 Access Token 재발급 및 Access Token 업데이트 */
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -78,7 +79,7 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserLoginResponse userLoginResponse = new UserLoginResponse();
 
-        User findUser = userRepository.findByAuthId(userLoginRequest.getAuthId());
+        User loginUser = userRepository.findByAuthId(userLoginRequest.getAuthId());
 
         /* 사용자면 사용자로 로그인 */
         log.info("사용자로 로그인을 진행합니다.");
@@ -97,12 +98,16 @@ public class UserService {
             log.info("RefreshToken : " + refreshToken);
 
             // DB에 Access Token 저장
-            findUser.setAccessToken(accessToken); // 새로운 accessToken으로 변경
-            userRepository.save(findUser);
+            loginUser.setAccessToken(accessToken); // 새로운 accessToken으로 변경
+            userRepository.save(loginUser);
+
+            // Redis에 Refresh Token 저장
+            redisService.setValues(loginUser.getAuthId(), refreshToken);
+
+            log.info("사용자 로그인이 완료되었습니다.");
 
             userLoginResponse = UserLoginResponse.builder()
                     .accessToken(accessToken)
-                    .refreshToken(refreshToken)
                     .role("User")
                     .build();
         }
