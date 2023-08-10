@@ -11,6 +11,6 @@ import java.util.Date;
 public interface LiveScheduleRepository extends JpaRepository<LiveSchedule, Long> {
     LiveSchedule findLiveScheduleById(Long id);
 
-    @Query("SELECT ls.liveDate FROM LiveSchedule ls WHERE ls.houseId = :houseId")
-    Date findLiveDateByHouseId(Long houseId);
+    @Query("SELECT ls.liveDate FROM LiveSchedule ls WHERE ls.id = :id")
+    Date findLiveDateById(Long id);
 }
