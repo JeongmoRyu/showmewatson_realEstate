@@ -13,7 +13,7 @@ public class HouseListResponse {
     private Long id;
     private int houseCode;
     private double squareMeter;
-    private double suppleAreaMeter;
+    private double supplyAreaMeter;
     private int floor;
     private String address;
 
