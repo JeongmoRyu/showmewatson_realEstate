@@ -11,5 +11,4 @@ import java.util.List;
 public interface WishesRepository extends JpaRepository<Wish, Long> {
 	@Query("SELECT w.houseId FROM Wish w WHERE w.userId = :userId AND w.isDeleted = false")
 	List<Long> findHouseIdByUserIdAndDeletedFalse(String userId);
-	Wishes findWishesByUserIdAndHouseId(String userId, Long houseId);
 }
