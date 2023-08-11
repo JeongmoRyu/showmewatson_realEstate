@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class ConsumerService {
     private final NotificationsService notificationsService;
 
-    @KafkaListener(topics = {"wish"}, groupId = KafkaProperties.CONSUMER_GROUP_ID)
+    @KafkaListener(topics = {"wish", "live"}, groupId = KafkaProperties.CONSUMER_GROUP_ID)
     public void consumerMessage(String message) {
         log.info("Received Message : {}", message);
         Gson gson = new Gson();

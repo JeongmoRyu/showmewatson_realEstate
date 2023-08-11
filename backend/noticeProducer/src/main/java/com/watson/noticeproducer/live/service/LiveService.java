@@ -4,10 +4,13 @@ import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
 import com.google.gson.Gson;
 import com.watson.noticeproducer.kafka.ProducerService;
+import com.watson.noticeproducer.live.domain.entity.LiveSchedule;
+import com.watson.noticeproducer.live.domain.entity.NoticeUser;
+import com.watson.noticeproducer.live.domain.entity.NotificationInfo;
+import com.watson.noticeproducer.live.domain.repository.LiveScheduleRepository;
+import com.watson.noticeproducer.live.domain.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,9 +24,9 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class LiveService {
-    private final RedisTemplate<String, Object> noticeRedisTemplate;
     private final ProducerService producerService;
-
+    private final NotificationRepository notificationRepository;
+    private final LiveScheduleRepository liveScheduleRepository;
     @Scheduled(cron = "0 0,30 * * * *")     // 정각과 30분마다 라이브 시작 알림
     public void liveStartNotification() {
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -31,60 +34,52 @@ public class LiveService {
 
         String formattedDateTime = currentDateTime.format(formatter);
 
-        Set<Object> objects = readValuesFromSet(formattedDateTime);
+        Optional<NotificationInfo> notificationInfoOptional = notificationRepository.findById(formattedDateTime);   // 해당 시간에 대한 NotificationInfo 가져오기
+        if (!notificationInfoOptional.isEmpty()) {
+            Set<NoticeUser> users = notificationInfoOptional.get().getUsers();
 
-        if (!objects.isEmpty()) {
-            Map<String, ArrayList<String>> houseIdByFcmToken = parseObject(objects);
+            HashMap<String, ArrayList<String>> messageMap = new HashMap<>();
 
-            for (Map.Entry<String, ArrayList<String>> entry : houseIdByFcmToken.entrySet()) {
-                String houseId = entry.getKey();
+            for(NoticeUser user : users) {
+                String liveSchedulesId = user.getLiveSchedulesId();
+                String fcmToken = user.getFcmToken();
+
+                if (messageMap.containsKey(liveSchedulesId)) {
+                    messageMap.get(liveSchedulesId).add(fcmToken);
+                } else {
+                    ArrayList<String> fcmTokens = new ArrayList<>();
+                    fcmTokens.add(fcmToken);
+                    messageMap.put(liveSchedulesId, fcmTokens);
+                }
+            }
+
+            for (Map.Entry<String, ArrayList<String>> entry : messageMap.entrySet()) {
+                String liveSchedulesId = entry.getKey();
                 ArrayList<String> fcmTokens = entry.getValue();
 
                 Gson gson = new Gson();
-                String muticastMessageJson = gson.toJson(createMessage(houseId, fcmTokens));
+
+                LiveSchedule liveSchedule = liveScheduleRepository.findLiveScheduleById(Long.valueOf(liveSchedulesId));
+                String muticastMessageJson = gson.toJson(createMessage(liveSchedulesId, liveSchedule.getContent(), fcmTokens));
                 log.info("muticastMessageJson: {}", muticastMessageJson);
                 producerService.sendToBroker("live", muticastMessageJson);      // live 토픽에 전송
             }
+
+            liveScheduleRepository.deleteById(Long.valueOf(formattedDateTime));
         }
     }
 
     // 메시지 생성
-    private MulticastMessage createMessage(String houseId, ArrayList<String> fcmTokens) {
+    private MulticastMessage createMessage(String liveSchedulesId, String liveSchedulesContent, ArrayList<String> fcmTokens) {
         String noticeHead = "라이브 알림";
-        String title = "라이브가 시작되었습니다.";
-        log.info("start live: {}", houseId);
+        log.info("start live: {}", liveSchedulesId);
         Notification notification = Notification.builder()
                 .setTitle(noticeHead)
-                .setBody(title).build();
+                .setBody(liveSchedulesContent).build();
 
         return MulticastMessage.builder()
                 .addAllTokens(fcmTokens) // FCM registration tokens 리스트
                 .setNotification(notification)
                 .build();
     }
-
-    // 캐시에서 읽은 값 파싱
-    public Map<String, ArrayList<String>> parseObject(Set<Object> objects) {
-        Map<String, ArrayList<String>> map = new HashMap<>();
-        for (Object value : objects) {
-            String stringValue = (String) value;
-            String[] parts = stringValue.split(",");
-            String fcmToken = parts[0];
-            String houseId = parts[1];
-
-            if (map.containsKey(houseId)) {
-                map.get(houseId).add(fcmToken);
-            } else {
-                ArrayList<String> fcmTokens = new ArrayList<>();
-                fcmTokens.add(fcmToken);
-                map.put(houseId, fcmTokens);
-            }
-        }
-        return map;
-    }
-
-    public Set<Object> readValuesFromSet(String key) {
-        return noticeRedisTemplate.opsForSet().members(key);
-    }
-
 }

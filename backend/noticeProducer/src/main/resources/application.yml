@@ -1,4 +1,12 @@
 spring:
+  data:
+    mongodb:
+      host: ${MONGODB_HOST}
+      port: ${MONGODB_PORT}
+      authentication-database: admin
+      username: ${MONGODB_USER}
+      password: ${MONGODB_PW}
+      database: notifications
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}/business
@@ -7,15 +15,6 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  redis:
-    notice:
-      host: 127.0.0.1
-      port: 6379  # live: 6379
-      sentinel:
-        master: noticemaster
-        nodes: 127.0.0.1:26379,127.0.0.1:26380,127.0.0.1:26381    # live : 26379-26381
-      lettuce:
-        shutdown-timeout: 200ms
 
   jpa:
     hibernate:
