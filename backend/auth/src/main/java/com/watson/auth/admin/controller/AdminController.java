@@ -129,9 +129,7 @@ public class AdminController {
                 .authType(newUser.getAuthType())
                 .build();
 
-        UserLoginResponse userLoginResponse = userService.modifyAccessToken(userLoginRequest);
-
-        return ResponseEntity.status(HttpStatus.OK).body(userLoginResponse);
+        return userLogin(userLoginRequest);
     }
 
     @PostMapping("/realtor")
@@ -139,9 +137,7 @@ public class AdminController {
 
         RealtorLoginRequest realtorLoginRequest = realtorService.addRealtor(profileImg, agencyImg, realtorSignupRequest); // 회원가입
 
-        RealtorLoginResponse realtorLoginResponse = realtorService.modifyAccessToken(realtorLoginRequest); // 로그인
-
-        return ResponseEntity.status(HttpStatus.OK).body(realtorLoginResponse);
+        return realtorLogin(realtorLoginRequest);
     }
 
 }
