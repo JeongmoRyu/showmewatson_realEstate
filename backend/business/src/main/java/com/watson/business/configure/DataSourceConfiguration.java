@@ -20,7 +20,8 @@ import javax.sql.DataSource;
                 "com.watson.business.house.domain.repository",
                 "com.watson.business.region.domain.repository",
                 "com.watson.business.liveschedule.domain.repository",
-                "com.watson.business.wish.domain.repository"
+                "com.watson.business.wish.domain.repository",
+                "com.watson.business.personalfilter.domain.repository"
         },
         entityManagerFactoryRef = "entityManagerFactory",
         transactionManagerRef = "transactionManager"
@@ -43,7 +44,8 @@ public class DataSourceConfiguration {
         em.setPackagesToScan("com.watson.business.house.domain.entity",
                 "com.watson.business.region.domain.entity",
                 "com.watson.business.liveschedule.domain.entity",
-                "com.watson.business.wish.domain.entity");
+                "com.watson.business.wish.domain.entity",
+                "com.watson.business.personalfilter.domain.entity");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         return em;
     }

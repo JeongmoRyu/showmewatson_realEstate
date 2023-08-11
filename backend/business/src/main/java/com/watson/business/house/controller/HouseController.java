@@ -36,7 +36,6 @@ public class HouseController {
     }
     @GetMapping("/{id}")  // 매물 상세보기
     public ResponseEntity<HouseDetailResponse> houseDetailsByHouseId(@PathVariable Long id) {
-        log.debug("{매물 id ::: }", id);
         HouseDetailResponse findHouse = houseService.findHouseByHouseId(id);
         String userId = "test"; //accessToken 보내면 userId return하는거 필요
         logService.insertViewLog(id,userId,findHouse.getDongleeName());
@@ -56,9 +55,7 @@ public class HouseController {
         return ResponseEntity.status(HttpStatus.CREATED).body("매물등록 완료");
     }
     @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> houseModify( @PathVariable Long id, @RequestPart @Valid List<MultipartFile> file, @RequestPart @Valid HouseUpdateRequest houseUpdateRequest) {
-        log.debug("{}", houseUpdateRequest);
-
+    public ResponseEntity<String> houseModify(@PathVariable Long id, @RequestPart @Valid List<MultipartFile> file, @RequestPart @Valid HouseUpdateRequest houseUpdateRequest) {
         // access_token으로 realtor_id 가져오는 로직 필요
         String realtorId = "realtor_id";
 
