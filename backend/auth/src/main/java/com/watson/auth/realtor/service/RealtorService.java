@@ -3,11 +3,13 @@ package com.watson.auth.realtor.service;
 import com.watson.auth.admin.dto.RealtorLoginResponse;
 import com.watson.auth.admin.jwt.JwtTokens;
 import com.watson.auth.admin.jwt.JwtUtils;
+import com.watson.auth.admin.service.RedisService;
 import com.watson.auth.realtor.domain.entity.Realtor;
 import com.watson.auth.realtor.domain.repository.RealtorRepository;
 import com.watson.auth.realtor.dto.RealtorLoginRequest;
 import com.watson.auth.realtor.dto.RealtorSignupRequest;
 import com.watson.auth.realtor.dto.RealtorSignupResponse;
+import com.watson.auth.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,39 @@ public class RealtorService {
     private final JwtUtils jwtUtils;
     private final RealtorRepository realtorRepository;
     private final RealtorImageService realtorImageService;
+    private final RedisService redisService;
+
+    public boolean validateToken(String accessToken) {
+        String authId = jwtUtils.getAuthIdByAccessToken(accessToken);
+        log.info("authId : " + authId);
+
+        Realtor findRealtor = realtorRepository.findByAuthId(authId);
+        log.info("findRealtor : " + findRealtor.toString());
+
+        if (accessToken.equals(findRealtor.getAccessToken())) {
+            /* 유효한 토큰인가? */
+            if (jwtUtils.validateToken(accessToken)) {
+                return true;
+            } else {
+                /* 3. 토큰이 유효하지 않다면 -> Refresh Token은 유효한가? */
+                String refreshToken = redisService.getValues(authId);
+                log.info("refreshToken : " + refreshToken);
+
+                if(jwtUtils.validateToken(refreshToken)) {
+                    /* 4. 유혀한 경우 -> Refresh Token으로 Access Token 재발급 및 Access Token 업데이트 */
+                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                    OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+                    String newAccessToken = jwtUtils.generateAccessToken(oauthToken);
+
+                    findRealtor.setAccessToken(newAccessToken); // 프론트에 newAccessToken 전달해줘야 함
+                    realtorRepository.save(findRealtor);
+
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public Realtor findRealtorByAuthId(String authId) {
         return realtorRepository.findByAuthId(authId);
@@ -70,9 +105,13 @@ public class RealtorService {
             loginRealtor.setAccessToken(accessToken); // 새로운 accessToken으로 변경
             realtorRepository.save(loginRealtor);
 
+            // Redis에 Refresh Token 저장
+            redisService.setValues(loginRealtor.getAuthId(), refreshToken);
+
+            log.info("중개사 로그인이 완료되었습니다.");
+
             return RealtorLoginResponse.builder()
                     .accessToken(accessToken)
-                    .refreshToken(refreshToken)
                     .role("User")
                     .build();
         }

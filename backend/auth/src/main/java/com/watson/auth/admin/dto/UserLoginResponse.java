@@ -12,9 +12,6 @@ public class UserLoginResponse {
     private String accessToken;
 
     @NonNull
-    private String refreshToken;
-
-    @NonNull
     @Builder.Default
     private String role = "User";
 
