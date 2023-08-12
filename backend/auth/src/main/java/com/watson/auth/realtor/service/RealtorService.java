@@ -6,9 +6,7 @@ import com.watson.auth.admin.jwt.JwtUtils;
 import com.watson.auth.admin.service.RedisService;
 import com.watson.auth.realtor.domain.entity.Realtor;
 import com.watson.auth.realtor.domain.repository.RealtorRepository;
-import com.watson.auth.realtor.dto.RealtorLoginRequest;
-import com.watson.auth.realtor.dto.RealtorSignupRequest;
-import com.watson.auth.realtor.dto.RealtorSignupResponse;
+import com.watson.auth.realtor.dto.*;
 import com.watson.auth.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -174,6 +172,7 @@ public class RealtorService {
                 .address(realtorSignupRequest.getAddress())
                 .tel(realtorSignupRequest.getTel())
                 .agencyImg(agencyImgName) // 사무소 이미지
+                .fcmToken(("tmpFcmToken"))
                 .build();
         log.info("newRealtor : " + newRealtor.toString());
 
@@ -201,4 +200,33 @@ public class RealtorService {
         }
     }
 
+    public RealtorResponse findRealtorByLicense(String license) {
+        Realtor findRealtor = realtorRepository.findByLicense(license);
+        return RealtorResponse.builder()
+                .realtorName(findRealtor.getRealtorName())
+                .phoneNumber(findRealtor.getPhoneNumber())
+                .profileImg(findRealtor.getProfileImg())
+                .registId(findRealtor.getRegistId())
+                .agencyName(findRealtor.getAgencyName())
+                .build();
+    }
+
+    public AgencyResponse findAgencyByRegistId(String registId) {
+        Realtor findRealtor = realtorRepository.findByRegistId(registId);
+
+        /* 공인중개사 ID로 매물 찾기 */
+        /**
+         * String realtorId = findRealtor.getId();
+         * List<HouseResponses> findHouses = houseService.findHousesByRealtorId(realtorId);
+         */
+
+        return AgencyResponse.builder()
+                .agencyName(findRealtor.getAgencyName())
+                .address(findRealtor.getAddress())
+                .tel(findRealtor.getTel())
+                .realtorId(findRealtor.getId())
+                .realtorName(findRealtor.getRealtorName())
+//                .houseId(findHouses)
+                .build();
+    }
 }

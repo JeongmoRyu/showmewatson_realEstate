@@ -8,10 +8,7 @@ import lombok.*;
 @Builder
 public class RealtorSignupResponse {
 
-    @NonNull
     private String authId;
-
-    @NonNull
     private String authType;
 
 }
