@@ -45,13 +45,11 @@ public class UserController {
     /* 회원 정보 조회 */
     @GetMapping
     public ResponseEntity<UserResponse> userDetails(@RequestHeader("Authorization") String accessToken) {
-        log.info("try 직전");
         try {
             log.info("nickname 초기설정");
             String nickname = "";
             log.info("accessToken : " + accessToken);
             if (userService.validateToken(accessToken)) {
-                log.info("findNickname 전");
                 nickname = userService.findNicknameByAccessToken(accessToken);
                 log.info("nickname : " + nickname);
             } else {

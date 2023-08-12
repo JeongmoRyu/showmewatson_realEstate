@@ -9,4 +9,9 @@ public interface RealtorRepository extends JpaRepository<Realtor, Long> {
     Realtor findByAuthId(String authId);
 
     Realtor findById(String tmpId);
+
+    Realtor findByLicense(String license);
+
+    Realtor findByRegistId(String registId);
+
 }
