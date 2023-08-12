@@ -1,5 +1,6 @@
 package com.watson.auth.admin.controller;
 
+import com.watson.auth.admin.jwt.JwtUtils;
 import com.watson.auth.realtor.domain.entity.Realtor;
 import com.watson.auth.admin.dto.RealtorLoginResponse;
 import com.watson.auth.realtor.dto.RealtorLoginRequest;
@@ -8,7 +9,6 @@ import com.watson.auth.realtor.service.RealtorService;
 import com.watson.auth.user.domain.entity.User;
 import com.watson.auth.admin.dto.UserLoginResponse;
 import com.watson.auth.user.dto.UserLoginRequest;
-import com.watson.auth.user.dto.UserSignupRequest;
 import com.watson.auth.user.dto.UserSignupResponse;
 import com.watson.auth.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +40,7 @@ public class AdminController {
 
     private final UserService userService;
     private final RealtorService realtorService;
+    private final JwtUtils jwtUtils;
 
     @Value("${spring.security.code}")
     String code;
@@ -48,7 +49,7 @@ public class AdminController {
     /* 회원이면 -> User/Realtor에 맞게 로그인 */
     /* 회원이 아니면 -> User/Realtor 선택 후 회원가입 */
     @GetMapping
-    public String checkRegisteration() {
+    public String checkRegisteration() { // 중개사/유저 선택 페이지로 이동 때문에 return String
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -138,6 +139,56 @@ public class AdminController {
         RealtorLoginRequest realtorLoginRequest = realtorService.addRealtor(profileImg, agencyImg, realtorSignupRequest); // 회원가입
 
         return realtorLogin(realtorLoginRequest);
+    }
+
+    /* accessToken -> userId */
+    @GetMapping("/get-userid/{accessToken}")
+    public ResponseEntity<String> getUserId(@PathVariable String accessToken) {
+        try {
+            if (userService.validateToken(accessToken)) {
+                String authId = jwtUtils.getAuthIdByAccessToken(accessToken);
+                User user = userService.findUserByAuthId(authId);
+                return ResponseEntity.status(HttpStatus.OK).body(user.getId());
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /* accessToken -> fcmToken */
+    @GetMapping("/get-fcm-token/{accessToken}")
+    public ResponseEntity<String> getFcmToken(@PathVariable String accessToken) {
+        try {
+            if (userService.validateToken(accessToken)) {
+                String authId = jwtUtils.getAuthIdByAccessToken(accessToken);
+                User user = userService.findUserByAuthId(authId);
+                return ResponseEntity.status(HttpStatus.OK).body(user.getFcmToken());
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /* accessToken/fcmToken -> fcmToken 저장 */
+    @PostMapping("/save-fcm-token/{accessToken}/{fcmToken}")
+    public ResponseEntity<String> saveFcmToken(@PathVariable String accessToken, @PathVariable String fcmToken) {
+        try {
+            if (userService.validateToken(accessToken)) {
+                userService.modifyFcmToken(accessToken, fcmToken);
+                return ResponseEntity.status(HttpStatus.OK).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }

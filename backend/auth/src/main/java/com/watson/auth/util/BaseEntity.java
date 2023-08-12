@@ -48,6 +48,9 @@ public abstract class BaseEntity {
     @Column(nullable = false)
     private String vapKey;
 
+    @Column(nullable = false)
+    private String fcmToken;
+
     @PrePersist
     protected void onCreate() {
         regDate = new Date(); // 현재 시간

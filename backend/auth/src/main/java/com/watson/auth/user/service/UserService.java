@@ -151,7 +151,8 @@ public class UserService {
                 .role("User")
                 .accessToken("tmpAccessToken") // 회원가입 후 로그인하면서 업데이트될 값
                 .password(bCryptPasswordEncoder.encode(code)) // security 사용을 위해 pw 등록)
-                .vapKey("vapKey") // vapKey는 클라이언트에서 받아옴
+                .vapKey("tmpVapKey") // vapKey는 클라이언트에서 받아옴
+                .fcmToken("tmpFcmToken")
                 .build();
 
         /* 4. 회원가입 (DB 저장) */
@@ -193,6 +194,14 @@ public class UserService {
         User findUser = userRepository.findByAuthId(authId);
 
         findUser.setNickname(nickname);
+        userRepository.save(findUser);
+    }
+
+    public void modifyFcmToken(String accessToken, String fcmToken) {
+        String authId = jwtUtils.getAuthIdByAccessToken(accessToken);
+        User findUser = userRepository.findByAuthId(authId);
+
+        findUser.setFcmToken(fcmToken);
         userRepository.save(findUser);
     }
 }
