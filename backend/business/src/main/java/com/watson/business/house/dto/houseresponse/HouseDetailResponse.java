@@ -1,7 +1,5 @@
 package com.watson.business.house.dto.houseresponse;
 
-import com.watson.business.house.domain.entity.HouseFile;
-import com.watson.business.house.domain.entity.HouseOption;
 import com.watson.business.house.dto.item.STATUS;
 import com.watson.business.region.dto.EmdResponse;
 import lombok.*;
@@ -11,8 +9,6 @@ import java.util.List;
 
 @Data
 @Builder
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseDetailResponse {
@@ -23,7 +19,7 @@ public class HouseDetailResponse {
     private Long houseId;
     private int houseCode;
     private double squareMeter;
-    private double suppleAreaMeter;
+    private double supplyAreaMeter;
     private int floor;
     private String address;
 
@@ -35,7 +31,7 @@ public class HouseDetailResponse {
     private String title;
     private STATUS status;
 
-    private String fileName;
+    private List<String> fileNames;
 
     private RealtorResponse realtor;
 
@@ -49,15 +45,15 @@ public class HouseDetailResponse {
     private int room;
 
     private String content;
-    private List<HouseFile> houseFiles;
     private LocalDateTime regDate;
-    private HouseOption houseOption;
+
+    private HouseOptionResponse houseOption;
 
     public void setHouseListResponse(HouseListResponse list) {
         this.houseId = list.getId();
         this.houseCode = list.getHouseCode();
         this.squareMeter = list.getSquareMeter();
-        this.suppleAreaMeter = list.getSupplyAreaMeter();
+        this.supplyAreaMeter = list.getSupplyAreaMeter();
         this.floor = list.getFloor();
         this.address = list.getAddress();
         this.deposit = list.getDeposit();
@@ -66,10 +62,14 @@ public class HouseDetailResponse {
         this.maintenance = list.getMaintenance();
         this.title = list.getTitle();
         this.status = list.getStatus();
-        this.fileName = list.getFileName();
+        this.fileNames = list.getFileNames();
         this.sidoName = list.getSidoName();
         this.gunguName = list.getGunguName();
         this.dongleeName = list.getDongleeName();
+    }
+
+    public void setHouseOption(HouseOptionResponse option) {
+        this.houseOption = option;
     }
 }
 

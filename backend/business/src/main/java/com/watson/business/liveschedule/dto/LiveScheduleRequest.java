@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 @Data
 @Getter @Setter
@@ -17,7 +16,7 @@ public class LiveScheduleRequest {
     @NotNull
     private Long houseId;
     @NotNull
-    private Date liveDate;
+    private String liveDate;
     @Size(min = 1, message = "내용을 입력해주세요.")
     private String content;
 }

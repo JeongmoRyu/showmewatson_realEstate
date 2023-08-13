@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
-public class Wish {
+@Entity
+public class Wishes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

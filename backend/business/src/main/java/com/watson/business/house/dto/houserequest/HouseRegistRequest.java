@@ -2,8 +2,6 @@ package com.watson.business.house.dto.houserequest;
 
 import lombok.*;
 
-@Getter
-@Setter
 @Builder
 @Data
 @AllArgsConstructor
@@ -27,5 +25,5 @@ public class HouseRegistRequest {
 
     private ContractRequest contractInfo;
 
-    private HouseOptionRequest houseOptionRequest;
+    private HouseOptionRequest houseOption;
 }

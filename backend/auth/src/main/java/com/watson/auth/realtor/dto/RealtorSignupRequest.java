@@ -22,4 +22,7 @@ public class RealtorSignupRequest {
     private String address;
     private String tel;
 
+    // 기기정보
+    private String fcmToken;
+
 }

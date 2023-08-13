@@ -22,7 +22,9 @@ import javax.sql.DataSource;
                 "com.watson.business.liveschedule.domain.repository",
                 "com.watson.business.wish.domain.repository",
                 "com.watson.business.personalfilter.domain.repository",
-                "com.watson.business.checklist.domain.repository"
+                "com.watson.business.checklist.domain.repository",
+                "com.watson.business.dm.domain.repository",
+
         },
         entityManagerFactoryRef = "entityManagerFactory",
         transactionManagerRef = "transactionManager"
@@ -47,7 +49,9 @@ public class DataSourceConfiguration {
                 "com.watson.business.liveschedule.domain.entity",
                 "com.watson.business.wish.domain.entity",
                 "com.watson.business.personalfilter.domain.entity",
-                "com.watson.business.checklist.domain.entity");
+                "com.watson.business.checklist.domain.entity",
+                "com.watson.business.dm.domain.entity"
+        );
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         return em;
     }
