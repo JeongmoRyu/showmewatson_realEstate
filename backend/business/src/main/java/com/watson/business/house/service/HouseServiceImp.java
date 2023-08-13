@@ -4,16 +4,19 @@ import com.watson.business.exception.HouseErrorCode;
 import com.watson.business.exception.HouseException;
 import com.watson.business.house.domain.entity.House;
 import com.watson.business.house.domain.entity.HouseFile;
+import com.watson.business.house.domain.entity.HouseOption;
 import com.watson.business.house.domain.entity.housecontractinfodetail.MonthlyInfo;
 import com.watson.business.house.domain.entity.housecontractinfodetail.SaleInfo;
 import com.watson.business.house.domain.entity.housecontractinfodetail.YearlyInfo;
 import com.watson.business.house.domain.repository.HouseFileRepository;
 import com.watson.business.house.domain.repository.HouseRepository;
 import com.watson.business.house.dto.houserequest.ContractRequest;
+import com.watson.business.house.dto.houserequest.HouseOptionRequest;
 import com.watson.business.house.dto.houserequest.HouseRegistRequest;
 import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
 import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
+import com.watson.business.house.dto.houseresponse.HouseOptionResponse;
 import com.watson.business.region.dto.EmdNameResponse;
 import com.watson.business.region.service.RegionService;
 import com.watson.business.wish.service.WishService;
@@ -25,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.watson.business.house.dto.item.STATUS.TRADING;
 
@@ -44,7 +48,7 @@ public class HouseServiceImp implements HouseService {
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for (House h : houseEntityList) {
             EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(h.getCourtCode());
-            HouseListResponse houseListResponse = listEntityToDto(h, emdNameResponse);
+            HouseListResponse houseListResponse = houseListEntityToDto(h, emdNameResponse);
 
             switch (h.getContractCode()) {
                 case 1:    // 월세
@@ -74,10 +78,11 @@ public class HouseServiceImp implements HouseService {
     public HouseDetailResponse findHouseByHouseId(Long houseId) {
         House house = houseRepository.findHouseById(houseId);
         EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
-        log.info("{}", house);
+        log.info("{}", house.getHouseOption());
         if (house == null) {
             throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
+
 
         HouseDetailResponse houseDetailResponse = HouseDetailResponse.builder()
 //                .realtor(house.getRealtorId())
@@ -90,11 +95,11 @@ public class HouseServiceImp implements HouseService {
                 .room(house.getRoom())
                 .content(house.getContent())
                 .regDate(house.getRegDate())
-                .houseOption(house.getHouseOption())
                 .build();
 
-        HouseListResponse houseListResponse = listEntityToDto(house, emdNameResponse);
+        HouseListResponse houseListResponse = houseListEntityToDto(house, emdNameResponse);
         houseDetailResponse.setHouseListResponse(houseListResponse);
+        houseDetailResponse.setHouseOption(houseOptionEntityToDto(house.getHouseOption()));
 
         switch (house.getContractCode()) {
             case 1:      // 월세
@@ -125,7 +130,9 @@ public class HouseServiceImp implements HouseService {
     public Long addHouse(List<MultipartFile> file, HouseRegistRequest request, String realtorId) {
 
         ContractRequest contractRequest = request.getContractInfo();
-
+        HouseOptionRequest houseOptionRequest = request.getHouseOption();
+        log.debug("{}", request);
+        log.debug("{}", houseOptionRequest);
 //        realtorId 받아오기
 
         House house = House.builder()
@@ -147,19 +154,21 @@ public class HouseServiceImp implements HouseService {
                 .status(TRADING)
                 .realtorId(realtorId)
                 .houseFiles(new ArrayList<>())
+                .houseOption(houseOptionDtoToEntity(houseOptionRequest))
                 .build();
 
         // 이미지 저장
         List<String> houseFileList = houseImageService.addFile(file, "house");
-        houseFileRepository.save(HouseFile.builder()
-                .fileName(houseFileList.get(0))
-                .house(house)
-                .isDeleted(false)
-                .build());
+        for(String fn : houseFileList) {
+            houseFileRepository.save(HouseFile.builder()
+                    .fileName(fn)
+                    .house(house)
+                    .isDeleted(false)
+                    .build());
+        }
         for (String houseFilePath : houseFileList) {
             house.addHouseFile(new HouseFile(houseFilePath));
         }
-        log.debug("{}", houseFileList);
         /**
          * 1: 월세
          * 2: 전세
@@ -232,13 +241,15 @@ public class HouseServiceImp implements HouseService {
         for(HouseFile d : deleteHouseFileList) {
             houseFileRepository.delete(d);
         }
-//        새 파일 추가
+        // 이미지 저장
         List<String> houseFileList = houseImageService.addFile(file, "house");
-        houseFileRepository.save(HouseFile.builder()
-                .fileName(houseFileList.get(0))
-                .house(house)
-                .isDeleted(false)
-                .build());
+        for(String fn : houseFileList) {
+            houseFileRepository.save(HouseFile.builder()
+                    .fileName(fn)
+                    .house(house)
+                    .isDeleted(false)
+                    .build());
+        }
         for (String houseFilePath : houseFileList) {
             house.addHouseFile(new HouseFile(houseFilePath));
         }
@@ -253,7 +264,7 @@ public class HouseServiceImp implements HouseService {
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for (House h : houseEntityList) {
             EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(h.getCourtCode());
-            HouseListResponse houseListResponse = listEntityToDto(h, emdNameResponse);
+            HouseListResponse houseListResponse = houseListEntityToDto(h, emdNameResponse);
 
             switch (h.getContractCode()) {
                 case 1:    // 월세
@@ -291,14 +302,14 @@ public class HouseServiceImp implements HouseService {
         for(Long id : houseIds) {
             House house = houseRepository.findHouseById(id);
             EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
-            HouseListResponse houseListResponse = listEntityToDto(house, emdNameResponse);
+            HouseListResponse houseListResponse = houseListEntityToDto(house, emdNameResponse);
             houseListResponse.setWished(true);
             allHouseList.add(houseListResponse);
         }
         return allHouseList;
     }
 
-    private HouseListResponse listEntityToDto(House house, EmdNameResponse emdNameResponse) {
+    private HouseListResponse houseListEntityToDto(House house, EmdNameResponse emdNameResponse) {
         HouseListResponse response =  HouseListResponse.builder()
                 .id(house.getId())
                 .houseCode(house.getHouseCode())
@@ -313,8 +324,43 @@ public class HouseServiceImp implements HouseService {
                 .dongleeName(emdNameResponse.getDongLeeName())
                 .build();
         if(!house.getHouseFiles().isEmpty()) {
-            response.setFileName(house.getHouseFiles().get(0).getFileName());
+            List<String> fileNames = house.getHouseFiles().stream()
+                    .map(HouseFile::getFileName)
+                    .collect(Collectors.toList());
+            response.setFileNames(fileNames);
+
         }
         return response;
+    }
+
+    private HouseOption houseOptionDtoToEntity(HouseOptionRequest houseOptionRequest) {
+        return HouseOption.builder()
+                .sink(houseOptionRequest.isSink())
+                .airConditioner(houseOptionRequest.isAirConditioner())
+                .shoeCloset(houseOptionRequest.isShoeCloset())
+                .washingMachine(houseOptionRequest.isWashingMachine())
+                .refrigerator(houseOptionRequest.isRefrigerator())
+                .closet(houseOptionRequest.isCloset())
+                .induction(houseOptionRequest.isInduction())
+                .desk(houseOptionRequest.isDesk())
+                .elevator(houseOptionRequest.isElevator())
+                .coldHeating(houseOptionRequest.isColdHeating())
+                .parking(houseOptionRequest.isParking())
+                .build();
+    }
+    private HouseOptionResponse houseOptionEntityToDto(HouseOption houseOption) {
+        return HouseOptionResponse.builder()
+                .sink(houseOption.isSink())
+                .airConditioner(houseOption.isAirConditioner())
+                .shoeCloset(houseOption.isShoeCloset())
+                .washingMachine(houseOption.isWashingMachine())
+                .refrigerator(houseOption.isRefrigerator())
+                .closet(houseOption.isCloset())
+                .induction(houseOption.isInduction())
+                .desk(houseOption.isDesk())
+                .elevator(houseOption.isElevator())
+                .coldHeating(houseOption.isColdHeating())
+                .parking(houseOption.isParking())
+                .build();
     }
 }

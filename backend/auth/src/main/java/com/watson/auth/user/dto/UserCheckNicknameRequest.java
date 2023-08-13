@@ -6,8 +6,9 @@ import lombok.*;
 @AllArgsConstructor
 @Getter @Setter
 @Builder
-public class UserLoginRequest {
+public class UserCheckNicknameRequest {
 
-    private String authId;
+    @NonNull
+    private String nickname;
 
 }

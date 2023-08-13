@@ -16,7 +16,7 @@ public class ProducerService {
 
     public void sendToBroker(String topicName, String multicastMessage) {
         Properties configs = new Properties();
-        String bootStrapServers = "localhost:9091,localhost:9092,localhost:9093";
+        String bootStrapServers = "kafka1:9091, kafka2:9092, kafka3:9093";
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootStrapServers);
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());

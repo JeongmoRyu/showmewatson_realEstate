@@ -10,7 +10,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -29,7 +28,7 @@ public class LiveSchedule {
     @Column(name = "house_id")
     private Long houseId;
     @Column(name = "live_date")
-    private Date liveDate;
+    private String liveDate;
     @Column(name = "content")
     private String content;
 

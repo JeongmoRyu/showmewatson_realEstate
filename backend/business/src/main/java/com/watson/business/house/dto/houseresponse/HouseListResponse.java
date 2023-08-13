@@ -3,10 +3,10 @@ package com.watson.business.house.dto.houseresponse;
 import com.watson.business.house.dto.item.STATUS;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Builder
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseListResponse {
@@ -25,7 +25,7 @@ public class HouseListResponse {
     private String title;
     private STATUS status;
 
-    private String fileName;
+    private List<String> fileNames;
 
     private boolean isWished;
 //    시도, 구군, 동리

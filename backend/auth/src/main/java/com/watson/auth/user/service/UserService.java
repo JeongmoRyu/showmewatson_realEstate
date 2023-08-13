@@ -8,6 +8,7 @@ import com.watson.auth.user.domain.entity.User;
 import com.watson.auth.user.domain.repository.UserRepository;
 import com.watson.auth.user.dto.UserLoginRequest;
 import com.watson.auth.user.dto.UserResponse;
+import com.watson.auth.user.dto.UserSignupRequest;
 import com.watson.auth.user.dto.UserSignupResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -119,7 +120,7 @@ public class UserService {
         return userRepository.findByAuthId(authId);
     }
 
-    public UserSignupResponse addUser(String nickname) {
+    public UserSignupResponse addUser(UserSignupRequest userSignupRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         log.info("사용자 회원가입을 진행합니다.");
@@ -145,14 +146,13 @@ public class UserService {
         /* 3. 회원가입 시킬 UserSignupResponse를 만들기 */
         User newUser = User.builder()
                 .id(id)
-                .nickname(nickname)
+                .nickname(userSignupRequest.getNickname())
                 .authId(authId)
                 .authType("Kakao")
                 .role("User")
                 .accessToken("tmpAccessToken") // 회원가입 후 로그인하면서 업데이트될 값
                 .password(bCryptPasswordEncoder.encode(code)) // security 사용을 위해 pw 등록)
-                .vapKey("tmpVapKey") // vapKey는 클라이언트에서 받아옴
-                .fcmToken("tmpFcmToken")
+                .fcmToken("tmpFcmToken") // fcmToken 클라이언트에서 받아옴
                 .build();
 
         /* 4. 회원가입 (DB 저장) */

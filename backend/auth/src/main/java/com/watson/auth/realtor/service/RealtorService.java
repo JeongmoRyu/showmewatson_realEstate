@@ -7,7 +7,6 @@ import com.watson.auth.admin.service.RedisService;
 import com.watson.auth.realtor.domain.entity.Realtor;
 import com.watson.auth.realtor.domain.repository.RealtorRepository;
 import com.watson.auth.realtor.dto.*;
-import com.watson.auth.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,14 +164,13 @@ public class RealtorService {
                 .role("Realtor")
                 .accessToken("tmpAccessToken") // 회원가입 후 로그인하면서 업데이트될 값
                 .password(bCryptPasswordEncoder.encode(code))
-                .vapKey("vapKey") // vapKey는 클라이언트에서 받아옴
                 .profileImg(profileImgName) // 중개사 프로필 이미지
                 .registId(realtorSignupRequest.getRegistId())
                 .agencyName(realtorSignupRequest.getAgencyName())
                 .address(realtorSignupRequest.getAddress())
                 .tel(realtorSignupRequest.getTel())
                 .agencyImg(agencyImgName) // 사무소 이미지
-                .fcmToken(("tmpFcmToken"))
+                .fcmToken(realtorSignupRequest.getFcmToken())
                 .build();
         log.info("newRealtor : " + newRealtor.toString());
 
