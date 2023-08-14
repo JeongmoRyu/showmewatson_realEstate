@@ -296,14 +296,15 @@ public class HouseServiceImp implements HouseService {
     @Override
     public List<HouseListResponse> findWishedHousesByUserId(String userId) {
         List<Long> houseIds = wishService.findWishedHouseIdByUserId(userId);
-        log.debug("{}", userId);
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for(Long id : houseIds) {
             House house = houseRepository.findHouseById(id);
-            EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
-            HouseListResponse houseListResponse = houseListEntityToDto(house, emdNameResponse);
-            houseListResponse.setWished(true);
-            allHouseList.add(houseListResponse);
+            if(house != null) {
+                EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
+                HouseListResponse houseListResponse = houseListEntityToDto(house, emdNameResponse);
+                houseListResponse.setWished(true);
+                allHouseList.add(houseListResponse);
+            }
         }
         return allHouseList;
     }
