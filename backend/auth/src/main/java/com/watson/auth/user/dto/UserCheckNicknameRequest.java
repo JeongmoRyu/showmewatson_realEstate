@@ -8,7 +8,6 @@ import lombok.*;
 @Builder
 public class UserCheckNicknameRequest {
 
-    @NonNull
     private String nickname;
 
 }

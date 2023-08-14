@@ -77,12 +77,11 @@ public class HouseServiceImp implements HouseService {
 
     public HouseDetailResponse findHouseByHouseId(Long houseId) {
         House house = houseRepository.findHouseById(houseId);
-        EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
-        log.info("{}", house.getHouseOption());
         if (house == null) {
             throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
+        EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
 
         HouseDetailResponse houseDetailResponse = HouseDetailResponse.builder()
 //                .realtor(house.getRealtorId())
