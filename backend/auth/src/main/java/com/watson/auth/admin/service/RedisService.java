@@ -15,9 +15,14 @@ public class RedisService {
     private final RedisTemplate<String, String> authRedisTemplate;
 
     /* Set */
-    public void setValues(String authId, String refreshToken) {
-        ValueOperations<String, String> values = authRedisTemplate.opsForValue();
-        values.set(authId, refreshToken, Duration.ofMinutes(5)); // 5분 후 메모리에서 삭제
+    public void setValues(String authId, String tokens) {
+        try {
+            ValueOperations<String, String> values = authRedisTemplate.opsForValue();
+            values.set(authId, tokens, Duration.ofDays(365)); // RefreshToken expire 1년
+            log.info("Redis에 Access Token과 Refresh Token을 등록합니다. : " + tokens);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /* Get */
@@ -25,12 +30,27 @@ public class RedisService {
         ValueOperations<String, String> values = authRedisTemplate.opsForValue();
 
         try {
-            return values.get(authId).toString();
+            return values.get(authId);
         } catch (Exception e) {
             log.info("Refresh Token이 만료되어 로그인이 필요합니다.");
             e.printStackTrace();
             return "index";
         }
+    }
+
+    /* Update */
+    public void updateValues(String authId, String tokens) {
+        ValueOperations<String, String> values = authRedisTemplate.opsForValue();
+
+        try {
+            values.getAndDelete(authId);
+            log.info(authId + "인 Token 정보를 삭제합니다.");
+            values.set(authId, tokens, Duration.ofDays(365)); // RefreshToken expire 1년
+            log.info("Redis에 새로운 Access Token과 Refresh Token을 등록합니다. : " + tokens);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

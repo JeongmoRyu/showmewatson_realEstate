@@ -42,9 +42,6 @@ public abstract class BaseEntity {
     @Builder.Default
     private boolean isDeleted = false; // 탈퇴 여부
 
-    @Column(nullable = false, length = 512)
-    private String accessToken; // 로그인 액세스 토큰
-
     @Column(nullable = false)
     private String fcmToken;
 

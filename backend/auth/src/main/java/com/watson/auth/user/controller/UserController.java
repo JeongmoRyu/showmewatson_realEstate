@@ -23,7 +23,7 @@ public class UserController {
         try {
             String accessToken = userUpdateRequest.getAccessToken();
             log.info("accessToken : " + accessToken);
-            if (userService.validateToken(accessToken)) {
+            if (userService.validateToken(accessToken) != null) {
                 log.info("유효한 토큰입니다.");
                 userService.modifyNickname(accessToken, userUpdateRequest.getNickname());
                 log.info("닉네임을 수정하였습니다.");
@@ -49,7 +49,7 @@ public class UserController {
             log.info("nickname 초기설정");
             String nickname = "";
             log.info("accessToken : " + accessToken);
-            if (userService.validateToken(accessToken)) {
+            if (userService.validateToken(accessToken) != null) {
                 nickname = userService.findNicknameByAccessToken(accessToken);
                 log.info("nickname : " + nickname);
             } else {

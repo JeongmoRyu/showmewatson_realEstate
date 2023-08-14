@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,48 +24,51 @@ public class LiveNoticeService {
 
     private final LiveScheduleRepository liveScheduleRepository;
     private final NotificationRepository notificationRepository;
+    private static final String DATEFORMAT = "yyyy-MM-dd HH:mm:00";
     public void registLiveNotice(String liveSchedulesId, String fcmToken) {
         try {
-            Date liveDate = liveScheduleRepository.findLiveDateById(Long.valueOf(liveSchedulesId));
+            Date liveDate = new SimpleDateFormat(DATEFORMAT).parse(liveScheduleRepository.findLiveDateById(Long.valueOf(liveSchedulesId)));
+            if (liveDate != null) {
+                log.info("liveDate: {}", liveDate.toString());
+                SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMAT);
+                String formattedDate = sdf.format(liveDate);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");
-            String formattedDate = sdf.format(liveDate);
+                Optional<Notification> existingLiveSchedule = notificationRepository.findById(formattedDate);
 
-            log.info("liveDate: {}", formattedDate);
+                NoticeUser newUser = NoticeUser.builder()
+                        .fcmToken(fcmToken)
+                        .liveSchedulesId(liveSchedulesId).build();
+                if (existingLiveSchedule.isPresent()) {
+                    Set<NoticeUser> users = existingLiveSchedule.get().getUsers();
 
-            Optional<Notification> existingLiveSchedule = notificationRepository.findById(formattedDate);
-
-            NoticeUser newUser = NoticeUser.builder()
-                    .fcmToken(fcmToken)
-                    .liveSchedulesId(liveSchedulesId).build();
-            if (existingLiveSchedule.isPresent()) {
-                Set<NoticeUser> users = existingLiveSchedule.get().getUsers();
-
-                if (!users.contains(newUser)) {
+                    if (!users.contains(newUser)) {
+                        users.add(newUser);
+                        existingLiveSchedule.get().setUsers(users);
+                        notificationRepository.save(existingLiveSchedule.get());
+                    }
+                } else {
+                    Set<NoticeUser> users = new HashSet<>();
                     users.add(newUser);
-                    existingLiveSchedule.get().setUsers(users);
-                    notificationRepository.save(existingLiveSchedule.get());
+                    Notification newNotification = Notification.builder()
+                            .liveDate(formattedDate)
+                            .users(users)
+                            .build();
+                    notificationRepository.save(newNotification);
                 }
             } else {
-                Set<NoticeUser> users = new HashSet<>();
-                users.add(newUser);
-                Notification newNotification = Notification.builder()
-                        .liveDate(formattedDate)
-                        .users(users)
-                        .build();
-                notificationRepository.save(newNotification);
+                log.warn("liveDate is null for liveSchedulesId: {}", liveSchedulesId);
+                throw new HouseException(HouseErrorCode.NOT_FOUND_LIVE_INFO);
             }
-        } catch (NullPointerException e) {
+
+        } catch (NullPointerException | ParseException e) {
             throw new HouseException(HouseErrorCode.NOT_FOUND_LIVE_INFO);
         }
     }
     public void cancelLiveNotice(String liveSchedulesId, String fcmToken) {
         try {
-            Date liveDate = liveScheduleRepository.findLiveDateById(Long.valueOf(liveSchedulesId));
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:00");
+            Date liveDate = new SimpleDateFormat(DATEFORMAT).parse(liveScheduleRepository.findLiveDateById(Long.valueOf(liveSchedulesId)));
+            SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMAT);
             String formattedDate = sdf.format(liveDate);
-
             Optional<Notification> existingLiveSchedule = notificationRepository.findById(formattedDate);
             if (existingLiveSchedule.isPresent()) {
                 Set<NoticeUser> users = existingLiveSchedule.get().getUsers();
@@ -82,7 +86,7 @@ public class LiveNoticeService {
                 existingLiveSchedule.get().setUsers(users);
                 notificationRepository.save(existingLiveSchedule.get());
             }
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | ParseException e) {
             throw new HouseException(HouseErrorCode.NOT_FOUND_LIVE_INFO);
         }
     }

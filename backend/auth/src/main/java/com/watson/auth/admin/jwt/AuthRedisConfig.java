@@ -30,7 +30,6 @@ public class AuthRedisConfig {
         return new LettuceConnectionFactory(sentinelConfig);
     }
 
-
     @Bean(name = "authRedisTemplate")
     public RedisTemplate<String, String> authRedisTemplate() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();

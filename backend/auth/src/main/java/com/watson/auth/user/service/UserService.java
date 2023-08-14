@@ -20,7 +20,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import javax.print.DocFlavor;
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -43,36 +46,49 @@ public class UserService {
 
     static String provider = "kakao";
 
-    public boolean validateToken(String accessToken) {
+    // accessToken 유효 -> userId만 반환
+    // refeshToken으로 accessToken 재발급 -> userId, accessToken 반환
+    // 그 외 -> null 반환
+    public Map<String, String> validateToken(String accessToken) { // return "userId": userId, "accessToken":accessToken
         String authId = jwtUtils.getAuthIdByAccessToken(accessToken);
         log.info("authId : " + authId);
 
-        User findUser = userRepository.findByAuthId(authId);
-        log.info("findUser : " + findUser.toString());
+        String[] redisTokens = redisService.getValues(authId).split(",");
+        String redisAccessToken = redisTokens[0];
 
-        if (accessToken.equals(findUser.getAccessToken())) {
+        if (accessToken.equals(redisAccessToken)) {
+
+            Map<String, String> validationResults = new HashMap<>();
+            User findUser = userRepository.findByAuthId(authId);// authId로 userId 가져오기
+            validationResults.put("userId", findUser.getId());
+
             /* 유효한 토큰인가? */
-            if (jwtUtils.validateToken(accessToken)) {
-                return true;
-            } else {
-                /* 3. 토큰이 유효하지 않다면 -> Refresh Token은 유효한가? */
-                String refreshToken = redisService.getValues(authId);
+            if (!jwtUtils.validateToken(accessToken)) {
+                log.info("AccessToken이 유효하지 않습니다.");
+                /* 토큰이 유효하지 않다면 -> Refresh Token은 유효한가? */
+                String refreshToken = redisTokens[1];
                 log.info("refreshToken : " + refreshToken);
 
                 if(jwtUtils.validateToken(refreshToken)) {
-                    /* 4. 유혀한 경우 -> Refresh Token으로 Access Token 재발급 및 Access Token 업데이트 */
+                    log.info("RefreshToken이 유효합니다.");
+                    /* 유효한 경우 -> Refresh Token으로 Access Token 재발급 및 Access Token 업데이트 */
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                     OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
                     String newAccessToken = jwtUtils.generateAccessToken(oauthToken);
+                    String newTokens = newAccessToken + "," + refreshToken;
 
-                    findUser.setAccessToken(newAccessToken); // 프론트에 newAccessToken 전달해줘야 함
-                    userRepository.save(findUser);
+                    redisService.updateValues(authId, newTokens); // redis에 새로운 토큰으로 변경
 
-                    return true;
+                    // userId, 프론트에 전달할 새로운 accessToken 전달
+                    validationResults.put("accessToken", newAccessToken);
+                } else {
+                    // refreshToken도 유효하지 않다면
+                    return null;
                 }
+                return validationResults;
             }
         }
-        return false;
+        return null; // token 불일치
     }
 
     public UserLoginResponse modifyAccessToken(UserLoginRequest userLoginRequest) {
@@ -98,12 +114,9 @@ public class UserService {
             log.info("AccessToken : " + accessToken);
             log.info("RefreshToken : " + refreshToken);
 
-            // DB에 Access Token 저장
-            loginUser.setAccessToken(accessToken); // 새로운 accessToken으로 변경
-            userRepository.save(loginUser);
-
-            // Redis에 Refresh Token 저장
-            redisService.setValues(loginUser.getAuthId(), refreshToken);
+            // Redis에 Access Token, Refresh Token 저장
+            String tokens = accessToken + "," + refreshToken;
+            redisService.setValues(loginUser.getAuthId(), tokens);
 
             log.info("사용자 로그인이 완료되었습니다.");
 
@@ -150,7 +163,6 @@ public class UserService {
                 .authId(authId)
                 .authType("Kakao")
                 .role("User")
-                .accessToken("tmpAccessToken") // 회원가입 후 로그인하면서 업데이트될 값
                 .password(bCryptPasswordEncoder.encode(code)) // security 사용을 위해 pw 등록)
                 .fcmToken("tmpFcmToken") // fcmToken 클라이언트에서 받아옴
                 .build();

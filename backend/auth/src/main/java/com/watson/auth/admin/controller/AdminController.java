@@ -25,6 +25,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping(value = "/auth/admin")
@@ -192,22 +194,16 @@ public class AdminController {
     @GetMapping("/get-userid/{accessToken}")
     public ResponseEntity<String> getUserId(@PathVariable String accessToken) {
         try {
-            if (userService.validateToken(accessToken)) {
-                String authId = jwtUtils.getAuthIdByAccessToken(accessToken);
-                User findUser = userService.findUserByAuthId(authId);
-
-                if(findUser != null) {
-                    return ResponseEntity.status(HttpStatus.OK).body(findUser.getId());
-                } else { // user 아니면 realtor인지 찾기
-                    Realtor findRealtor = realtorService.findRealtorByAuthId(authId);
-                    if (findRealtor != null) {
-                        return ResponseEntity.status(HttpStatus.OK).body(findRealtor.getId());
-                    } else {
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-                    }
-                }
+            Map<String, String> validationResults = userService.validateToken(accessToken);
+            if (validationResults != null) { // user인 경우
+                return ResponseEntity.status(HttpStatus.OK).body(validationResults.get("userId"));
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+                validationResults = realtorService.validateToken(accessToken);
+                if (validationResults != null) {
+                    return ResponseEntity.status(HttpStatus.OK).body(validationResults.get("realtorId"));
+                } else {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -219,7 +215,7 @@ public class AdminController {
     @GetMapping("/get-fcm-token/{accessToken}")
     public ResponseEntity<String> getFcmToken(@PathVariable String accessToken) {
         try {
-            if (userService.validateToken(accessToken)) {
+            if (userService.validateToken(accessToken) != null) {
                 String authId = jwtUtils.getAuthIdByAccessToken(accessToken);
                 User user = userService.findUserByAuthId(authId);
                 return ResponseEntity.status(HttpStatus.OK).body(user.getFcmToken());
@@ -236,7 +232,7 @@ public class AdminController {
     @PostMapping("/save-fcm-token/{accessToken}/{fcmToken}")
     public ResponseEntity<String> saveFcmToken(@PathVariable String accessToken, @PathVariable String fcmToken) {
         try {
-            if (userService.validateToken(accessToken)) {
+            if (userService.validateToken(accessToken) != null) {
                 userService.modifyFcmToken(accessToken, fcmToken);
                 return ResponseEntity.status(HttpStatus.OK).build();
             } else {
