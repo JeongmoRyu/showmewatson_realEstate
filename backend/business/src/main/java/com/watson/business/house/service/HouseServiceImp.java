@@ -1,5 +1,6 @@
 package com.watson.business.house.service;
 
+import com.watson.business.connect.service.ConnectAuthService;
 import com.watson.business.exception.HouseErrorCode;
 import com.watson.business.exception.HouseException;
 import com.watson.business.house.domain.entity.House;
@@ -18,6 +19,7 @@ import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
 import com.watson.business.house.dto.houseresponse.HouseOptionResponse;
 import com.watson.business.house.dto.houseresponse.RealtorResponse;
+import com.watson.business.realtor.dto.RealtorInfoResponse;
 import com.watson.business.region.dto.EmdNameResponse;
 import com.watson.business.region.service.RegionService;
 import com.watson.business.wish.service.WishService;
@@ -41,6 +43,7 @@ public class HouseServiceImp implements HouseService {
     private final HouseRepository houseRepository;
     private final HouseFileRepository houseFileRepository;
     private final HouseImageServiceImp houseImageService;
+    private final ConnectAuthService connectAuthService;
     private final RegionService regionService;
     private final WishService wishService;
 
@@ -67,7 +70,12 @@ public class HouseServiceImp implements HouseService {
         }
 
         EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
-        RealtorResponse realtorResponse = null;
+        RealtorInfoResponse realtorDetail = connectAuthService.getRealtorDetail(house.getRealtorId());
+
+        RealtorResponse realtorResponse = RealtorResponse.builder()
+                .realtorId(realtorDetail.getRegistId())
+                .realtorName(realtorDetail.getRealtorName()).build();
+
 
         HouseDetailResponse houseDetailResponse = HouseDetailResponse.builder()
                 .realtor(realtorResponse)
@@ -107,7 +115,6 @@ public class HouseServiceImp implements HouseService {
                 throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
         }
 
-//        // TODO: isWish 로직 필요
 
         return houseDetailResponse;
     }
@@ -193,6 +200,9 @@ public class HouseServiceImp implements HouseService {
     @Override
     public Long modifyHouse(Long houseId, List<MultipartFile> file, HouseUpdateRequest houseUpdateRequest, String realtorId) {
         House house = houseRepository.findHouseById(houseId);
+
+        if (!house.getRealtorId().equals(realtorId)) throw new HouseException(HouseErrorCode.NOT_REALTOR_USER);
+
         house.editHousePost(houseUpdateRequest.getTitle(), houseUpdateRequest.getContent());
 //        가격 수정
         switch (house.getContractCode()) {
@@ -287,7 +297,7 @@ public class HouseServiceImp implements HouseService {
                 .title(house.getTitle())
                 .status(house.getStatus())
                 .sidoName(emdNameResponse.getSidoName())
-                .gunguName(emdNameResponse.getGunguName())
+//                .gunguName(emdNameResponse.getGunguName())
                 .dongleeName(emdNameResponse.getDongLeeName())
                 .build();
         if(!house.getHouseFiles().isEmpty()) {

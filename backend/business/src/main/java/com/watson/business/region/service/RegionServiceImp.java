@@ -37,15 +37,10 @@ public class RegionServiceImp implements RegionService {
 
     @Override
     public EmdNameResponse getEmdNameByEmdCode(String courtCode) {
-        Emd emd = emdRepository.findByCourtCode(courtCode);
+        List<Emd> emd = emdRepository.findByCourtCode(courtCode);
         return EmdNameResponse.builder()
-                .sidoName(emd.getSidoName())
-                .gunguName(emd.getGunguName())
-                .dongLeeName(emd.getDongleeName())
+                .sidoName(emd.get(0).getSidoName())
+                .dongLeeName(emd.get(0).getDongleeName())
                 .build();
     }
-
-//    public EmdResponse getDongleeNameByEmdCode(String courtCode) {
-//        return new EmdResponse(emdRepository.findDongleeNameByCourtCode(courtCode), courtCode);
-//    }
 }

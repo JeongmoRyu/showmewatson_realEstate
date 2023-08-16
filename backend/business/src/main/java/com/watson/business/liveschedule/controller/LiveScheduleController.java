@@ -1,5 +1,7 @@
 package com.watson.business.liveschedule.controller;
 
+import com.watson.business.connect.service.ConnectAuthService;
+import com.watson.business.connect.service.ConnectNoticeService;
 import com.watson.business.liveschedule.dto.LiveScheduleRequest;
 import com.watson.business.liveschedule.dto.LiveScheduleResponse;
 import com.watson.business.liveschedule.service.LiveScheduleService;
@@ -18,7 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LiveScheduleController {
     private final LiveScheduleService liveScheduleService;
-
+    private final ConnectAuthService connectAuthService;
+    private final ConnectNoticeService connectNoticeService;
     @GetMapping("")
     public ResponseEntity<List<LiveScheduleResponse>> liveScheduleList() {
         return ResponseEntity.status(HttpStatus.OK).body(liveScheduleService.findAllLiveSchedules());
@@ -28,8 +31,14 @@ public class LiveScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(liveScheduleService.findLiveScheduleByScheduleId(id));
     }
     @PostMapping("")
-    public ResponseEntity<String> liveScheduleDetailByScheduleId(@RequestBody @Valid LiveScheduleRequest requset) {
+    public ResponseEntity<String> liveScheduleDetailByScheduleId(@RequestHeader("Authorization") String accessToken, @RequestBody @Valid LiveScheduleRequest requset) {
+        String realtorId = connectAuthService.getRealtorId(accessToken);
+        requset.setRealtorId(realtorId);
+
         liveScheduleService.addLiveSchedule(requset);
+        ResponseEntity<String> response = connectNoticeService.noticeLive(String.valueOf(requset.getHouseId()), requset.getContent());
+        log.info("발송: {}" , response.getStatusCode());
+
         return ResponseEntity.status(HttpStatus.OK).body("라이브 공지 등록 성공");
     }
 }

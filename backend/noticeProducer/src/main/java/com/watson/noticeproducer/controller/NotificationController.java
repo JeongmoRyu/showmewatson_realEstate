@@ -19,7 +19,7 @@ public class NotificationController {
     }
 
     @GetMapping(value = "/send/{houseId}/{title}")
-    public @ResponseBody ResponseEntity<String> send(@PathVariable Long houseId, String title) throws FCMException{
+    public @ResponseBody ResponseEntity<String> send(@PathVariable Long houseId, @PathVariable String title) throws FCMException{
         wishService.sendLiveNotice(houseId, title);
 
         return new ResponseEntity<>(HttpStatus.OK);
