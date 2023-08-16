@@ -102,6 +102,7 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/user-login")
     public ResponseEntity<UserLoginResponse> userLogin(UserLoginRequest userLoginRequest) {
         UserLoginResponse userLoginResponse = userService.modifyAccessToken(userLoginRequest);
 
@@ -139,7 +140,7 @@ public class AdminController {
     @PostMapping("/user")
     public ResponseEntity<UserLoginResponse> userSignup(@RequestPart UserSignupRequest userSignupRequest) {
         try {
-            /* 1. userSignupRequest 보낸 사람과 카카오 로그인 한 사람이 동일한가? */
+            /* 1. userSignupRequest 보낸 사용자와 카카오 로그인 한 사용자가 동일한가? */
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             log.info("authId : " + userSignupRequest.getAuthId());
@@ -172,14 +173,14 @@ public class AdminController {
     }
 
     @PostMapping("/realtor")
-    public ResponseEntity<RealtorLoginResponse> realtorSignup(@RequestPart MultipartFile profileImg, @RequestPart MultipartFile agencyImg, @RequestPart RealtorSignupRequest realtorSignupRequest) {
+    public ResponseEntity<RealtorLoginResponse> realtorSignup(@RequestPart MultipartFile agencyImg, @RequestPart RealtorSignupRequest realtorSignupRequest) {
         try {
             /* 1. userSignupRequest 보낸 사람과 카카오 로그인 한 사람이 동일한가? */
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             log.info("authId : " + realtorSignupRequest.getAuthId());
 
             if (realtorSignupRequest.getAuthId().equals("kakao_" + authentication.getName())) {
-                RealtorLoginRequest realtorLoginRequest = realtorService.addRealtor(profileImg, agencyImg, realtorSignupRequest); // 회원가입
+                RealtorLoginRequest realtorLoginRequest = realtorService.addRealtor(agencyImg, realtorSignupRequest); // 회원가입
                 return realtorLogin(realtorLoginRequest);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 다른 유저

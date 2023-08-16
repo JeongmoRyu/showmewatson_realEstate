@@ -1,13 +1,13 @@
-package com.watson.auth.realtor.dto;
+package com.watson.business.realtor.dto;
 
 import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @Builder
 public class AgencyResponse {
-
     /* 사무소 정보 */
     String agencyName;
     String address;
@@ -18,5 +18,4 @@ public class AgencyResponse {
     String realtorId;
     String realtorName;
     String phoneNumber;
-
 }

@@ -16,4 +16,8 @@ public interface HouseService {
     List<HouseListResponse> findAllHousesWithIsWish(String userId);
 //    사용자의 관심매물 리스트
     List<HouseListResponse> findWishedHousesByUserId(String userId);
+
+    List<HouseListResponse> findAllHousesByRealtorId(String realtorId);
+
+    List<HouseListResponse> findAllHousesWithIsWishByRealtorId(String realtorId, String userId);
 }

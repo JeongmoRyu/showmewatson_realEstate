@@ -26,9 +26,6 @@ public class Realtor extends BaseEntity {
     @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = false)
-    private String profileImg;
-
     // 중개사무소 정보
     @Column(nullable = false)
     private String registId;

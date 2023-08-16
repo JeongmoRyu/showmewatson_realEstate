@@ -1,7 +1,6 @@
 package com.watson.auth.realtor.controller;
 
 import com.watson.auth.realtor.dto.AgencyResponse;
-import com.watson.auth.realtor.dto.RealtorResponse;
 import com.watson.auth.realtor.service.RealtorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,25 +16,8 @@ public class RealtorController {
 
     private final RealtorService realtorService;
 
-    /* 중개사 정보 조회 */
-    @GetMapping("/{license}")
-    public ResponseEntity<RealtorResponse> realtorDetails(@PathVariable String license) {
-
-        try {
-            RealtorResponse realtorResponse = realtorService.findRealtorByLicense(license);
-            if (realtorResponse != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(realtorResponse);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     /* 사무소 정보 조회 */
-    @GetMapping("/{regist-id}")
+    @GetMapping("/{registId}")
     public ResponseEntity<AgencyResponse> agencyDetails(@PathVariable String registId) {
         try {
             AgencyResponse agencyResponse = realtorService.findAgencyByRegistId(registId);

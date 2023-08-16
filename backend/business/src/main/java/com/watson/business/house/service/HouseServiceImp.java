@@ -17,6 +17,7 @@ import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
 import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
 import com.watson.business.house.dto.houseresponse.HouseOptionResponse;
+import com.watson.business.house.dto.houseresponse.RealtorResponse;
 import com.watson.business.region.dto.EmdNameResponse;
 import com.watson.business.region.service.RegionService;
 import com.watson.business.wish.service.WishService;
@@ -43,36 +44,20 @@ public class HouseServiceImp implements HouseService {
     private final RegionService regionService;
     private final WishService wishService;
 
+    // house 매물 조회 (인증 X)
     public List<HouseListResponse> findAllHouses() {
         List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
-        List<HouseListResponse> allHouseList = new ArrayList<>();
-        for (House h : houseEntityList) {
-            EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(h.getCourtCode());
-            HouseListResponse houseListResponse = houseListEntityToDto(h, emdNameResponse);
+        return createHouseList(houseEntityList, new ArrayList<>());
+    }
 
-            switch (h.getContractCode()) {
-                case 1:    // 월세
-                    houseListResponse.setDeposit(h.getMonthlyInfo().getDeposit());
-                    houseListResponse.setMaintenance(h.getMonthlyInfo().getMaintenance());
-                    houseListResponse.setMonthlyRent(h.getMonthlyInfo().getMonthlyRent());
-                    break;
+    // house 매물 조회 (인증 O)
+    @Override
+    public List<HouseListResponse> findAllHousesWithIsWish(String userId) {
+        List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
+        List<Long> isWiehedList = wishService.findWishedHouseIdByUserId(userId);
+        log.debug("{}", userId);
 
-                case 2:    // 전세
-                    houseListResponse.setDeposit(h.getYearlyInfo().getDeposit());
-                    houseListResponse.setMaintenance(h.getYearlyInfo().getMaintenance());
-                    break;
-
-                case 3:
-                    houseListResponse.setSalePrice(h.getSaleInfo().getSalePrice());
-                    break;// 매매
-                default:
-                    throw new HouseException(HouseErrorCode.NOT_FOUND_HOUSE_INFO);
-            }
-
-            allHouseList.add(houseListResponse);
-        }
-
-        return allHouseList;
+        return createHouseList(houseEntityList, isWiehedList);
     }
 
     public HouseDetailResponse findHouseByHouseId(Long houseId) {
@@ -82,9 +67,10 @@ public class HouseServiceImp implements HouseService {
         }
 
         EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
+        RealtorResponse realtorResponse = null;
 
         HouseDetailResponse houseDetailResponse = HouseDetailResponse.builder()
-//                .realtor(house.getRealtorId())
+                .realtor(realtorResponse)
                 .maintenanceList(house.getMaintenanceList())
                 .contractCode(house.getContractCode())
                 .totalFloor(house.getTotalFloor())
@@ -255,11 +241,66 @@ public class HouseServiceImp implements HouseService {
         return houseId;
     }
 
+
+
     @Override
-    public List<HouseListResponse> findAllHousesWithIsWish(String userId) {
-        List<House> houseEntityList = houseRepository.findAllHousesWithFiles();
+    public List<HouseListResponse> findWishedHousesByUserId(String userId) {
+        List<Long> houseIds = wishService.findWishedHouseIdByUserId(userId);
+        List<HouseListResponse> allHouseList = new ArrayList<>();
+        for(Long id : houseIds) {
+            House house = houseRepository.findHouseById(id);
+            if(house != null) {
+                EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
+                HouseListResponse houseListResponse = houseListEntityToDto(house, emdNameResponse);
+                houseListResponse.setWished(true);
+                allHouseList.add(houseListResponse);
+            }
+        }
+        return allHouseList;
+    }
+
+    // 중개사에 따른 매물 조회 (사용자 인증 X)
+    @Override
+    public List<HouseListResponse> findAllHousesByRealtorId(String realtorId) {
+        List<House> houseEntityList = houseRepository.findAllHousesByRealtorIdWithFiles(realtorId);
+
+        return createHouseList(houseEntityList, new ArrayList<>());
+    }
+
+    // 중개사에 따른 매물 조회 (사용자 인증 O)
+    @Override
+    public List<HouseListResponse> findAllHousesWithIsWishByRealtorId(String realtorId, String userId) {
+        List<House> houseEntityList = houseRepository.findAllHousesByRealtorIdWithFiles(realtorId);
         List<Long> isWiehedList = wishService.findWishedHouseIdByUserId(userId);
-        log.debug("{}", userId);
+
+        return createHouseList(houseEntityList, isWiehedList);
+    }
+
+    private HouseListResponse houseListEntityToDto(House house, EmdNameResponse emdNameResponse) {
+        HouseListResponse response =  HouseListResponse.builder()
+                .id(house.getId())
+                .houseCode(house.getHouseCode())
+                .squareMeter(house.getSquareMeter())
+                .supplyAreaMeter(house.getSupplyAreaMeter())
+                .floor(house.getFloor())
+                .address(house.getAddress())
+                .title(house.getTitle())
+                .status(house.getStatus())
+                .sidoName(emdNameResponse.getSidoName())
+                .gunguName(emdNameResponse.getGunguName())
+                .dongleeName(emdNameResponse.getDongLeeName())
+                .build();
+        if(!house.getHouseFiles().isEmpty()) {
+            List<String> fileNames = house.getHouseFiles().stream()
+                    .map(HouseFile::getFileName)
+                    .collect(Collectors.toList());
+            response.setFileNames(fileNames);
+
+        }
+        return response;
+    }
+
+    private List<HouseListResponse> createHouseList(List<House> houseEntityList, List<Long> isWiehedList) {
         List<HouseListResponse> allHouseList = new ArrayList<>();
         for (House h : houseEntityList) {
             EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(h.getCourtCode());
@@ -292,47 +333,6 @@ public class HouseServiceImp implements HouseService {
 
         return allHouseList;
     }
-
-    @Override
-    public List<HouseListResponse> findWishedHousesByUserId(String userId) {
-        List<Long> houseIds = wishService.findWishedHouseIdByUserId(userId);
-        List<HouseListResponse> allHouseList = new ArrayList<>();
-        for(Long id : houseIds) {
-            House house = houseRepository.findHouseById(id);
-            if(house != null) {
-                EmdNameResponse emdNameResponse = regionService.getEmdNameByEmdCode(house.getCourtCode());
-                HouseListResponse houseListResponse = houseListEntityToDto(house, emdNameResponse);
-                houseListResponse.setWished(true);
-                allHouseList.add(houseListResponse);
-            }
-        }
-        return allHouseList;
-    }
-
-    private HouseListResponse houseListEntityToDto(House house, EmdNameResponse emdNameResponse) {
-        HouseListResponse response =  HouseListResponse.builder()
-                .id(house.getId())
-                .houseCode(house.getHouseCode())
-                .squareMeter(house.getSquareMeter())
-                .supplyAreaMeter(house.getSupplyAreaMeter())
-                .floor(house.getFloor())
-                .address(house.getAddress())
-                .title(house.getTitle())
-                .status(house.getStatus())
-                .sidoName(emdNameResponse.getSidoName())
-                .gunguName(emdNameResponse.getGunguName())
-                .dongleeName(emdNameResponse.getDongLeeName())
-                .build();
-        if(!house.getHouseFiles().isEmpty()) {
-            List<String> fileNames = house.getHouseFiles().stream()
-                    .map(HouseFile::getFileName)
-                    .collect(Collectors.toList());
-            response.setFileNames(fileNames);
-
-        }
-        return response;
-    }
-
     private HouseOption houseOptionDtoToEntity(HouseOptionRequest houseOptionRequest) {
         return HouseOption.builder()
                 .sink(houseOptionRequest.isSink())
