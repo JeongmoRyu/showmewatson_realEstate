@@ -8,6 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 public class EmdNameResponse {
     private String sidoName;
-    private String gunguName;
     private String dongLeeName;
 }

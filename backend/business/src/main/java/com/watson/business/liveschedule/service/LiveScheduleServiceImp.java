@@ -1,5 +1,7 @@
 package com.watson.business.liveschedule.service;
 
+import com.watson.business.exception.HouseErrorCode;
+import com.watson.business.exception.HouseException;
 import com.watson.business.liveschedule.domain.entity.LiveSchedule;
 import com.watson.business.liveschedule.domain.repository.LiveScheduleRepository;
 import com.watson.business.liveschedule.dto.LiveScheduleRequest;
@@ -36,13 +38,17 @@ public class LiveScheduleServiceImp implements LiveScheduleService {
     }
     @Override
     public Long addLiveSchedule(LiveScheduleRequest request) {
-        LiveSchedule liveSchedule = liveScheduleRepository.save(LiveSchedule.builder()
-                        .realtorId(request.getRealtorId())
-                        .houseId(request.getHouseId())
-                        .liveDate(request.getLiveDate())
-                        .content(request.getContent())
-                        .build());
-        return liveSchedule.getId();
+        try {
+            LiveSchedule liveSchedule = liveScheduleRepository.save(LiveSchedule.builder()
+                    .realtorId(request.getRealtorId())
+                    .houseId(request.getHouseId())
+                    .liveDate(request.getLiveDate())
+                    .content(request.getContent())
+                    .build());
+            return liveSchedule.getId();
+        } catch (Exception e) {
+            throw new HouseException(HouseErrorCode.NOT_REGIST_LIVE_SCHEDULE);
+        }
     }
     private LiveScheduleResponse liveScheduleEntityToDto(LiveSchedule entity) {
         return LiveScheduleResponse.builder()

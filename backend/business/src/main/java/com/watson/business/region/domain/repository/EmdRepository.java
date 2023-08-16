@@ -15,6 +15,6 @@ public interface EmdRepository extends JpaRepository<Emd, String> {
     List<Object[]> findCourtCodesByGungu(@Param("gunguName") String gunguName);
 
     @Query("SELECT DISTINCT e FROM Emd e WHERE e.courtCode = :courtCode")
-    Emd findByCourtCode(@Param("courtCode") String courtCode);
+    List<Emd> findByCourtCode(@Param("courtCode") String courtCode);
 
 }

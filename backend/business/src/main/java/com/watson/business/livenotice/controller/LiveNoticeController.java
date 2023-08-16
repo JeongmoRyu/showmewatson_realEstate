@@ -1,5 +1,6 @@
 package com.watson.business.livenotice.controller;
 
+import com.watson.business.connect.service.ConnectAuthService;
 import com.watson.business.exception.HouseException;
 import com.watson.business.livenotice.dto.LiveAlarmResponse;
 import com.watson.business.livenotice.server.LiveNoticeService;
@@ -17,38 +18,24 @@ import java.util.List;
 @Slf4j
 public class LiveNoticeController {
     private final LiveNoticeService liveNoticeService;
+    private final ConnectAuthService connectAuthService;
     // 2차 알림 등록
     @PostMapping("")
-    public ResponseEntity<String> registLiveNotice(@RequestHeader String authorization, @RequestBody String liveSchedulesId) {
-        // TODO: header에서 받은 access-token을 이용해서 fcmToken 받아오기 (현재 임시값)
-        String fcmToken = "cj6aI7U9T8Kk7gJo7ktADP:APA91bEnfl6eG8_x2XNXX-i0O8HINpqM9tWoeQG3rxMeKp-FzffVZvVKAsDr206K0csWczmtKTw6fm1Tj3VGNlGZ_VHim9P5dCwDlsw_FGc2MSy8_IBneaEr1CyqD_HKLISs_Cl0QI5B";
-        try {
-            liveNoticeService.registLiveNotice(liveSchedulesId, fcmToken);
-        } catch (HouseException e) {
-            return ResponseEntity.status(e.getCode()).body(e.getMessage());
-        }
+    public ResponseEntity<String> registLiveNotice(@RequestHeader("Authorization") String accessToken, @RequestBody String liveSchedulesId) {
+        liveNoticeService.registLiveNotice(liveSchedulesId, connectAuthService.getFcmToken(accessToken));
         return ResponseEntity.status(HttpStatus.OK).body("라이브 알림을 등록했습니다.");
     }
 
     // 2차 알림 취소
     @PutMapping("")
-    public ResponseEntity<String> deleteLiveNotice(@RequestHeader String authorization, @RequestBody String liveSchedulesId) {
-        // TODO: header에서 받은 access-token을 이용해서 fcmToken 받아오기 (현재 임시값)
-        String fcmToken = "cj6aI7U9T8Kk7gJo7ktADP:APA91bEnfl6eG8_x2XNXX-i0O8HINpqM9tWoeQG3rxMeKp-FzffVZvVKAsDr206K0csWczmtKTw6fm1Tj3VGNlGZ_VHim9P5dCwDlsw_FGc2MSy8_IBneaEr1CyqD_HKLISs_Cl0QI5B";
-        try {
-            liveNoticeService.cancelLiveNotice(liveSchedulesId, fcmToken);
-        } catch (HouseException e) {
-            return ResponseEntity.status(e.getCode()).body(e.getMessage());
-        }
+    public ResponseEntity<String> deleteLiveNotice(@RequestHeader("Authorization") String accessToken, @RequestBody String liveSchedulesId) {
+        liveNoticeService.cancelLiveNotice(liveSchedulesId, connectAuthService.getFcmToken(accessToken));
         return ResponseEntity.status(HttpStatus.OK).body("라이브 알림을 취소했습니다.");
     }
 
+    // 2차 알림 리스트
     @GetMapping("")
-    public List<LiveAlarmResponse> getLiveNotice(@RequestHeader String authorization) {
-        // TODO: header에서 받은 access-token을 이용해서 fcmToken 받아오기 (현재 임시값)
-        String fcmToken = "cj6aI7U9T8Kk7gJo7ktADP:APA91bEnfl6eG8_x2XNXX-i0O8HINpqM9tWoeQG3rxMeKp-FzffVZvVKAsDr206K0csWczmtKTw6fm1Tj3VGNlGZ_VHim9P5dCwDlsw_FGc2MSy8_IBneaEr1CyqD_HKLISs_Cl0QI5B";
-
-
-        return liveNoticeService.getLiveNoticeList(fcmToken);
+    public ResponseEntity<List<LiveAlarmResponse>> getLiveNotice(@RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.status(HttpStatus.OK).body(liveNoticeService.getLiveNoticeList(connectAuthService.getFcmToken(accessToken)));
     }
 }

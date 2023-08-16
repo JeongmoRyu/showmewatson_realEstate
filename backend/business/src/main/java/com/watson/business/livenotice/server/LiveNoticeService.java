@@ -91,28 +91,31 @@ public class LiveNoticeService {
         }
     }
     public List<LiveAlarmResponse> getLiveNoticeList(String fcmToken) {
-        List<String> liveSchedules = new ArrayList<>();
+        try {
+            List<String> liveSchedules = new ArrayList<>();
 
-        List<Notification> notifications = notificationRepository.findAll();
-        for (Notification notification : notifications) {
-            List<String> matchingScheduleId = notification.getUsers().stream()
-                    .filter(user -> user.getFcmToken().equals(fcmToken))
-                    .map(NoticeUser::getLiveSchedulesId)
-                    .collect(Collectors.toList());
-            liveSchedules.addAll(matchingScheduleId);
+            List<Notification> notifications = notificationRepository.findAll();
+            for (Notification notification : notifications) {
+                List<String> matchingScheduleId = notification.getUsers().stream()
+                        .filter(user -> user.getFcmToken().equals(fcmToken))
+                        .map(NoticeUser::getLiveSchedulesId)
+                        .collect(Collectors.toList());
+                liveSchedules.addAll(matchingScheduleId);
+            }
+
+            // 해당 liveSchedulesId로 HouseResponse, liveStartDate, liveContent 가져오기
+            List<LiveAlarmResponse> notificationResponses = new ArrayList<>();
+            for (String scheduleId : liveSchedules) {
+                LiveSchedule liveSchedule = liveScheduleRepository.findLiveScheduleById(Long.valueOf(scheduleId));
+
+                notificationResponses.add(LiveAlarmResponse.builder()
+                        .liveScheduleId(liveSchedule.getId())
+                        .liveDate(liveSchedule.getLiveDate())
+                        .content(liveSchedule.getContent()).build());
+            }
+            return notificationResponses;
+        } catch (Exception e) {
+            throw new HouseException(HouseErrorCode.NOT_FOUND_LIVE_NOTICE_LIST);
         }
-
-        // 해당 liveSchedulesId로 HouseResponse, liveStartDate, liveContent 가져오기
-        List<LiveAlarmResponse> notificationResponses = new ArrayList<>();
-        for(String scheduleId: liveSchedules) {
-            LiveSchedule liveSchedule = liveScheduleRepository.findLiveScheduleById(Long.valueOf(scheduleId));
-
-            notificationResponses.add(LiveAlarmResponse.builder()
-                    .liveScheduleId(liveSchedule.getId())
-                    .liveDate(liveSchedule.getLiveDate())
-                    .content(liveSchedule.getContent()).build());
-        }
-
-        return notificationResponses;
     }
 }
