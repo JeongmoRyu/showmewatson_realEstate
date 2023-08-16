@@ -20,7 +20,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import javax.print.DocFlavor;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,9 +56,12 @@ public class UserService {
         String redisAccessToken = redisTokens[0];
 
         if (accessToken.equals(redisAccessToken)) {
+            log.info("AccessToken이 일치합니다.");
 
             Map<String, String> validationResults = new HashMap<>();
+            log.info("user를 찾을 authId : " + authId);
             User findUser = userRepository.findByAuthId(authId);// authId로 userId 가져오기
+            log.info("findUser : " + findUser.toString());
             validationResults.put("userId", findUser.getId());
 
             /* 유효한 토큰인가? */
@@ -87,6 +89,7 @@ public class UserService {
                 }
                 return validationResults;
             }
+            return validationResults;
         }
         return null; // token 불일치
     }

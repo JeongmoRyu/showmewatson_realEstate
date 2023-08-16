@@ -1,7 +1,6 @@
 package com.watson.business.house.dto.houseresponse;
 
 import com.watson.business.house.dto.item.STATUS;
-import com.watson.business.region.dto.EmdResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -37,7 +36,6 @@ public class HouseDetailResponse {
 
     private String maintenanceList;
     private int contractCode;
-    private EmdResponse emdResponse;
     private int totalFloor;
     private String buildingUse;
     private String approvalBuildingDate;

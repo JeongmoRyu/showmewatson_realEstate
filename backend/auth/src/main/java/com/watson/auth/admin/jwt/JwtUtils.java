@@ -20,8 +20,8 @@ public class JwtUtils {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1800000; // Access Token 만료 시간 (30분)
-    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 604800000; // Refresh Token 만료 시간 (7일)
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 604800000 * 400; // Access Token 만료 시간 (30분)
+    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 604800000 * 400; // Refresh Token 만료 시간 (7일)
 
     /* AccessToken 생성 : authId, authorities로 생성 */
     public String generateAccessToken(OAuth2AuthenticationToken oauthToken) {
@@ -41,6 +41,9 @@ public class JwtUtils {
         header.put("alg", "HS256");
 
         log.info("oauthUser.getName() : " + oauthUser.getName());
+
+        log.info("issuedAt : " + new Date());
+        log.info("Expiration : " + expirationDate);
 
         return Jwts.builder()
                 .setClaims(claims)

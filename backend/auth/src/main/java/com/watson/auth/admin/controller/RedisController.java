@@ -17,12 +17,17 @@ public class RedisController { // Refresh Token api Test 용
 
     @PostMapping
     public void redisCreateTest(@RequestBody HashMap<String, String> body) {
-        redisService.setValues(body.get("authId"), body.get("refreshToken"));
+        redisService.setValues(body.get("authId"), body.get("tokens"));
     }
 
     @GetMapping
     public String redisReadTest(@RequestParam String authId) {
         return redisService.getValues(authId);
+    }
+
+    @PutMapping
+    public void redisUpdateTest(@RequestBody HashMap<String, String> body) {
+        redisService.updateValues(body.get("authId"), body.get("tokens"));
     }
 
 }

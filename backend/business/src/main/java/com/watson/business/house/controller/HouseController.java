@@ -29,20 +29,31 @@ public class HouseController {
     private final LogService logService;
 
     @GetMapping("")     // 매물 전체 목록
-    public ResponseEntity<List<HouseListResponse>> houseList() {
+    public ResponseEntity<List<HouseListResponse>> houseList(@RequestHeader("Authorization") String accessToken) {
+        HttpStatus loginStatus = HttpStatus.UNAUTHORIZED;
+        if(loginStatus == HttpStatus.UNAUTHORIZED) { // 로그인 안한 사용자
+            return ResponseEntity.status(HttpStatus.OK).body(houseService.findAllHouses());
+        }
+        else {     //  HttpStatus.OK : 로그인 완료된 사용자
 //        access token 여부 체크 -> if 로그인한 사용자라면 userId 리턴받기
-        String userId = "admin";
-        return ResponseEntity.status(HttpStatus.OK).body(houseService.findAllHousesWithIsWish(userId));
+            String userId = "admin";
+            return ResponseEntity.status(HttpStatus.OK).body(houseService.findAllHousesWithIsWish(userId));
+        }
     }
     @GetMapping("/{id}")  // 매물 상세보기
-    public ResponseEntity<HouseDetailResponse> houseDetailsByHouseId(@PathVariable Long id) {
+    public ResponseEntity<HouseDetailResponse> houseDetailsByHouseId(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable Long id) {
         HouseDetailResponse findHouse = houseService.findHouseByHouseId(id);
         String userId = "test"; //accessToken 보내면 userId return하는거 필요
         logService.insertViewLog(id,userId,findHouse.getDongleeName());
         return ResponseEntity.status(HttpStatus.OK).body(findHouse);
     }
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)    // 매물 게시글 등록
-    public ResponseEntity<String> houseAdd(@RequestPart List<MultipartFile> file, @RequestPart @Valid HouseRegistRequest houseRegistRequest) {
+    public ResponseEntity<String> houseAdd(
+            @RequestHeader("Authorization") String accessToken,
+            @RequestPart(value = "file", required = false) List<MultipartFile> file,
+            @RequestPart @Valid HouseRegistRequest houseRegistRequest) {
         log.debug("{}", houseRegistRequest);
         if (file == null || file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사진 파일을 추가해주세요.");
@@ -55,7 +66,10 @@ public class HouseController {
         return ResponseEntity.status(HttpStatus.CREATED).body("매물등록 완료");
     }
     @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> houseModify(@PathVariable Long id, @RequestPart @Valid List<MultipartFile> file, @RequestPart @Valid HouseUpdateRequest houseUpdateRequest) {
+    public ResponseEntity<String> houseModify(
+            @RequestHeader("Authorization") String accessToken,
+            @PathVariable Long id, @RequestPart @Valid List<MultipartFile> file,
+            @RequestPart @Valid HouseUpdateRequest houseUpdateRequest) {
         // access_token으로 realtor_id 가져오는 로직 필요
         String realtorId = "realtor_id";
 
@@ -65,7 +79,9 @@ public class HouseController {
 
 //    매물 필터링
     @PostMapping("/filter")
-    public ResponseEntity<List<HouseListResponse>> houseFilterList(@RequestBody HouseFilterParamRequest filterParam) {
+    public ResponseEntity<List<HouseListResponse>> houseFilterList(
+            @RequestHeader("Authorization") String accessToken,
+            @RequestBody HouseFilterParamRequest filterParam) {
         log.debug("{}", filterParam);
 
         return ResponseEntity.status(HttpStatus.OK).body(houseFilterService.findFilterHouses(filterParam));

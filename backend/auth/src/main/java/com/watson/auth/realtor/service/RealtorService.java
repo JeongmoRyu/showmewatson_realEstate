@@ -129,7 +129,7 @@ public class RealtorService {
         return realtorLoginResponse;
     }
 
-    public RealtorLoginRequest addRealtor(MultipartFile profileImg, MultipartFile agencyImg, RealtorSignupRequest realtorSignupRequest) {
+    public RealtorLoginRequest addRealtor(MultipartFile agencyImg, RealtorSignupRequest realtorSignupRequest) {
 
         log.info("중개사 회원가입을 진행합니다.");
 
@@ -148,25 +148,12 @@ public class RealtorService {
         log.info("id : " + id);
 
         /* 2. authId 생성 */
-        log.info("authId를 가져옵니다.");
         String authId = realtorSignupRequest.getAuthId();
         log.info("authId : " + authId);
 
-        /* 3. profileImg 이름 생성 및 등록 */
-        String dirName = "realtor";
+        // 이미지 저장
+        String agencyImgName = realtorImageService.addFile(agencyImg, "agency");
 
-        String profileImgName = createFileName(profileImg.getOriginalFilename(), dirName);
-        log.info("profileImgName : " + profileImgName);
-
-        realtorImageService.addRealtorImage(profileImg, dirName); // S3 안에 폴더명
-
-        /* 4. agencyImg 이름 생성 및 등록 */
-        String agencyImgName = createFileName(agencyImg.getOriginalFilename(), "agency");
-        log.info("agencyImgName : " + agencyImgName);
-
-        realtorImageService.addRealtorImage(profileImg, dirName); // S3 안에 폴더명
-
-        /* 5. 회원가입 시킬 Realtor를 만들기 */
         Realtor newRealtor = Realtor.builder()
                 .id(id) // PK
                 .authType(realtorSignupRequest.getAuthType())
@@ -176,7 +163,6 @@ public class RealtorService {
                 .phoneNumber(realtorSignupRequest.getPhoneNumber())
                 .role("Realtor")
                 .password(bCryptPasswordEncoder.encode(code))
-                .profileImg(profileImgName) // 중개사 프로필 이미지
                 .registId(realtorSignupRequest.getRegistId())
                 .agencyName(realtorSignupRequest.getAgencyName())
                 .address(realtorSignupRequest.getAddress())
@@ -184,10 +170,11 @@ public class RealtorService {
                 .agencyImg(agencyImgName) // 사무소 이미지
                 .fcmToken(realtorSignupRequest.getFcmToken())
                 .build();
-        log.info("newRealtor : " + newRealtor.toString());
 
         realtorRepository.save(newRealtor);
         log.info("중개사 회원가입이 완료되었습니다.");
+
+        log.info("newRealtor : " + newRealtor.toString());
 
         return RealtorLoginRequest.builder()
                 .authId(newRealtor.getAuthId())
@@ -195,27 +182,11 @@ public class RealtorService {
                 .build();
     }
 
-    /* 파일 업로드 메소드 */
-    public String createFileName(String fileName, String dirName) { // 먼저 파일 업로드 시, 파일명을 난수화하기 위해 random으로 돌림
-        String createdFileName = dirName + "/" + UUID.randomUUID().toString().concat(getFileExtension(fileName));
-        log.info("createdFileName : " + createdFileName);
-        return createdFileName;
-    }
-
-    public String getFileExtension(String fileName) { // file 형식이 잘못된 경우를 확인, 파일 타입과 상관없이 업로드할 수 있게 하기 위해 .의 존재 유무만 판단
-        try {
-            return fileName.substring(fileName.lastIndexOf("."));
-        } catch (StringIndexOutOfBoundsException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일(" + fileName + ") 입니다.");
-        }
-    }
-
-    public RealtorResponse findRealtorByLicense(String license) {
-        Realtor findRealtor = realtorRepository.findByLicense(license);
+    public RealtorResponse findRealtorById(String realtorId) {
+        Realtor findRealtor = realtorRepository.findById(realtorId);
         return RealtorResponse.builder()
                 .realtorName(findRealtor.getRealtorName())
                 .phoneNumber(findRealtor.getPhoneNumber())
-                .profileImg(findRealtor.getProfileImg())
                 .registId(findRealtor.getRegistId())
                 .agencyName(findRealtor.getAgencyName())
                 .build();
@@ -224,19 +195,15 @@ public class RealtorService {
     public AgencyResponse findAgencyByRegistId(String registId) {
         Realtor findRealtor = realtorRepository.findByRegistId(registId);
 
-        /* 공인중개사 ID로 매물 찾기 */
-        /**
-         * String realtorId = findRealtor.getId();
-         * List<HouseResponses> findHouses = houseService.findHousesByRealtorId(realtorId);
-         */
-
         return AgencyResponse.builder()
                 .agencyName(findRealtor.getAgencyName())
                 .address(findRealtor.getAddress())
                 .tel(findRealtor.getTel())
                 .realtorId(findRealtor.getId())
                 .realtorName(findRealtor.getRealtorName())
-//                .houseId(findHouses)
+                .phoneNumber(findRealtor.getPhoneNumber())
+                .agencyImg(findRealtor.getAgencyImg())
                 .build();
     }
+
 }

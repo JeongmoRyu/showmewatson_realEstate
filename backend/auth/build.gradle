@@ -38,7 +38,8 @@ dependencies {
 
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client' // 이거 넣으니까 시큐리티 비번이 안나옴
 
-	implementation 'org.springframework.boot:spring-boot-starter-mustache' // test위해서 template 설정
+	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+	implementation 'io.lettuce:lettuce-core:6.2.5.RELEASE'// test위해서 template 설정
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -53,6 +54,8 @@ dependencies {
 
 	// S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+
 
 }
 

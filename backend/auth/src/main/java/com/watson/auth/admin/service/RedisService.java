@@ -44,7 +44,7 @@ public class RedisService {
 
         try {
             values.getAndDelete(authId);
-            log.info(authId + "인 Token 정보를 삭제합니다.");
+            log.info("authId가 " + authId + "인 Token 정보를 삭제합니다.");
             values.set(authId, tokens, Duration.ofDays(365)); // RefreshToken expire 1년
             log.info("Redis에 새로운 Access Token과 Refresh Token을 등록합니다. : " + tokens);
         } catch (Exception e) {
