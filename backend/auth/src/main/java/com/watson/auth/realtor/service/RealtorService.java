@@ -54,35 +54,45 @@ public class RealtorService {
         String redisAccessToken = redisTokens[0];
 
         if (accessToken.equals(redisAccessToken)) {
+            log.info("AccessToken이 일치합니다.");
 
             Map<String, String> validationResults = new HashMap<>();
+            log.info("realtor를 찾을 authId : " + authId);
             Realtor findRealtor = realtorRepository.findByAuthId(authId);// authId로 userId 가져오기
-            validationResults.put("userId", findRealtor.getId());
 
-            /* 유효한 토큰인가? */
-            if (!jwtUtils.validateToken(accessToken)) {
-                log.info("AccessToken이 유효하지 않습니다.");
-                /* 토큰이 유효하지 않다면 -> Refresh Token은 유효한가? */
-                String refreshToken = redisTokens[1];
-                log.info("refreshToken : " + refreshToken);
+            if (findRealtor != null) {
+                log.info("findRealtor : " + findRealtor.toString());
+                validationResults.put("realtorId", findRealtor.getId());
 
-                if(jwtUtils.validateToken(refreshToken)) {
-                    log.info("RefreshToken이 유효합니다.");
-                    /* 유효한 경우 -> Refresh Token으로 Access Token 재발급 및 Access Token 업데이트 */
-                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                    OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-                    String newAccessToken = jwtUtils.generateAccessToken(oauthToken);
-                    String newTokens = newAccessToken + "," + refreshToken;
-                    redisService.updateValues(authId, newTokens); // redis에 새로운 토큰으로 변경
+                /* 유효한 토큰인가? */
+                if (!jwtUtils.validateToken(accessToken)) {
+                    log.info("AccessToken이 유효하지 않습니다.");
+                    /* 토큰이 유효하지 않다면 -> Refresh Token은 유효한가? */
+                    String refreshToken = redisTokens[1];
+                    log.info("refreshToken : " + refreshToken);
 
-                    // userId, 프론트에 전달할 새로운 accessToken 전달
-                    validationResults.put("accessToken", newAccessToken);
+                    if(jwtUtils.validateToken(refreshToken)) {
+                        log.info("RefreshToken이 유효합니다.");
+                        /* 유효한 경우 -> Refresh Token으로 Access Token 재발급 및 Access Token 업데이트 */
+                        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+                        String newAccessToken = jwtUtils.generateAccessToken(oauthToken);
+                        String newTokens = newAccessToken + "," + refreshToken;
+
+                        redisService.updateValues(authId, newTokens); // redis에 새로운 토큰으로 변경
+
+                        // userId, 프론트에 전달할 새로운 accessToken 전달
+                        validationResults.put("accessToken", newAccessToken);
+                    } else {
+                        // refreshToken도 유효하지 않다면
+                        return null;
+                    }
+                    return validationResults;
                 } else {
-                    // refreshToken도 유효하지 않다면
-                    return null;
+                    return validationResults;
                 }
-                return validationResults;
             }
+            return null;
         }
         return null; // token 불일치
     }

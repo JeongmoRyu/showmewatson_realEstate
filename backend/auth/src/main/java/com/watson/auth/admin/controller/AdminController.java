@@ -199,6 +199,7 @@ public class AdminController {
             if (validationResults != null) { // user인 경우
                 return ResponseEntity.status(HttpStatus.OK).body(validationResults.get("userId"));
             } else {
+                log.info("중개사인지 확인합니다.");
                 validationResults = realtorService.validateToken(accessToken);
                 if (validationResults != null) {
                     return ResponseEntity.status(HttpStatus.OK).body(validationResults.get("realtorId"));
