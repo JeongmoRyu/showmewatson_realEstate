@@ -55,7 +55,7 @@ public class AdminController {
     /* 회원이 아니면 -> User/Realtor 선택 후 회원가입 */
     /* UUID로 AuthId를 사용하고, 클라에 AuthId(UUID)를 반환 */
     @GetMapping("/check-regist/{authId}")
-    public ResponseEntity<String> checkRegisteration(@PathVariable String authId) { // 중개사/유저 선택 페이지로 이동 때문에 return String
+    public ResponseEntity<?> checkRegisteration(@PathVariable String authId) { // 중개사/유저 선택 페이지로 이동 때문에 return String
 
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -77,10 +77,11 @@ public class AdminController {
                 UserLoginRequest userLoginRequest = UserLoginRequest.builder()
                         .authId(loginUser.getAuthId())
                         .build();
-                userLogin(userLoginRequest);
 
                 log.info("UUID : " + loginUser.getAuthId());
-                return ResponseEntity.status(HttpStatus.OK).body(loginUser.getAuthId());
+
+                return userLogin(userLoginRequest);
+//                return ResponseEntity.status(HttpStatus.OK).body(loginUser.getAuthId());
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 다른 유저
             }
@@ -93,8 +94,8 @@ public class AdminController {
                             .authId(loginRealtor.getAuthId())
                             .authType(loginRealtor.getAuthType())
                             .build();
-                    realtorLogin(realtorLoginRequest);
-                    return ResponseEntity.status(HttpStatus.OK).body(loginRealtor.getAuthId());
+                    return realtorLogin(realtorLoginRequest);
+//                    return ResponseEntity.status(HttpStatus.OK).body(loginRealtor.getAuthId());
                 } else {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 다른 유저
                 }
