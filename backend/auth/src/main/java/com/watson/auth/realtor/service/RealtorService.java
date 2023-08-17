@@ -32,11 +32,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RealtorService {
 
-    @Autowired // config에서 Bean 등록
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+//    @Autowired // config에서 Bean 등록
+//    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Value("${spring.security.code}")
-    String code;
+//    @Value("${spring.security.code}")
+//    String code;
 
     private final JwtUtils jwtUtils;
     private final RealtorRepository realtorRepository;
@@ -74,9 +74,9 @@ public class RealtorService {
                     if(jwtUtils.validateToken(refreshToken)) {
                         log.info("RefreshToken이 유효합니다.");
                         /* 유효한 경우 -> Refresh Token으로 Access Token 재발급 및 Access Token 업데이트 */
-                        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-                        String newAccessToken = jwtUtils.generateAccessToken(oauthToken);
+//                        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//                        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+                        String newAccessToken = jwtUtils.generateAccessToken(authId, "realtor");
                         String newTokens = newAccessToken + "," + refreshToken;
 
                         redisService.updateValues(authId, newTokens); // redis에 새로운 토큰으로 변경
@@ -102,20 +102,23 @@ public class RealtorService {
     }
 
     public RealtorLoginResponse modifyAccessToken(RealtorLoginRequest realtorLoginRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RealtorLoginResponse realtorLoginResponse = new RealtorLoginResponse();
 
-        Realtor loginRealtor = realtorRepository.findByAuthId(realtorLoginRequest.getAuthId());
+    String authId = realtorLoginRequest.getAuthId();
+        Realtor loginRealtor = realtorRepository.findByAuthId(authId);
 
         log.info("중개사로 로그인을 진행합니다.");
 
         log.info("로그인 토큰을 발급합니다.");
-        if (authentication.isAuthenticated()) {
+//        if (authentication.isAuthenticated()) {
 
-            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-            log.info("oauthToken : " + oauthToken);
+//            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+//            log.info("oauthToken : " + oauthToken);
 
-            JwtTokens jwtTokens = jwtUtils.generateTokens(oauthToken);
+//            JwtTokens jwtTokens = jwtUtils.generateTokens(oauthToken);
+        String role = "realtor";
+            JwtTokens jwtTokens = jwtUtils.generateTokens(authId, role);
 
             String accessToken = jwtTokens.getAccessToken();
             String refreshToken = jwtTokens.getRefreshToken();
@@ -134,9 +137,9 @@ public class RealtorService {
                     .accessToken(accessToken)
                     .role("User")
                     .build();
-        }
+//        }
 
-        return realtorLoginResponse;
+//        return realtorLoginResponse;
     }
 
     public RealtorLoginRequest addRealtor(MultipartFile agencyImg, RealtorSignupRequest realtorSignupRequest) {
@@ -172,7 +175,7 @@ public class RealtorService {
                 .realtorName(realtorSignupRequest.getRealtorName())
                 .phoneNumber(realtorSignupRequest.getPhoneNumber())
                 .role("Realtor")
-                .password(bCryptPasswordEncoder.encode(code))
+                .password("password")
                 .registId(realtorSignupRequest.getRegistId())
                 .agencyName(realtorSignupRequest.getAgencyName())
                 .address(realtorSignupRequest.getAddress())

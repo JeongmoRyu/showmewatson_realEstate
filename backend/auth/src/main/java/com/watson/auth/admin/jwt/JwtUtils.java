@@ -24,15 +24,13 @@ public class JwtUtils {
     private static final long REFRESH_TOKEN_EXPIRATION_TIME = 604800000 * 400; // Refresh Token 만료 시간 (7일)
 
     /* AccessToken 생성 : authId, authorities로 생성 */
-    public String generateAccessToken(OAuth2AuthenticationToken oauthToken) {
-
-        DefaultOAuth2User oauthUser = (DefaultOAuth2User) oauthToken.getPrincipal();
+    public String generateAccessToken(String authId, String role) {
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("authId", oauthUser.getAttribute("id"));
-        log.info("authId : " + oauthUser.getAttribute("id"));
-        claims.put("role", oauthToken.getAuthorities());
-        log.info("role : " + oauthToken.getAuthorities());
+        claims.put("authId", authId);
+        log.info("authId : " + authId);
+        claims.put("role", role);
+        log.info("role : " + role);
 
         Date expirationDate = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME);
 
@@ -40,23 +38,52 @@ public class JwtUtils {
         header.put("typ", "JWT");
         header.put("alg", "HS256");
 
-        log.info("oauthUser.getName() : " + oauthUser.getName());
-
         log.info("issuedAt : " + new Date());
         log.info("Expiration : " + expirationDate);
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setHeader(header)
-                .setSubject(oauthUser.getName())
+                .setSubject(authId)
                 .setIssuedAt(new Date())
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
+//    public String generateAccessToken(OAuth2AuthenticationToken oauthToken) {
+//
+//        DefaultOAuth2User oauthUser = (DefaultOAuth2User) oauthToken.getPrincipal();
+//
+//        Map<String, Object> claims = new HashMap<>();
+//        claims.put("authId", oauthUser.getAttribute("id"));
+//        log.info("authId : " + oauthUser.getAttribute("id"));
+//        claims.put("role", oauthToken.getAuthorities());
+//        log.info("role : " + oauthToken.getAuthorities());
+//
+//        Date expirationDate = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME);
+//
+//        Map<String, Object> header = new HashMap<>();
+//        header.put("typ", "JWT");
+//        header.put("alg", "HS256");
+//
+//        log.info("oauthUser.getName() : " + oauthUser.getName());
+//
+//        log.info("issuedAt : " + new Date());
+//        log.info("Expiration : " + expirationDate);
+//
+//        return Jwts.builder()
+//                .setClaims(claims)
+//                .setHeader(header)
+//                .setSubject(oauthUser.getName())
+//                .setIssuedAt(new Date())
+//                .setExpiration(expirationDate)
+//                .signWith(SignatureAlgorithm.HS256, secretKey)
+//                .compact();
+//    }
+
     /* RefreshToken 생성 */
-    public String generateRefreshToken(DefaultOAuth2User oauthUser) {
+    public String generateRefreshToken(String authId) {
 
         Map<String, Object> claims = new HashMap<>();
 
@@ -69,7 +96,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .setClaims(claims)
                 .setHeader(header)
-                .setSubject(oauthUser.getName())
+                .setSubject(authId)
                 .setIssuedAt(new Date())
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -103,14 +130,22 @@ public class JwtUtils {
     }
 
     /* Access Token, Refresh Token 생성 */
-    public JwtTokens generateTokens(OAuth2AuthenticationToken oauthToken) {
-        DefaultOAuth2User oauthUser = (DefaultOAuth2User) oauthToken.getPrincipal();
+    public JwtTokens generateTokens(String authId, String role) {
 
-        String accessToken = generateAccessToken(oauthToken);
-        String refreshToken = generateRefreshToken(oauthUser);
+        String accessToken = generateAccessToken(authId, role);
+        String refreshToken = generateRefreshToken(authId);
 
         return new JwtTokens(accessToken, refreshToken);
     }
+
+//    public JwtTokens generateTokens(OAuth2AuthenticationToken oauthToken) {
+//        DefaultOAuth2User oauthUser = (DefaultOAuth2User) oauthToken.getPrincipal();
+//
+//        String accessToken = generateAccessToken(oauthToken);
+//        String refreshToken = generateRefreshToken(oauthUser);
+//
+//        return new JwtTokens(accessToken, refreshToken);
+//    }
 
     public String getAuthIdByAccessToken(String accessToken) {
         Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).getBody();

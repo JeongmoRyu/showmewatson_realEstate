@@ -1,5 +1,6 @@
 package com.watson.auth.admin.controller;
 
+import com.watson.auth.admin.dto.LoginResponse;
 import com.watson.auth.admin.jwt.JwtUtils;
 import com.watson.auth.realtor.domain.entity.Realtor;
 import com.watson.auth.admin.dto.RealtorLoginResponse;
@@ -30,7 +31,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping(value = "/auth/admin")
-@Controller // html 페이지 이동을 위해 추가
+@RestController
 public class AdminController {
 
     @GetMapping("/test")
@@ -46,24 +47,24 @@ public class AdminController {
     private final RealtorService realtorService;
     private final JwtUtils jwtUtils;
 
-    @Value("${spring.security.code}")
-    String code;
+//    @Value("${spring.security.code}")
+//    String code;
 
     /* 회원인지 확인 */
     /* 회원이면 -> User/Realtor에 맞게 로그인 */
     /* 회원이 아니면 -> User/Realtor 선택 후 회원가입 */
     /* UUID로 AuthId를 사용하고, 클라에 AuthId(UUID)를 반환 */
-    @GetMapping
-    public ResponseEntity<String> checkRegisteration() { // 중개사/유저 선택 페이지로 이동 때문에 return String
+    @GetMapping("/check-regist/{authId}")
+    public ResponseEntity<String> checkRegisteration(@PathVariable String authId) { // 중개사/유저 선택 페이지로 이동 때문에 return String
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         log.info("회원여부를 확인합니다.");
 
-        /* 1. 이미 회원인지 확인. authId로 */
-        /* 1-1. authId 추출 */
-        String providerId = authentication.getName(); // kakao에서 주는 id 값
-        String authId = "kakao_" + providerId; // authentication에서 provider name 받아올 수 있는지 확인
+//        /* 1. 이미 회원인지 확인. authId로 */
+//        /* 1-1. authId 추출 */
+//        String providerId = authentication.getName(); // kakao에서 주는 id 값
+//        String authId = "kakao_" + providerId; // authentication에서 provider name 받아올 수 있는지 확인
         log.info("authId : " + authId);
 
         /* 1-2. authId로 기회원인지 확인 */
@@ -71,7 +72,8 @@ public class AdminController {
         User loginUser = userService.findUserByAuthId(authId);
         /* 1-3. 회원이면 로그인 */
         if (loginUser != null) { // 사용자면 사용자로 로그인
-            if (loginUser.getAuthId().equals("kakao_" + authentication.getName())) { // 동일 사용자 맞으면 로그인
+//            if (loginUser.getAuthId().equals("kakao_" + authentication.getName())) { // 동일 사용자 맞으면 로그인
+            if (loginUser.getAuthId().equals(authId)) { // 동일 사용자 맞으면 로그인
                 UserLoginRequest userLoginRequest = UserLoginRequest.builder()
                         .authId(loginUser.getAuthId())
                         .build();
@@ -85,7 +87,8 @@ public class AdminController {
         } else { // 중개사면 중개사로 로그인
             Realtor loginRealtor = realtorService.findRealtorByAuthId(authId);
             if (loginRealtor != null) {
-                if (loginRealtor.getAuthId().equals("kakao_" + authentication.getName())) { // 동일 사용자면 로그인
+//                if (loginRealtor.getAuthId().equals("kakao_" + authentication.getName())) { // 동일 사용자면 로그인
+                if (loginRealtor.getAuthId().equals(authId)) { // 동일 사용자면 로그인
                     RealtorLoginRequest realtorLoginRequest = RealtorLoginRequest.builder()
                             .authId(loginRealtor.getAuthId())
                             .authType(loginRealtor.getAuthType())
