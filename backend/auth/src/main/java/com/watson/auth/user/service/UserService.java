@@ -34,11 +34,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final RedisService redisService;
 
-    @Autowired // config에서 Bean 등록
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+//    @Autowired // config에서 Bean 등록
+//    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Value("${spring.security.code}")
-    String code;
+//    @Value("${spring.security.code}")
+//    String code;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -76,9 +76,9 @@ public class UserService {
                     if(jwtUtils.validateToken(refreshToken)) {
                         log.info("RefreshToken이 유효합니다.");
                         /* 유효한 경우 -> Refresh Token으로 Access Token 재발급 및 Access Token 업데이트 */
-                        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-                        String newAccessToken = jwtUtils.generateAccessToken(oauthToken);
+//                        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//                        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+                        String newAccessToken = jwtUtils.generateAccessToken(authId, "user");
                         String newTokens = newAccessToken + "," + refreshToken;
 
                         redisService.updateValues(authId, newTokens); // redis에 새로운 토큰으로 변경
@@ -101,20 +101,21 @@ public class UserService {
 
     public UserLoginResponse modifyAccessToken(UserLoginRequest userLoginRequest) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserLoginResponse userLoginResponse = new UserLoginResponse();
 
-        User loginUser = userRepository.findByAuthId(userLoginRequest.getAuthId());
+        String authId = userLoginRequest.getAuthId();
+        User loginUser = userRepository.findByAuthId(authId);
 
         /* 사용자면 사용자로 로그인 */
         log.info("사용자로 로그인을 진행합니다.");
         log.info("로그인 토큰을 발급합니다.");
-        if (authentication.isAuthenticated()) {
+//        if (authentication.isAuthenticated()) {
 
-            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-            log.info("oauthToken : " + oauthToken.toString());
+//            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+//            log.info("oauthToken : " + oauthToken.toString());
 
-            JwtTokens jwtTokens = jwtUtils.generateTokens(oauthToken);
+            JwtTokens jwtTokens = jwtUtils.generateTokens(authId, "user");
 
             String accessToken = jwtTokens.getAccessToken();
             String refreshToken = jwtTokens.getRefreshToken();
@@ -132,8 +133,8 @@ public class UserService {
                     .accessToken(accessToken)
                     .role("User")
                     .build();
-        }
-
+//        }
+//
         return userLoginResponse;
     }
 
@@ -171,7 +172,7 @@ public class UserService {
                 .authId(authId)
                 .authType("Kakao")
                 .role("User")
-                .password(bCryptPasswordEncoder.encode(code)) // security 사용을 위해 pw 등록)
+                .password("password") // security 사용을 위해 pw 등록)
                 .fcmToken("tmpFcmToken") // fcmToken 클라이언트에서 받아옴
                 .build();
 
