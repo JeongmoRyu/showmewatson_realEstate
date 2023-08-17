@@ -88,7 +88,7 @@ public class HouseController {
     }
 
     @GetMapping("/weekly-rank/{dongleeName}")
-    public ResponseEntity<List<WeeklyRankResponse>> weeklyRankByDongleeName(@RequestParam String dongleeName){
+    public ResponseEntity<List<WeeklyRankResponse>> weeklyRankByDongleeName(@PathVariable String dongleeName){
         return viewCountService.weeklyRankByDongleeName(dongleeName);
     }
 }
