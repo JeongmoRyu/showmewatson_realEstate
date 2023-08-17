@@ -1,0 +1,41 @@
+server:
+  port: 8084
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: ${DB_URL}/business
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  second-datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: ${DB_URL}/log
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        show-sql: true
+        format_sql: true
+  redis:
+    rank:
+      host: I9A803.p.ssafy.io
+      port: 6379
+      password: ${REDIS-PASSWORD}
+      sentinel:
+        master: rankmaster
+        nodes: I9A803.p.ssafy.io:26379,I9A803.p.ssafy.io:26380,I9A803.p.ssafy.io:26381
+      lettuce:
+        shutdown-timeout: 200ms
+
+logging:
+  level:
+    com.watson.viewcalculator: info
+    org.hibernate.SQL: debug
