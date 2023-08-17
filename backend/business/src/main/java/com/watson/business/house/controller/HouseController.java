@@ -1,11 +1,13 @@
 package com.watson.business.house.controller;
 
 import com.watson.business.connect.service.ConnectAuthService;
+import com.watson.business.connect.service.ConnectViewCountService;
 import com.watson.business.house.dto.houserequest.HouseFilterParamRequest;
 import com.watson.business.house.dto.houserequest.HouseRegistRequest;
 import com.watson.business.house.dto.houserequest.HouseUpdateRequest;
 import com.watson.business.house.dto.houseresponse.HouseDetailResponse;
 import com.watson.business.house.dto.houseresponse.HouseListResponse;
+import com.watson.business.house.dto.houseresponse.WeeklyRankResponse;
 import com.watson.business.house.service.HouseFilterService;
 import com.watson.business.house.service.HouseService;
 import com.watson.business.log.service.LogService;
@@ -29,6 +31,7 @@ public class HouseController {
     private final HouseFilterService houseFilterService;
     private final LogService logService;
     private final ConnectAuthService connectAuthService;
+    private final ConnectViewCountService viewCountService;
 
     @GetMapping("")     // 매물 전체 목록
     public ResponseEntity<List<HouseListResponse>> houseList(@RequestHeader("Authorization") String accessToken) {
@@ -82,5 +85,10 @@ public class HouseController {
         log.debug("{}", filterParam);
 
         return ResponseEntity.status(HttpStatus.OK).body(houseFilterService.findFilterHouses(filterParam));
+    }
+
+    @GetMapping("/weekly-rank/{dongleeName}")
+    public ResponseEntity<List<WeeklyRankResponse>> weeklyRankByDongleeName(@RequestParam String dongleeName){
+        return viewCountService.weeklyRankByDongleeName(dongleeName);
     }
 }
