@@ -85,7 +85,7 @@ class Detail extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/img_1.png'),
+                          image: AssetImage('assets/images/img_1.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -93,7 +93,7 @@ class Detail extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/img_0.png'),
+                          image: AssetImage('assets/images/img_0.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -101,7 +101,7 @@ class Detail extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/img_2.png'),
+                          image: AssetImage('assets/images/img_2.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
