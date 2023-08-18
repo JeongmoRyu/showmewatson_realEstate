@@ -17,7 +17,7 @@
 
 - 아키텍쳐
 
-![arch](/uploads/f60246a9859ac5ff54498f7353ac44ee/image.png)
+![arch](readme_assets/architecture.PNG)
 
 - 기능명세서
 
