@@ -11,7 +11,7 @@
 ### 주제
 매물 실시간 방송 서비스 제공 어플
 
-#### 기술 스택
+#### 사용 기술 스택
 
 <div align="center">
 <br>
@@ -50,82 +50,108 @@
 </div>
 </div>
 
+### 발표자료
+[ppt](docs/presentation/공통PJT_서울_8반_A803_허주혁.pdf)
+
+</br>
+[발표영상](docs/presentation/공통PJT_서울_8반_A803_UCC경진대회.mp4)
+
+
 ## 역할
 
 ### 프론트
 ##### 류정모
-- Figma 제작 
-- DM 
-- chatting 일반 유저 페이지 
-- 구글 맵을 통한 매물 정보 제공
--  매물 관련 정보 필터
+    - Figma 제작 
+    - DM 
+    - chatting 일반 유저 페이지 
+    - 구글 맵을 통한 매물 정보 제공
+    -  매물 관련 정보 필터
 ##### 허주혁
-- Figma 제작 
-- 로그인 페이지
-(중개사, 일반 유저)
-- 매물 작성 페이지
-- 라이브 등록, 목록
-- 스케줄 등록, 목록
+    - Figma 제작 
+    - 로그인 페이지 (중개사, 일반 유저)
+    - 매물 작성 페이지
+    - 라이브 등록, 목록
+    - 스케줄 등록, 목록
+
+<br/><br/>
 
 ### 백엔드
 ##### 김기헌
-- 아키텍쳐 , 시퀀스 설계
-- 배포 스크립트 작성 
-- 로그 저장, 분석
-- 지역별 주간 랭킹 선정
-- 깃 관리 
-- 코드 리팩토링
+    - 아키텍쳐 , 시퀀스 설계
+    - 배포 스크립트 작성 
+    - 로그 저장, 분석
+    - 지역별 주간 랭킹 선정
+    - 깃 관리 
+    - 코드 리팩토링
 ##### 박지영
-- Kafka와 FCM을 이용한 Notice 서버 개발
-- Openvidu 서버 구축
-- Redis 서버 구축
-- S3이미지 서버 구축
+    - Kafka와 FCM을 이용한 Notice 서버 개발
+    - Openvidu 서버 구축
+    - Redis 서버 구축
+    - S3이미지 서버 구축
 ##### 오채영
-- 매물 CRUD 
-- 매물 필터링 
-- 관심매물 CRUD 
-- 방송 스케줄 게시판 CRUD
+    - 매물 CRUD 
+    - 매물 필터링 
+    - 관심매물 CRUD 
+    - 방송 스케줄 게시판 CRUD
 ##### 이정민
-- 사용자/중개사 정보 CRUD
-- JWT 토큰을 이용한 로그인 및 인가
-- Spring Security
+    - 사용자/중개사 정보 CRUD
+    - JWT 토큰을 이용한 로그인 및 인가
+    - Spring Security
 
 <br/>
 <br/>
 
 
 ----
-### 공통
-    - 서비스 아이콘 제작
-    - 기술 스택 선정
-    - 정보구조도 
+
+### 정보구조도 
 ![정보구조도](/uploads/a789c3a4597dd16b9642b5002b7873cb/image.png)
 ![중개사구조도](/uploads/e3f8510d1b700b495ebf14a8bcf52757/image.png)
 
 ### Backend
-- ERD 제작  
-
+##### ERD 제작  
 ![erd](readme_assets/erd.PNG)
 
-- 아키텍쳐
-
+##### 아키텍쳐
 ![arch](readme_assets/architecture.png)
 
-- 기능명세서
+##### 명세서
+[기능명세서/API명세서](https://docs.google.com/spreadsheets/d/1O8tJik-yb2d7x9Nqm7bvH7MYdZcXFeiq4Sb5f2xZhYU/edit?usp=sharing)
+![API1](readme_assets/api1.PNG)
 
-![re](readme_assets/re.PNG)
+auth swagger(추후 외부 포트 닫을 예정)
+http://i9a803.p.ssafy.io:8080/swagger-ui/index.html
 
-- sequence diagram
+business swagger
+http://i9a803.p.ssafy.io:8081/swagger-ui/index.html
 
+notice swagger
+http://i9a803.p.ssafy.io:8082/swagger-ui/index.html
 
+-----
 
 ### Frontend
 
-![mvp](readme_assets/figma_user.PNG)
-![mvp](readme_assets/figma_agent.PNG)
 
+##### 사용자
+<div>
+<img src="readme_assets/Screenshot_20230818_122901.png" width="200">
+<img src="readme_assets/Screenshot_20230818_122937.png" width="200">
+<img src="readme_assets/Screenshot_20230818_122957.png" width="200">
+<img src="readme_assets/Screenshot_20230818_123012.png" width="200">
+<img src="readme_assets/Screenshot_20230818_123020.png" width="200">
+</div>
 
-- MVP 제작
+##### 중개자
+<div>
+<img src="readme_assets/Screenshot_20230818_123219.png" width="200">
+<img src="readme_assets/Screenshot_20230818_123101.png" width="200">
+<img src="readme_assets/Screenshot_20230818_123126.png" width="200">
+<img src="readme_assets/Screenshot_20230818_123200.png" width="200">
+<img src="readme_assets/Screenshot_20230818_123210.png" width="200">
+</div>
+
+<!-- - MVP 제작
     - Figma MVP 제작
         - MVP (Flutter) 초안 미완성
             - filter
@@ -157,12 +183,12 @@
             - 공인중개사 등록 매물 페이지
             - live 일정 공지 창
             - 게시판 형식?
-            - splash
+            - splash -->
 
 
-## 개발 시작 및 진행 중
+<!-- ## 개발 시작 및 진행 중 -->
 
-### Frontend
+<!-- ### Frontend
 
 ![splash](readme_assets/splash.PNG)
 ![main](readme_assets/main.PNG)
@@ -196,6 +222,6 @@ business swagger
 http://i9a803.p.ssafy.io:8081/swagger-ui/index.html
 
 notice swagger
-http://i9a803.p.ssafy.io:8082/swagger-ui/index.html
+http://i9a803.p.ssafy.io:8082/swagger-ui/index.html -->
 
 
