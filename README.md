@@ -1,6 +1,3 @@
-# 사장님! 7인분 같은 6인분 주세요
-
-----
 # 보여줘 왓슨
 <div align="center">
 <img src="readme_assets/app_icon.png"/>
@@ -73,7 +70,7 @@
     - 라이브 등록, 목록
     - 스케줄 등록, 목록
 
-<br/><br/>
+<br/>
 
 ### 백엔드
 ##### 김기헌
@@ -104,34 +101,12 @@
 
 ----
 
-### 정보구조도 
+## 정보구조도 
 ![정보구조도](/uploads/a789c3a4597dd16b9642b5002b7873cb/image.png)
 ![중개사구조도](/uploads/e3f8510d1b700b495ebf14a8bcf52757/image.png)
 
-### Backend
-##### ERD 제작  
-![erd](readme_assets/erd.PNG)
-
-##### 아키텍쳐
-![arch](readme_assets/architecture.png)
-
-##### 명세서
-[기능명세서/API명세서](https://docs.google.com/spreadsheets/d/1O8tJik-yb2d7x9Nqm7bvH7MYdZcXFeiq4Sb5f2xZhYU/edit?usp=sharing)
-![API1](readme_assets/api1.PNG)
-
-auth swagger(추후 외부 포트 닫을 예정)
-http://i9a803.p.ssafy.io:8080/swagger-ui/index.html
-
-business swagger
-http://i9a803.p.ssafy.io:8081/swagger-ui/index.html
-
-notice swagger
-http://i9a803.p.ssafy.io:8082/swagger-ui/index.html
-
------
-
-### Frontend
-
+## Frontend
+[figma]()
 
 ##### 사용자
 <div>
@@ -150,6 +125,30 @@ http://i9a803.p.ssafy.io:8082/swagger-ui/index.html
 <img src="readme_assets/Screenshot_20230818_123200.png" width="200">
 <img src="readme_assets/Screenshot_20230818_123210.png" width="200">
 </div>
+
+
+
+## Backend
+#### ERD 제작  
+![erd](readme_assets/erd.PNG)
+
+#### 아키텍쳐
+![arch](readme_assets/architecture.png)
+
+#### 명세서
+[기능명세서/API명세서](https://docs.google.com/spreadsheets/d/1O8tJik-yb2d7x9Nqm7bvH7MYdZcXFeiq4Sb5f2xZhYU/edit?usp=sharing)
+![API1](readme_assets/api1.PNG)
+
+#### Swagger
+[auth](http://i9a803.p.ssafy.io:8080/swagger-ui/index.html)
+
+[business](http://i9a803.p.ssafy.io:8081/swagger-ui/index.html)
+
+[notice](http://i9a803.p.ssafy.io:8082/swagger-ui/index.html)
+
+-----
+
+
 
 <!-- - MVP 제작
     - Figma MVP 제작
