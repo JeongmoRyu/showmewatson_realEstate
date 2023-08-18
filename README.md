@@ -102,8 +102,8 @@
 ----
 
 ## 정보구조도 
-![정보구조도](/uploads/a789c3a4597dd16b9642b5002b7873cb/image.png)
-![중개사구조도](/uploads/e3f8510d1b700b495ebf14a8bcf52757/image.png)
+![정보구조도](readme_assets/userIA.png)
+![중개사구조도](readme_assets/realtorIA.png)
 
 ## Frontend
 [figma](https://www.figma.com/file/SOoHTxgMwKQqBppPFFAvHY/%EB%B6%80%EB%8F%99%EC%82%B0-%EC%A4%91%EA%B0%9C-%ED%99%94%EC%83%81-%ED%94%8C%EB%9E%AB%ED%8F%BC-%EC%95%B1-MVP-(1%EC%B0%A8-%EC%99%84%EC%84%B1%EB%B3%B8)-(Copy)?type=design&node-id=111%3A2&mode=design&t=ZmTgbWDQAYHdGAx7-1)
