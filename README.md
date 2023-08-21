@@ -52,7 +52,7 @@
 
 </br>
 
-[ucc](https://youtu.be/E6jklmXQNa8)
+[https://youtu.be/E6jklmXQNa8](https://www.youtube.com/watch?v=E6jklmXQNa8)
 <-- [발표영상](docs/presentation/공통PJT_서울_8반_A803_UCC경진대회.mp4) -->
 
 
